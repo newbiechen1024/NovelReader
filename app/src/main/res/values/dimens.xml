@@ -1,0 +1,25 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Common -->
+<!--    <dimen name="nb.divider.line">1px</dimen>
+    <dimen name="nb.divider.small">4dp</dimen>
+    <dimen name="nb.divider.normal">8dp</dimen>
+    <dimen name="nb.divider.large">16dp</dimen>
+    <dimen name="nb.divider.xlarge">24dp</dimen>-->
+
+    <dimen name="nb.padding.small">4dp</dimen>
+    <dimen name="nb.padding.normal">8dp</dimen>
+    <dimen name="nb.padding.large">16dp</dimen>
+    <dimen name="nb.padding.xlarge">24dp</dimen>
+
+    <dimen name="nb.margin.small">4dp</dimen>
+    <dimen name="nb.margin.normal">8dp</dimen>
+    <dimen name="nb.margin.large">16dp</dimen>
+    <dimen name="nb.margin.xlarge">24dp</dimen>
+    
+    <!---->
+    <dimen name="nb.divider.line">0.5dp</dimen>
+</resources>

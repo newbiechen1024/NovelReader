@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--半透明圆角背景-->
+<!--暂时取名为skip，即SplashActivity的Skip按钮-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <corners android:radius="3dp"/>
+    <solid android:color="@color/translucent"/>
+
+</shape>

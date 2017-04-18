@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:padding="20dp"
+              android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/choose_iv_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/ic_close_window"/>
+
+    <ImageView
+        android:id="@+id/choose_iv_ic_sex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/choose_iv_close"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/ic_sex_logo"/>
+
+    <TextView
+        android:id="@+id/choose_tv_introduce"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/choose_iv_ic_sex"
+        android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/black"
+        android:text="@string/nb.dialog.text.introduce"/>
+
+    <TextView
+        android:id="@+id/choose_tv_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/nb.dialog.text.choose_tip"
+        android:textColor="@color/black"
+        android:layout_below="@+id/choose_tv_introduce"
+        android:layout_centerHorizontal="true"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/choose_tv_tip"
+        android:layout_marginTop="@dimen/nb.margin.normal"
+>
+        <Button
+            android:id="@+id/choose_btn_boy"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="start"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="@string/nb.dialog.text.boy_story"
+            android:background="@drawable/btn_sex_choose_boy"/>
+
+        <Button
+            android:id="@+id/choose_btn_girl"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="end"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="@string/nb.dialog.text.girl_story"
+            android:background="@drawable/btn_sex_choose_girl"/>
+    </LinearLayout>
+</RelativeLayout>

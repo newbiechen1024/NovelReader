@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="70dp"
+              android:paddingLeft="@dimen/nb.padding.large"
+              android:paddingRight="@dimen/nb.padding.large"
+              android:background="@drawable/btn_common_touch">
+
+    <ImageView
+        android:id="@+id/section_iv_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/ic_section_comment"/>
+
+    <TextView
+        android:id="@+id/section_tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/section_iv_icon"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:text="综合讨论区"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/black"
+        android:src="@drawable/ic_arrow"/>
+</RelativeLayout>

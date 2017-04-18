@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.example.newbiechen.ireader.ui.activity.MainActivity">
+    <item
+        android:id="@+id/action_search"
+        android:orderInCategory="80"
+        android:title="@string/nb.menu.action.search"
+        android:icon="@drawable/ic_menu_search"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_login"
+        android:title="@string/nb.menu.action.login"
+        android:icon="@drawable/ic_menu_login"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_my_message"
+        android:title="@string/nb.menu.action.message"
+        android:icon="@drawable/ic_menu_tip"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_sync_bookshelf"
+        android:title="@string/nb.menu.action.sync"
+        android:icon="@drawable/ic_menu_syn"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_scan_local_book"
+        android:title="@string/nb.menu.action.scan"
+        android:icon="@drawable/ic_menu_scan"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_wifi_book"
+        android:title="@string/nb.menu.action.transfer"
+        android:icon="@drawable/ic_menu_transfer"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_feedback"
+        android:title="@string/nb.menu.action.feedback"
+        android:icon="@drawable/ic_menu_feedback"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_night_mode"
+        android:title="@string/nb.menu.action.night_mode"
+        android:icon="@drawable/theme_night"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/nb.menu.action.setting"
+        android:icon="@drawable/ic_menu_setting"
+        app:showAsAction="never" />
+
+</menu>

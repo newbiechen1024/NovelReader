@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@mipmap/bg_splash">
+
+    <TextView
+        android:id="@+id/splash_tv_skip"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/nb.margin.large"
+        android:layout_marginRight="@dimen/nb.margin.large"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:background="@drawable/bg_skip"
+        android:text="@string/nb.splash.skip"
+        tools:ignore="RtlHardcoded"/>
+
+</RelativeLayout>

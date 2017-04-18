@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name">IReader</string>
+    <string name="nb.title.app">iReader</string>
+
+    <!--string_array-->
+    <string-array name="nb_fragment_title">
+        <item>@string/nb.fragment.title.bookshelf</item>
+        <item>@string/nb.fragment.title.community</item>
+        <item>@string/nb.fragment.title.discovery</item>
+    </string-array>
+
+    <string-array name="nb_fragment_section">
+        <item>@string/nb.fragment.section.comment</item>
+        <item>@string/nb.fragment.section.discuss</item>
+        <item>@string/nb.fragment.section.help</item>
+        <item>@string/nb.fragment.section.girl</item>
+        <item>@string/nb.fragment.section.compose</item>
+    </string-array>
+
+    <!--fragment_title-->
+    <string name="nb.fragment.title.bookshelf">书架</string>
+    <string name="nb.fragment.title.community">社区</string>
+    <string name="nb.fragment.title.discovery">发现</string>
+
+    <!---->
+    <string name="nb.fragment.section.comment">综合讨论区</string>
+    <string name="nb.fragment.section.discuss">书评区</string>
+    <string name="nb.fragment.section.help">书荒帮助区</string>
+    <string name="nb.fragment.section.girl">女生区</string>
+    <string name="nb.fragment.section.compose">原创区</string>
+    
+    <string name="nb.fragment.section.top">排行榜</string>
+    <string name="nb.fragment.section.topic">主题书单</string>
+    <string name="nb.fragment.section.sort">分类</string>
+    <string name="nb.framgent.section.listen_novel">有声小说</string>
+
+    <!--dialog-->
+    <string name="nb.dialog.text.introduce">我们会根据您的喜好\n推荐相对应的小说</string>
+    <string name="nb.dialog.text.choose_tip">--请选择你的喜好--</string>
+    <string name="nb.dialog.text.boy_story">男生小说</string>
+    <string name="nb.dialog.text.girl_story">女生小说</string>
+
+    <!--menu-->
+    <string name="nb.menu.action.search">搜索</string>
+    <string name="nb.menu.action.login">请登录</string>
+    <string name="nb.menu.action.message">我的消息</string>
+    <string name="nb.menu.action.sync">同步书架</string>
+    <string name="nb.menu.action.scan">扫描本地书籍</string>
+    <string name="nb.menu.action.transfer">WIFI传书</string>
+    <string name="nb.menu.action.feedback">意见反馈</string>
+    <string name="nb.menu.action.night_mode">夜间模式</string>
+    <string name="nb.menu.action.setting">设置</string>
+    
+    <!--SplashActivity-->
+    <string name="nb.splash.skip">跳过</string>
+</resources>
