@@ -5,7 +5,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.model.SectionBean;
+import com.example.newbiechen.ireader.model.bean.SectionBean;
 import com.example.newbiechen.ireader.ui.adapter.SectionAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.widget.DashItemDecoration;

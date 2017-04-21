@@ -38,6 +38,7 @@ public class SharedPreUtils {
 
     public void putString(String key,String value){
         sharedWritable.putString(key,value);
+        sharedWritable.commit();
     }
 
 

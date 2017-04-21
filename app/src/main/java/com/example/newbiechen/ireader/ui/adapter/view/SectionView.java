@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.model.SectionBean;
+import com.example.newbiechen.ireader.model.bean.SectionBean;
 import com.example.newbiechen.ireader.ui.base.IAdapter;
 
 import butterknife.ButterKnife;

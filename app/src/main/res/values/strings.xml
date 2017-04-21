@@ -53,4 +53,11 @@
     
     <!--SplashActivity-->
     <string name="nb.splash.skip">跳过</string>
+
+    <!--section-->
+    <string name="nb.section.user_lv">&#160;lv.%1$d</string>
+
+    <!--fragment_review-->
+    <string name="nb.fragment.review.book_type">[%1$s]</string>
+    <string name="nb.fragment.review.helpful">%1$d 人推荐</string>
 </resources>

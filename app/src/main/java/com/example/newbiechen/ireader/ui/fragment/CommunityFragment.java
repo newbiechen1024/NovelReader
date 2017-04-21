@@ -1,14 +1,13 @@
 package com.example.newbiechen.ireader.ui.fragment;
 
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.model.SectionBean;
-import com.example.newbiechen.ireader.ui.activity.CommunityActivity;
+import com.example.newbiechen.ireader.model.bean.SectionBean;
+import com.example.newbiechen.ireader.ui.activity.SectionActivity;
 import com.example.newbiechen.ireader.ui.adapter.SectionAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
@@ -63,6 +62,7 @@ public class CommunityFragment extends BaseFragment implements BaseListAdapter.O
     public void onItemClick(View view, int pos) {
         String section = mAdapter.getItems().get(pos)
                 .getName();
-        CommunityActivity.startActivity(getContext(),section);
+
+        SectionActivity.startActivity(getContext(),section);
     }
 }

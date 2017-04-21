@@ -3,7 +3,7 @@ package com.example.newbiechen.ireader.ui.adapter;
 import android.content.Context;
 import android.view.View;
 
-import com.example.newbiechen.ireader.model.SectionBean;
+import com.example.newbiechen.ireader.model.bean.SectionBean;
 import com.example.newbiechen.ireader.ui.adapter.view.SectionView;
 import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
 

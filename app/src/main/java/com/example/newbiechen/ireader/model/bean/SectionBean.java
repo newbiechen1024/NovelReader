@@ -1,4 +1,4 @@
-package com.example.newbiechen.ireader.model;
+package com.example.newbiechen.ireader.model.bean;
 
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;

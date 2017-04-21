@@ -3,23 +3,34 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="nb.theme.background">@color/white</color>
 
     <!--common-->
+    <color name="transparent">#00000000</color>
     <color name="translucent">#99343434</color>
     <color name="white">#ffffff</color>
-    <color name="light_white">#EEEEEE</color>
     <color name="black">#000000</color>
     <color name="light_pink">#fb9090</color>
-    <color name="transparent">#00000000</color>
+    <color name="light_white">#EEEEEE</color>
+    <color name="light_coffee">#A58D5E</color>
+    <color name="light_red">#EC4A48</color>
+    <color name="light_blue">#039BE5</color>
 
     <!--list-->
     <color name="nb.divider.common">@color/black</color>
     <color name="nb.divider.dash">@color/light_white</color>
 
     <!--text-->
-    <color name="nb.theme.background">@color/white</color>
-    <color name="nb.text.default">@color/black</color>
 
+    <color name="nb.text.default">@color/black</color>
+    <!--通用一级标题的颜色-->
+    <color name="nb.text.common_h1">#212121</color>
+    <!--通用二级标题的颜色-->
+    <color name="nb.text.common_h2">#727272</color>
+    <!--通用三级标题的颜色-->
+    <color name="nb.text.common_h3">#B2B2B2</color>
+
+    <color name="nb.text.user_name">@color/light_coffee</color>
     <color name="translucent_text">#96ffffff</color>
 
     <!--button-->
@@ -34,4 +45,6 @@
 
     <!---->
     <color name="nb.popup.text.selected">@color/light_pink</color>
+    <!---->
+    <color name="nb.scroll_refresh.tip">#88303F9F</color>
 </resources>

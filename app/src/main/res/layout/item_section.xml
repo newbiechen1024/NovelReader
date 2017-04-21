@@ -6,7 +6,7 @@
               android:layout_height="70dp"
               android:paddingLeft="@dimen/nb.padding.large"
               android:paddingRight="@dimen/nb.padding.large"
-              android:background="@drawable/btn_common_touch">
+              android:background="@drawable/common_bg_touch">
 
     <ImageView
         android:id="@+id/section_iv_icon"

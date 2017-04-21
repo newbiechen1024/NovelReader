@@ -50,7 +50,7 @@
 
     <!--用于修改popmenu的分割线-->
     <style name="dropDownStyle" parent="android:style/Widget.Holo.ListView.DropDown">
-        <item name="android:listSelector">@drawable/btn_common_touch</item>
+        <item name="android:listSelector">@drawable/common_bg_touch</item>
         <item name="android:divider">@color/nb.divider.common</item>
         <item name="android:dividerHeight">@dimen/nb.divider.line</item>
     </style>

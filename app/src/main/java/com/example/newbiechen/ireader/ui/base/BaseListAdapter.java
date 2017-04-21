@@ -32,23 +32,22 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter {
         View view = createView(parent.getContext(),viewType);
         //初始化
         RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {};
-        //设置点击事件
-        holder.itemView.setOnClickListener((v)->{
-            if (mListener != null){
-                int pos = holder.getAdapterPosition();
-                if (pos != Adapter.NO_SELECTION){
-                    mListener.onItemClick(v,pos);
-                }
-            }
-        });
         return holder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (! (holder.itemView instanceof IAdapter))
-            return;
+            throw new IllegalArgumentException("The adapter view must extend IAdapter");
         IAdapter<T> view = (IAdapter<T>)holder.itemView;
+
+        //设置点击事件
+        holder.itemView.setOnClickListener((v)->{
+            if (mListener != null){
+                mListener.onItemClick(v,position);
+            }
+        });
+
         view.onBind(mList.get(position),position);
     }
 
@@ -79,6 +78,10 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter {
 
     public List<T> getItems(){
         return Collections.unmodifiableList(mList);
+    }
+
+    public int getItemSize(){
+        return mList.size();
     }
 
     public void refreshItems(List<T> list){

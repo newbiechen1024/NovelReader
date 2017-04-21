@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/scroll_refresh_fl_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/scroll_refresh_tv_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/nb.scroll_refresh.tip"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="似乎没有网络哦"
+        android:textColor="@color/white"
+        android:visibility="gone"/>
+</RelativeLayout>

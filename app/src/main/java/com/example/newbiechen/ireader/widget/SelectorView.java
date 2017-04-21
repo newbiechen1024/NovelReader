@@ -36,6 +36,8 @@ import butterknife.ButterKnife;
 public class SelectorView extends LinearLayout {
 
     private OnItemSelectedListener mListener;
+
+    private ViewGroup parent;
     public SelectorView(Context context) {
         this(context, null);
     }
@@ -46,6 +48,7 @@ public class SelectorView extends LinearLayout {
 
     public SelectorView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        parent = this;
         setOrientation(HORIZONTAL);
     }
 
@@ -77,6 +80,11 @@ public class SelectorView extends LinearLayout {
     }
 
     public interface OnItemSelectedListener{
+        /**
+         * @param type:选中的类型
+         * @param pos:类型中的位置
+         * 位置都是从0开始的
+         */
         void onItemSelected(int type,int pos);
     }
 
@@ -118,7 +126,6 @@ public class SelectorView extends LinearLayout {
 
         private void initWidget(){
             setUpAnim();
-            setUpPopWindow();
         }
 
         private void setUpAnim(){
@@ -132,20 +139,35 @@ public class SelectorView extends LinearLayout {
             restoreAnim.setFillAfter(true);
         }
 
-        private void setUpPopWindow(){
+        private void openPopWindow(){
+            if (popupWindow == null){
+                createPopWindow();
+            }
+            popupWindow.show();
+        }
+
+        private void createPopWindow(){
             popupWindow = new ListPopupWindow(getContext());
             popupAdapter = new SelectorAdapter();
-            popupWindow.setAnchorView(this);
+            popupWindow.setAnchorView(parent.getChildAt(0));
             popupWindow.setAdapter(popupAdapter);
             popupWindow.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
             popupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+            //获取焦点
             popupWindow.setModal(true);
+
+            popupWindow.setOnItemClickListener(this);
+            popupWindow.setOnDismissListener(this);
+        }
+
+        private void closePopWindow(){
+            if (popupWindow != null && popupWindow.isShowing()){
+                popupWindow.dismiss();
+            }
         }
 
         private void initClick(){
-            this.setOnClickListener(this);
-            popupWindow.setOnItemClickListener(this);
-            popupWindow.setOnDismissListener(this);
+            setOnClickListener(this);
         }
 
         private void setData(List<String> types){
@@ -156,13 +178,13 @@ public class SelectorView extends LinearLayout {
         @Override
         public void onClick(View v) {
             if (isOpen){
+                closePopWindow();
                 isOpen = false;
-                popupWindow.dismiss();
                 ivArrow.startAnimation(restoreAnim);
             }
             else{
+                openPopWindow();
                 isOpen = true;
-                popupWindow.show();
                 ivArrow.startAnimation(rotateAnim);
             }
         }
@@ -188,7 +210,7 @@ public class SelectorView extends LinearLayout {
         }
 
         /*PopupWindow内容显示类*/
-        class SelectorAdapter extends BaseAdapter{
+        private class SelectorAdapter extends BaseAdapter{
             int current = 0;
 
             @Override
@@ -230,7 +252,7 @@ public class SelectorView extends LinearLayout {
                 return convertView;
             }
 
-            class ViewHolder{
+            private class ViewHolder{
                 TextView tvName;
             }
         }

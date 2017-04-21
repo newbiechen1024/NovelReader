@@ -23,6 +23,9 @@ public abstract class BaseFragment extends Fragment{
 
     /*******************************init area*********************************/
 
+    protected void initData(Bundle savedInstanceState){
+    }
+
     /**
      * 初始化点击事件
      */
@@ -53,6 +56,7 @@ public abstract class BaseFragment extends Fragment{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initData(savedInstanceState);
         unbinder = ButterKnife.bind(this,root);
         initWidget(savedInstanceState);
         initClick();

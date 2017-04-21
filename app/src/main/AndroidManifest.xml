@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.example.newbiechen.ireader">
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -13,12 +14,13 @@
             android:theme="@style/SplashTheme">
         </activity>
         <activity android:name=".ui.activity.MainActivity">
-        </activity>
-        <activity android:name=".ui.activity.CommunityActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".ui.activity.SectionActivity"
+            android:parentActivityName=".ui.activity.MainActivity">
         </activity>
     </application>
 

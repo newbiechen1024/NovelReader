@@ -73,6 +73,7 @@ public class MainActivity extends BaseActivity{
         initFragment();
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
         mVp.setAdapter(adapter);
+
         mTlTab.setupWithViewPager(mVp);
     }
 
