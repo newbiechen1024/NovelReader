@@ -13,6 +13,7 @@ import com.example.newbiechen.ireader.event.SelectorEvent;
 import com.example.newbiechen.ireader.model.Selection;
 import com.example.newbiechen.ireader.ui.base.BaseActivity;
 import com.example.newbiechen.ireader.ui.fragment.BookHelpsFragment;
+import com.example.newbiechen.ireader.ui.fragment.BookReviewFragment;
 import com.example.newbiechen.ireader.ui.fragment.DiscussionFragment;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.widget.SelectorView;
@@ -72,6 +73,7 @@ public class SectionActivity extends BaseActivity implements SelectorView.OnItem
         else if (sections[1].equals(mSection)){
             mSvSelector.setSelectData(Selection.DISTILLATE.getParams(),
                     Selection.BOOK_TYPE.getParams(),Selection.SORT_TYPE.getParams());
+            fragment = new BookReviewFragment();
         }
         else if (sections[2].equals(mSection)){
             mSvSelector.setSelectData(Selection.DISTILLATE.getParams(),

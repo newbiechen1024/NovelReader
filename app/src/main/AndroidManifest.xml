@@ -22,6 +22,7 @@
         <activity android:name=".ui.activity.SectionActivity"
             android:parentActivityName=".ui.activity.MainActivity">
         </activity>
+        <activity android:name=".ui.activity.DiscussionDetailActivity"/>
     </application>
 
 </manifest>

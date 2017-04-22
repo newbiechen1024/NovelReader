@@ -13,6 +13,7 @@ import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 import com.example.newbiechen.ireader.ui.base.IAdapter;
 import com.example.newbiechen.ireader.utils.Constant;
+import com.example.newbiechen.ireader.utils.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -64,10 +65,12 @@ public class BookReviewView extends RelativeLayout implements IAdapter<BookRevie
         //名字
         mTvBookName.setText(value.getBook().getTitle());
         //类型
-        mTvBookType.setText(getResources().getString(R.string.nb_section_user_lv,
-                value.getBook().getType()));
+        String bookType = Constant.bookType.get(value.getBook().getType());
+        mTvBookType.setText(getResources().getString(R.string.nb_fragment_review_book_type,bookType));
         //简介
         mTvBrief.setText(value.getTitle());
+        //time
+        mTvTime.setText(StringUtils.dateConvert(value.getUpdated(),Constant.FORMAT_BOOK_DATE));
         //label
         if (value.getState().equals(Constant.BOOK_STATE_DISTILLATE)){
             mTvLabelDistillate.setVisibility(VISIBLE);
@@ -76,6 +79,6 @@ public class BookReviewView extends RelativeLayout implements IAdapter<BookRevie
             mTvLabelDistillate.setVisibility(GONE);
         }
         //response count
-        mTvRecommendCount.setText(value.getHelpful().getYes()+"");
+        mTvRecommendCount.setText(getResources().getString(R.string.nb_fragment_review_helpful,value.getHelpful().getYes()));
     }
 }

@@ -15,6 +15,7 @@ import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.DiscussionBean;
 import com.example.newbiechen.ireader.ui.base.IAdapter;
 import com.example.newbiechen.ireader.utils.Constant;
+import com.example.newbiechen.ireader.utils.StringUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -76,9 +77,11 @@ public class DiscussionView extends RelativeLayout implements IAdapter<Discussio
         //label
         if (value.getState().equals(Constant.BOOK_STATE_DISTILLATE)){
             mTvLableDistillate.setVisibility(VISIBLE);
+            mTvTime.setVisibility(VISIBLE);
         }
         else {
             mTvLableDistillate.setVisibility(GONE);
+            mTvTime.setVisibility(GONE);
         }
         //comment or vote
         String type = value.getType();
@@ -95,6 +98,9 @@ public class DiscussionView extends RelativeLayout implements IAdapter<Discussio
                 break;
         }
         drawable.setBounds(0,0,drawable.getIntrinsicWidth(),drawable.getIntrinsicHeight());
+        //time
+        mTvTime.setText(StringUtils.dateConvert(value.getUpdated(),Constant.FORMAT_BOOK_DATE));
+
         mTvResponseCount.setCompoundDrawables(drawable,null,null,null);
         //response count
         mTvResponseCount.setText(value.getCommentCount()+"");

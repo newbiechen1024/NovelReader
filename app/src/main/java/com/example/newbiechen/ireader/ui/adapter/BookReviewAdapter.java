@@ -12,6 +12,11 @@ import com.example.newbiechen.ireader.widget.WholeAdapter;
  */
 
 public class BookReviewAdapter extends WholeAdapter<BookReviewBean> {
+
+    public BookReviewAdapter(Context context, Options options) {
+        super(context, options);
+    }
+
     @Override
     protected View createView(Context context, int viewType) {
         return new BookReviewView(context);

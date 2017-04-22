@@ -5,7 +5,9 @@ import android.support.annotation.StringDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by newbiechen on 17-4-16.
@@ -26,6 +28,8 @@ public class Constant {
     //book state
     public static final String BOOK_STATE_NORMAL = "normal";
     public static final String BOOK_STATE_DISTILLATE = "distillate";
+    //Book Date Convert Format
+    public static final String FORMAT_BOOK_DATE = "yyyy-MM-dd'T'HH:mm:ss";
     //RxBus
     public static final int MSG_SELECTOR = 1;
 
@@ -138,5 +142,21 @@ public class Constant {
         add(BookType.GDYQ);
         add(BookType.HXYQ);
         add(BookType.DMTR);
+    }};
+
+    public static Map<String, String> bookType = new HashMap<String, String>() {{
+        put("qt", "其他");
+        put(BookType.XHQH, "玄幻奇幻");
+        put(BookType.WXXX, "武侠仙侠");
+        put(BookType.DSYN, "都市异能");
+        put(BookType.LSJS, "历史军事");
+        put(BookType.YXJJ, "游戏竞技");
+        put(BookType.KHLY, "科幻灵异");
+        put(BookType.CYJK, "穿越架空");
+        put(BookType.HMZC, "豪门总裁");
+        put(BookType.XDYQ, "现代言情");
+        put(BookType.GDYQ, "古代言情");
+        put(BookType.HXYQ, "幻想言情");
+        put(BookType.DMTR, "耽美同人");
     }};
 }
