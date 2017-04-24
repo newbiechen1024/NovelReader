@@ -1,14 +1,17 @@
 package com.example.newbiechen.ireader.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.SectionBean;
+import com.example.newbiechen.ireader.ui.activity.BillboardActivity;
+import com.example.newbiechen.ireader.ui.activity.SortActivity;
 import com.example.newbiechen.ireader.ui.adapter.SectionAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
-import com.example.newbiechen.ireader.widget.DashItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DashItemDecoration;
 
 import java.util.ArrayList;
 
@@ -52,7 +55,18 @@ public class DiscoveryFragment extends BaseFragment {
     protected void initClick() {
         mAdapter.setOnItemClickListener(
                 (view,pos) ->{
+                    Intent intent;
                     //跳转
+                    switch (pos){
+                        case 0:
+                            intent = new Intent(getContext(),BillboardActivity.class);
+                            startActivity(intent);
+                            break;
+                        case 2:
+                            intent = new Intent(getContext(), SortActivity.class);
+                            startActivity(intent);
+                            break;
+                    }
                 }
         );
 

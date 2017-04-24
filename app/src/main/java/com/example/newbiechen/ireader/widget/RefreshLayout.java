@@ -3,6 +3,7 @@ package com.example.newbiechen.ireader.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,9 @@ import com.example.newbiechen.ireader.R;
  * 2. 加载错误点击重新加载
  */
 
-public abstract class RefreshLayout extends FrameLayout {
+public class RefreshLayout extends FrameLayout {
+
+    private static final String TAG = "RefreshLayout";
 
     protected static final int STATUS_LOADING = 0;
     protected static final int STATUS_FINISH = 1;
@@ -55,9 +58,9 @@ public abstract class RefreshLayout extends FrameLayout {
 
     private void initAttrs(AttributeSet attrs){
         TypedArray typedArray = mContext.obtainStyledAttributes(attrs, R.styleable.RefreshLayout);
-        mEmptyViewId = typedArray.getResourceId(R.styleable.RefreshLayout_layout_empty,R.layout.view_empty);
-        mErrorViewId = typedArray.getResourceId(R.styleable.RefreshLayout_layout_error,R.layout.view_net_error);
-        mLoadingViewId = typedArray.getResourceId(R.styleable.RefreshLayout_layout_loading,R.layout.view_loading);
+        mEmptyViewId = typedArray.getResourceId(R.styleable.RefreshLayout_refresh_empty,R.layout.view_empty);
+        mErrorViewId = typedArray.getResourceId(R.styleable.RefreshLayout_refresh_error,R.layout.view_net_error);
+        mLoadingViewId = typedArray.getResourceId(R.styleable.RefreshLayout_refresh_loading,R.layout.view_loading);
     }
 
     private void initView(){
@@ -65,19 +68,9 @@ public abstract class RefreshLayout extends FrameLayout {
         mErrorView = inflateView(mErrorViewId);
         mLoadingView = inflateView(mLoadingViewId);
 
-        mContentView = createContentView(this);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-        );
-        mContentView.setLayoutParams(params);
-
-        //默认显示加载
-        toggleStatus(STATUS_LOADING);
-
         addView(mEmptyView);
         addView(mErrorView);
         addView(mLoadingView);
-        addView(mContentView);
 
         //设置监听器
         mErrorView.setOnClickListener(
@@ -90,25 +83,74 @@ public abstract class RefreshLayout extends FrameLayout {
         );
     }
 
-    protected void showLoading(){
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        toggleStatus(STATUS_LOADING);
+    }
+
+    @Override
+    public void onViewAdded(View child) {
+        super.onViewAdded(child);
+        if (getChildCount() == 4){
+            mContentView = child;
+        }
+    }
+
+    @Override
+    public void addView(View child) {
+        if (getChildCount() > 4) {
+            throw new IllegalStateException("ScrollView can host only one direct child");
+        }
+        super.addView(child);
+    }
+
+    @Override
+    public void addView(View child, int index) {
+        if (getChildCount() > 4) {
+            throw new IllegalStateException("ScrollView can host only one direct child");
+        }
+
+        super.addView(child, index);
+    }
+
+    @Override
+    public void addView(View child, ViewGroup.LayoutParams params) {
+        if (getChildCount() > 4) {
+            throw new IllegalStateException("ScrollView can host only one direct child");
+        }
+
+        super.addView(child, params);
+    }
+
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        if (getChildCount() > 4) {
+            throw new IllegalStateException("ScrollView can host only one direct child");
+        }
+
+        super.addView(child, index, params);
+    }
+
+    public void showLoading(){
         if (mStatus != STATUS_LOADING){
             toggleStatus(STATUS_LOADING);
         }
     }
 
-    protected void showFinish(){
+    public void showFinish(){
         if (mStatus == STATUS_LOADING){
             toggleStatus(STATUS_FINISH);
         }
     }
 
-    protected void showError(){
+    public void showError(){
         if (mStatus != STATUS_ERROR){
             toggleStatus(STATUS_ERROR);
         }
     }
 
-    protected void showEmpty(){
+    public void showEmpty(){
         if (mStatus != STATUS_EMPTY){
             toggleStatus(STATUS_EMPTY);
         }
@@ -120,31 +162,37 @@ public abstract class RefreshLayout extends FrameLayout {
                 mLoadingView.setVisibility(VISIBLE);
                 mEmptyView.setVisibility(GONE);
                 mErrorView.setVisibility(GONE);
-                mContentView.setVisibility(GONE);
+                if (mContentView != null){
+                    mContentView.setVisibility(GONE);
+                }
                 break;
             case STATUS_FINISH:
-                mContentView.setVisibility(VISIBLE);
+                if (mContentView != null){
+                    mContentView.setVisibility(VISIBLE);
+                }
                 mLoadingView.setVisibility(GONE);
                 mEmptyView.setVisibility(GONE);
                 mErrorView.setVisibility(GONE);
                 break;
             case STATUS_ERROR:
                 mErrorView.setVisibility(VISIBLE);
-                mContentView.setVisibility(GONE);
                 mLoadingView.setVisibility(GONE);
                 mEmptyView.setVisibility(GONE);
+                if (mContentView != null){
+                    mContentView.setVisibility(GONE);
+                }
                 break;
             case STATUS_EMPTY:
                 mEmptyView.setVisibility(VISIBLE);
                 mErrorView.setVisibility(GONE);
-                mContentView.setVisibility(GONE);
                 mLoadingView.setVisibility(GONE);
+                if (mContentView != null){
+                    mContentView.setVisibility(GONE);
+                }
                 break;
         }
         mStatus = status;
     }
-
-    protected abstract View createContentView(ViewGroup parent);
 
     protected int getStatus(){
         return mStatus;

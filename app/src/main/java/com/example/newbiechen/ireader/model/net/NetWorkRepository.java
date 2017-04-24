@@ -1,8 +1,10 @@
 package com.example.newbiechen.ireader.model.net;
 
+import com.example.newbiechen.ireader.model.bean.BillboardListBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 import com.example.newbiechen.ireader.model.bean.DiscussionBean;
+import com.example.newbiechen.ireader.model.bean.SortListBean;
 
 import java.util.List;
 
@@ -51,5 +53,13 @@ public class NetWorkRepository{
     public Observable<List<BookReviewBean>> getBookReviewBeanList(String sort,String bookType,int start,int limited,String distillate){
         return mBookApi.getBookReviewList("all",sort,bookType,start+"",limited+"",distillate)
                 .map(listBean-> listBean.getReviews());
+    }
+
+    public Observable<BillboardListBean> getBillboardListBean(){
+        return mBookApi.getBillboardList();
+    }
+
+    public Observable<SortListBean> getSortListBean(){
+        return mBookApi.getSortListBean();
     }
 }

@@ -116,6 +116,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
         }
+        mToolbar.setNavigationOnClickListener(
+                (v) -> finish()
+        );
         return actionBar;
     }
 

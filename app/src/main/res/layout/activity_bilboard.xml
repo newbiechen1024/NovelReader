@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+    
+    <include layout="@layout/toolbar"/>
+    
+    <com.example.newbiechen.ireader.widget.RefreshLayout
+        android:id="@+id/billboard_rl_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        
+        <com.example.newbiechen.ireader.widget.ReboundScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    style="@style/NB.Theme.TextAppearance.Billboard.Title"
+                    android:text="男生" />
+                
+                <com.example.newbiechen.ireader.widget.CustomExpandableListView
+                    android:id="@+id/billboard_elv_boy"
+                    style="@style/NB.Theme.Widget.DefaultExpandListView">
+                </com.example.newbiechen.ireader.widget.CustomExpandableListView>
+                
+                <TextView
+                    style="@style/NB.Theme.TextAppearance.Billboard.Title"
+                    android:text="女生" />
+                
+                <com.example.newbiechen.ireader.widget.CustomExpandableListView
+                    android:id="@+id/billboard_elv_girl"
+                    style="@style/NB.Theme.Widget.DefaultExpandListView">
+                </com.example.newbiechen.ireader.widget.CustomExpandableListView>
+            </LinearLayout>
+        </com.example.newbiechen.ireader.widget.ReboundScrollView>
+    </com.example.newbiechen.ireader.widget.RefreshLayout>
+</LinearLayout>

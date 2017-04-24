@@ -1,4 +1,4 @@
-package com.example.newbiechen.ireader.widget;
+package com.example.newbiechen.ireader.widget.adapter;
 
 import android.content.Context;
 import android.os.Build;

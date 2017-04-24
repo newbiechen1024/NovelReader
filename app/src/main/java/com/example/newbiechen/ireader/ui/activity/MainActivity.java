@@ -32,13 +32,16 @@ import java.util.ArrayList;
 import butterknife.BindView;
 
 public class MainActivity extends BaseActivity{
+
     private static final int WAIT_INTERVAL = 2000;
+
     @BindView(R.id.main_tl_tab) TabLayout mTlTab;
     @BindView(R.id.main_vp) ViewPager mVp;
 
     private final ArrayList<Fragment> mFragmentList = new ArrayList<>();
 
     private boolean isPrepareFinish = false;
+
     @Override
     protected int getContentId() {
         return R.layout.activity_main;

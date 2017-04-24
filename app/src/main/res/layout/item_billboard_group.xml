@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/common_bg_touch"
+	android:padding="15dp">
+	
+	<ImageView
+		android:id="@+id/billboard_group_iv_symbol"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:layout_centerVertical="true" />
+	
+	<TextView
+		android:id="@+id/billboard_group_tv_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_centerVertical="true"
+		android:layout_marginLeft="15dp"
+		android:layout_toRightOf="@+id/billboard_group_iv_symbol"
+		android:text="xxxx" />
+	
+	<ImageView
+		android:id="@+id/billboard_group_iv_arrow"
+		android:layout_width="25dp"
+		android:layout_height="25dp"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:layout_marginRight="15dp"
+		android:src="@drawable/ic_billboard_arrow" />
+</RelativeLayout>

@@ -1,9 +1,12 @@
 package com.example.newbiechen.ireader.model.net;
 
+import com.example.newbiechen.ireader.model.bean.BillboardListBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsListBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewListBean;
 import com.example.newbiechen.ireader.model.bean.DiscussionListBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
+import com.example.newbiechen.ireader.model.bean.SortBean;
+import com.example.newbiechen.ireader.model.bean.SortListBean;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
@@ -72,4 +75,19 @@ public interface BookApi {
     @GET("/post/review")
     Observable<BookReviewListBean> getBookReviewList(@Query("duration") String duration, @Query("sort") String sort, @Query("type") String type, @Query("start") String start, @Query("limit") String limit, @Query("distillate") String distillate);
 
+    /**
+     * 获取所有排行榜
+     *
+     * @return
+     */
+    @GET("/ranking/gender")
+    Observable<BillboardListBean> getBillboardList();
+
+    /**
+     * 获取分类
+     *
+     * @return
+     */
+    @GET("/cats/lv2/statistics")
+    Observable<SortListBean> getSortListBean();
 }

@@ -3,7 +3,6 @@ package com.example.newbiechen.ireader.ui.fragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.RxBus;
@@ -14,9 +13,9 @@ import com.example.newbiechen.ireader.presenter.contract.CommentContact;
 import com.example.newbiechen.ireader.ui.adapter.DiscussionAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.utils.Constant;
-import com.example.newbiechen.ireader.widget.DashItemDecoration;
-import com.example.newbiechen.ireader.widget.ScrollRefreshRecyclerView;
-import com.example.newbiechen.ireader.widget.WholeAdapter;
+import com.example.newbiechen.ireader.widget.itemdecoration.DashItemDecoration;
+import com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView;
+import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 
 import java.util.List;
 

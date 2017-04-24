@@ -11,7 +11,7 @@ import com.example.newbiechen.ireader.ui.activity.SectionActivity;
 import com.example.newbiechen.ireader.ui.adapter.SectionAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
-import com.example.newbiechen.ireader.widget.DashItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DashItemDecoration;
 
 import java.util.ArrayList;
 

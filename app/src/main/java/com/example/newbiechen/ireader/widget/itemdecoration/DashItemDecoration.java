@@ -1,4 +1,4 @@
-package com.example.newbiechen.ireader.widget;
+package com.example.newbiechen.ireader.widget.itemdecoration;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -61,6 +61,6 @@ public class DashItemDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
-        outRect.set(0,0,0,getDrawable().getIntrinsicHeight());
+        outRect.set(0,0,getDrawable().getIntrinsicWidth(),getDrawable().getIntrinsicHeight());
     }
 }

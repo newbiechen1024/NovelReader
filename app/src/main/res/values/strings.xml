@@ -50,7 +50,6 @@
     <string name="nb.menu.action.feedback">意见反馈</string>
     <string name="nb.menu.action.night_mode">夜间模式</string>
     <string name="nb.menu.action.setting">设置</string>
-    
     <!--SplashActivity-->
     <string name="nb.splash.skip">跳过</string>
 
@@ -60,4 +59,6 @@
     <!--fragment_review-->
     <string name="nb.fragment.review.book_type">[%1$s]</string>
     <string name="nb.fragment.review.helpful">%1$d 人推荐</string>
+    <!---->
+    <string name="nb.sort.book_count">%1$d 本</string>
 </resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--ExpandListView-->
+	<style name="NB.Theme.Widget.DefaultExpandListView">
+		<item name="android:layout_width">match_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:childDivider">@drawable/shape_divider_dash</item>
+		<item name="android:groupIndicator">@null</item>
+		<item name="android:listSelector">@drawable/common_bg_touch</item>
+	</style>
+	
+	<!--表示领域-->
+	<style name="NB.Theme.TextAppearance.Billboard"/>
+	<style name="NB.Theme.TextAppearance.Billboard.Title">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:padding">10dp</item>
+		<item name="android:textColor">@color/nb.text.default</item>
+		<item name="android:textSize">@dimen/nb.text.large</item>
+	</style>
+</resources>

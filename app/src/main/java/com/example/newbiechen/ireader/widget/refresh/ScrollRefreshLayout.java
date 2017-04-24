@@ -1,4 +1,4 @@
-package com.example.newbiechen.ireader.widget;
+package com.example.newbiechen.ireader.widget.refresh;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -56,7 +56,7 @@ public abstract class ScrollRefreshLayout extends SwipeRefreshLayout {
 
     private void initAttrs(AttributeSet attrs){
         TypedArray array = mContext.obtainStyledAttributes(attrs,R.styleable.ScrollRefreshLayout);
-        int emptyId = array.getResourceId(R.styleable.ScrollRefreshLayout_layout_empty,ATTR_NULL);
+        int emptyId = array.getResourceId(R.styleable.ScrollRefreshLayout_scroll_empty,ATTR_NULL);
 
         if (emptyId != ATTR_NULL) mEmptyId = emptyId;
     }

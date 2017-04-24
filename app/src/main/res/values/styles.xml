@@ -10,11 +10,11 @@
         <item name="android:windowExitAnimation">@anim/slide_left_out</item>
         <item name="android:actionOverflowMenuStyle">@style/ActionButton.Overflow.Menu</item>
     </style>
-
+    <!--Splash-->
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:background">@color/transparent</item>
     </style>
-
+    <!--Dialog-->
     <style name="CommonDialog" parent="android:Theme.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFrame">@null</item>
@@ -23,7 +23,7 @@
         <item name="android:windowEnterAnimation">@anim/slide_left_in</item>
         <item name="android:windowExitAnimation">@anim/slide_right_out</item>
     </style>
-
+    <!--Toolbar-->
     <style name="Theme.ToolBar.Menu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <!-- 设置-弹窗的背景-颜色-->
         <item name="android:colorBackground">@color/nb.theme.background</item>
@@ -54,4 +54,13 @@
         <item name="android:divider">@color/nb.divider.common</item>
         <item name="android:dividerHeight">@dimen/nb.divider.line</item>
     </style>
+    
+    <!--Common-->
+    <style name="NB.Theme" parent="AppTheme"/>
+    <!-- Widget:修改View的样式的-->
+    <style name="NB.Theme.Widget"/>
+    <!-- TextAppearance:修改 -->
+    <style name="NB.Theme.TextAppearance"/>
+    
+    
 </resources>

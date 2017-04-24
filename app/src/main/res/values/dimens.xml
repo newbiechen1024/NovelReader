@@ -22,4 +22,8 @@
     
     <!---->
     <dimen name="nb.divider.line">0.5dp</dimen>
+    '
+    <!--text-->
+    <!--二级标题-->
+    <dimen name="nb.text.large">18dp</dimen>
 </resources>

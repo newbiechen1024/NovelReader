@@ -7,16 +7,14 @@ import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.RxBus;
 import com.example.newbiechen.ireader.event.SelectorEvent;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
-import com.example.newbiechen.ireader.model.bean.DiscussionBean;
 import com.example.newbiechen.ireader.presenter.BookHelpsPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookHeplsContract;
 import com.example.newbiechen.ireader.ui.adapter.BookHelpsAdapter;
-import com.example.newbiechen.ireader.ui.adapter.DiscussionAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.utils.Constant;
-import com.example.newbiechen.ireader.widget.DashItemDecoration;
-import com.example.newbiechen.ireader.widget.ScrollRefreshRecyclerView;
-import com.example.newbiechen.ireader.widget.WholeAdapter;
+import com.example.newbiechen.ireader.widget.itemdecoration.DashItemDecoration;
+import com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView;
+import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 
 import java.util.List;
 

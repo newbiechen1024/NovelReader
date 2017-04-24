@@ -5,7 +5,7 @@ import android.view.View;
 
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 import com.example.newbiechen.ireader.ui.adapter.view.BookReviewView;
-import com.example.newbiechen.ireader.widget.WholeAdapter;
+import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 
 /**
  * Created by newbiechen on 17-4-21.

@@ -17,7 +17,7 @@
     <color name="light_blue">#039BE5</color>
 
     <!--list-->
-    <color name="nb.divider.common">@color/black</color>
+    <color name="nb.divider.common">#727272</color>
     <color name="nb.divider.dash">@color/light_white</color>
 
     <!--text-->

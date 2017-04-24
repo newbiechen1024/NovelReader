@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <com.example.newbiechen.ireader.widget.ScrollRefreshRecyclerView
+    <com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView
         android:id="@+id/section_rv_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </com.example.newbiechen.ireader.widget.ScrollRefreshRecyclerView>
+    </com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView>
 </RelativeLayout>

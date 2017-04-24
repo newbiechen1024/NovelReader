@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <com.example.newbiechen.ireader.widget.RefreshRecyclerView
+<!--    <com.example.newbiechen.ireader.widget.refresh.RefreshRecyclerView
         android:id="@+id/discussion_detail_rv_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </com.example.newbiechen.ireader.widget.RefreshRecyclerView>
+    </com.example.newbiechen.ireader.widget.refresh.RefreshRecyclerView>-->
 </RelativeLayout>

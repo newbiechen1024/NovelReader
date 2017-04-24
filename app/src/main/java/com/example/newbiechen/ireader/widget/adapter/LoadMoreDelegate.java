@@ -1,13 +1,9 @@
-package com.example.newbiechen.ireader.widget;
+package com.example.newbiechen.ireader.widget.adapter;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
-import com.example.newbiechen.ireader.R;
 
 /**
  * Created by newbiechen on 17-4-20.

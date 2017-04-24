@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
-import com.example.newbiechen.ireader.widget.RefreshRecyclerView;
+import com.example.newbiechen.ireader.widget.refresh.RefreshRecyclerView;
 
 /**
  * Created by newbiechen on 17-4-22.
@@ -18,7 +18,9 @@ public class DiscussionDetailFragment extends BaseFragment {
 
     private static final String EXTRA_DETAIL_ID = "extra_detail_id";
 
+/*
     private RefreshRecyclerView mRvContent;
+*/
 
     public static Fragment newInstance(String detailId){
         Bundle args = new Bundle();

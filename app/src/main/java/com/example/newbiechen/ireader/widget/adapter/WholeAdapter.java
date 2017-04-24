@@ -1,22 +1,13 @@
-package com.example.newbiechen.ireader.widget;
+package com.example.newbiechen.ireader.widget.adapter;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.FrameLayout;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
-import com.example.newbiechen.ireader.ui.base.IAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

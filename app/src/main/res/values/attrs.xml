@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ScrollRefreshLayout">
-        <attr name="layout_empty" format="reference"/>
+        <attr name="scroll_empty" format="reference"/>
     </declare-styleable>
 
     <declare-styleable name="RefreshLayout">
-        <attr name="layout_empty" format="reference"/>
-        <attr name="layout_error" format="reference"/>
-        <attr name="layout_loading" format="reference"/>
+        <attr name="refresh_empty" format="reference"/>
+        <attr name="refresh_error" format="reference"/>
+        <attr name="refresh_loading" format="reference"/>
     </declare-styleable>
 </resources>

@@ -1,31 +1,34 @@
-package com.example.newbiechen.ireader.widget;
+package com.example.newbiechen.ireader.widget.refresh;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 /**
- * Created by newbiechen on 17-4-18.
+ * Created by newbiechen on 17-4-22.
  */
 
-public class ScrollRefreshRecyclerView extends ScrollRefreshLayout {
-    private static final String TAG = "RefreshRecyclerView";
+public class RefreshRecyclerView extends RefreshLayout {
+
     private RecyclerView mRecyclerView;
-    private static boolean showLog = true;
-    public ScrollRefreshRecyclerView(Context context) {
+
+    private boolean isFirstLoad = true;
+    public RefreshRecyclerView(Context context) {
         super(context);
     }
 
-    public ScrollRefreshRecyclerView(Context context, AttributeSet attrs) {
+    public RefreshRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
+    public RefreshRecyclerView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
     @Override
-    public View getContentView(ViewGroup parent) {
+    protected View createContentView(ViewGroup parent) {
         mRecyclerView = new RecyclerView(getContext());
         return mRecyclerView;
     }
@@ -41,13 +44,6 @@ public class ScrollRefreshRecyclerView extends ScrollRefreshLayout {
     public void setAdapter(RecyclerView.Adapter adapter){
         mRecyclerView.setAdapter(adapter);
         adapter.registerAdapterDataObserver(new MyAdapterDataObserver());
-    }
-
-    /**
-     * 刚进入的时候不点击界面，自动刷新
-     * */
-    public void initRefresh(){
-        mRecyclerView.post(()-> setRefreshing(true));
     }
 
     public RecyclerView getReyclerView(){
@@ -94,20 +90,15 @@ public class ScrollRefreshRecyclerView extends ScrollRefreshLayout {
 
         private void update(){
             int count = mRecyclerView.getAdapter().getItemCount();
-            if (count == 0){
-                showEmptyView();
-                mRecyclerView.setVisibility(GONE);
+            if (isFirstLoad){
+                if (count == 0){
+                    showEmpty();
+                }
+                else {
+                    showFinish();
+                }
+                isFirstLoad = false;
             }
-            else if (mRecyclerView.getVisibility() == GONE){
-                hideEmptyView();
-                mRecyclerView.setVisibility(VISIBLE);
-            }
-        }
-    }
-
-    public static void log(String str){
-        if (showLog){
-            Log.d(TAG, str);
         }
     }
 }
