@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.example.newbiechen.ireader.App;
@@ -53,7 +52,7 @@ public class DashItemDecoration extends RecyclerView.ItemDecoration {
             drawable = dashDrawable.get();
         }
         if (drawable == null){
-            drawable = ContextCompat.getDrawable(App.getAppContext(),R.drawable.shape_divider_dash);
+            drawable = ContextCompat.getDrawable(App.getContext(),R.drawable.shape_divider_dash);
             dashDrawable = new WeakReference<Drawable>(drawable);
         }
         return drawable;

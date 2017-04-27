@@ -6,40 +6,39 @@
     <string-array name="nb_fragment_title">
         <item>@string/nb.fragment.title.bookshelf</item>
         <item>@string/nb.fragment.title.community</item>
-        <item>@string/nb.fragment.title.discovery</item>
+        <item>@string/nb.fragment.title.find</item>
     </string-array>
 
     <string-array name="nb_fragment_section">
-        <item>@string/nb.fragment.section.comment</item>
-        <item>@string/nb.fragment.section.discuss</item>
-        <item>@string/nb.fragment.section.help</item>
-        <item>@string/nb.fragment.section.girl</item>
-        <item>@string/nb.fragment.section.compose</item>
+        <item>@string/nb.fragment.community.comment</item>
+        <item>@string/nb.fragment.community.discussion</item>
+        <item>@string/nb.fragment.community.help</item>
+        <item>@string/nb.fragment.community.girl</item>
+        <item>@string/nb.fragment.community.compose</item>
     </string-array>
 
-    <!--fragment_title-->
+    <!--fragment_title:主页的名字-->
     <string name="nb.fragment.title.bookshelf">书架</string>
     <string name="nb.fragment.title.community">社区</string>
-    <string name="nb.fragment.title.discovery">发现</string>
+    <string name="nb.fragment.title.find">发现</string>
 
-    <!---->
-    <string name="nb.fragment.section.comment">综合讨论区</string>
-    <string name="nb.fragment.section.discuss">书评区</string>
-    <string name="nb.fragment.section.help">书荒帮助区</string>
-    <string name="nb.fragment.section.girl">女生区</string>
-    <string name="nb.fragment.section.compose">原创区</string>
+    <!--fragment-->
+    <string name="nb.fragment.community.comment">综合讨论区</string>
+    <string name="nb.fragment.community.discussion">书评区</string>
+    <string name="nb.fragment.community.help">书荒帮助区</string>
+    <string name="nb.fragment.community.girl">女生区</string>
+    <string name="nb.fragment.community.compose">原创区</string>
     
-    <string name="nb.fragment.section.top">排行榜</string>
-    <string name="nb.fragment.section.topic">主题书单</string>
-    <string name="nb.fragment.section.sort">分类</string>
-    <string name="nb.framgent.section.listen_novel">有声小说</string>
+    <string name="nb.fragment.find.top">排行榜</string>
+    <string name="nb.fragment.find.topic">主题书单</string>
+    <string name="nb.fragment.find.sort">分类</string>
+    <string name="nb.fragment.find.listen">有声小说</string>
 
     <!--dialog-->
     <string name="nb.dialog.text.introduce">我们会根据您的喜好\n推荐相对应的小说</string>
     <string name="nb.dialog.text.choose_tip">--请选择你的喜好--</string>
     <string name="nb.dialog.text.boy_story">男生小说</string>
     <string name="nb.dialog.text.girl_story">女生小说</string>
-
     <!--menu-->
     <string name="nb.menu.action.search">搜索</string>
     <string name="nb.menu.action.login">请登录</string>
@@ -53,12 +52,11 @@
     <!--SplashActivity-->
     <string name="nb.splash.skip">跳过</string>
 
-    <!--section-->
-    <string name="nb.section.user_lv">&#160;lv.%1$d</string>
-
-    <!--fragment_review-->
-    <string name="nb.fragment.review.book_type">[%1$s]</string>
-    <string name="nb.fragment.review.helpful">%1$d 人推荐</string>
-    <!---->
+    <!--user:用户的信息-->
+    <string name="nb.user.user_lv">&#160;lv.%1$d</string>
+    <!--book:书籍的信息-->
+    <string name="nb.book.type">[%1$s]</string>
+    <string name="nb.book.recommend">%1$d 人推荐</string>
+    <!--sort:每类的书-->
     <string name="nb.sort.book_count">%1$d 本</string>
 </resources>

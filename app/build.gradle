@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
         applicationId "com.example.newbiechen.ireader"
-        minSdkVersion 21
-        targetSdkVersion 25
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -24,31 +25,35 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+greendao{
+    schemaVersion 1
+    daoPackage 'com.example.newbiechen.ireader.model.gen'
+    targetGenDir 'src/main/java'
+}
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
+    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:design:$rootProject.supportLibraryVersion"
+    compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     //View injection
-    compile 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
-
+    compile "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
     //RxJava
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
-
+    compile "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
+    compile "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
     //NetWork
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
-    compile 'com.squareup.okio:okio:1.11.0'
-    compile 'com.squareup.retrofit2:retrofit:2.2.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava2:2.2.0'
-
+    compile "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion"
+    compile "com.squareup.okio:okio:$rootProject.okioVersion"
+    compile "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofitVersion"
     //ImageLoader
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    testCompile 'junit:junit:4.12'
+    compile "com.github.bumptech.glide:glide:$rootProject.glideVersion"
+    //ORM Databae
+    compile "org.greenrobot:greendao:$rootProject.greendaoVersion"
+    testCompile "junit:junit:$rootProject.junitVersion"
 }

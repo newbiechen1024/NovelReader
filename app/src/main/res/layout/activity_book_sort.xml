@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:fitsSystemWindows="true">
+	
+	<include layout="@layout/toolbar"/>
+	<com.example.newbiechen.ireader.widget.RefreshLayout
+		android:id="@+id/book_sort_rl_refresh"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:fitsSystemWindows="true">
+		<com.example.newbiechen.ireader.widget.ReboundScrollView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:fitsSystemWindows="true">
+			
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:fitsSystemWindows="true">
+				
+				<TextView
+					style="@style/NB.Theme.TextAppearance.Billboard.Title"
+					android:text="男生" />
+				
+				<android.support.v7.widget.RecyclerView
+					android:id="@+id/book_sort_rv_boy"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+				</android.support.v7.widget.RecyclerView>
+				
+				<TextView
+					style="@style/NB.Theme.TextAppearance.Billboard.Title"
+					android:text="女生" />
+				
+				<android.support.v7.widget.RecyclerView
+					android:id="@+id/book_sort_rv_girl"
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+				</android.support.v7.widget.RecyclerView>
+			</LinearLayout>
+		</com.example.newbiechen.ireader.widget.ReboundScrollView>
+	</com.example.newbiechen.ireader.widget.RefreshLayout>
+</LinearLayout>

@@ -14,16 +14,13 @@ import java.util.List;
 
 /**
  * Created by newbiechen on 17-4-19.
- * 1. Header和Footer的监听事件由View自行决定
- * 2. Adapter的监听事件需要改变
- * 3. 需要支持GridLayoutManager
- * 4. 尾部的load事件
+ *
  */
 
 public abstract class WholeAdapter<T> extends BaseListAdapter<T>{
     private static final String TAG = "WholeAdapter";
-
     private static final int TYPE_ITEM = 0;
+
     //刷新类
     private LoadMoreDelegate mLoadDelegate = null;
 
@@ -142,7 +139,7 @@ public abstract class WholeAdapter<T> extends BaseListAdapter<T>{
         super.refreshItems(list);
     }
 
-    public void setLoadError(){
+    public void showLoadError(){
         //设置为加载错误
         checkLoadMoreExist();
         mLoadDelegate.setLoadMoreStatus(LoadMoreView.TYPE_LOAD_ERROR);

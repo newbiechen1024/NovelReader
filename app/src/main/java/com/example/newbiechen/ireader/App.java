@@ -16,7 +16,7 @@ public class App extends Application {
         sInstance = this;
     }
 
-    public static Context getAppContext(){
+    public static Context getContext(){
         return sInstance;
     }
 }

@@ -9,7 +9,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.View;
 
 import com.example.newbiechen.ireader.App;
@@ -169,7 +168,7 @@ public class DefaultItemDecoration extends RecyclerView.ItemDecoration {
             drawable = mVerticalDrawable.get();
         }
         if (drawable == null){
-            drawable = ContextCompat.getDrawable(App.getAppContext(),R.drawable.shape_divider_vertical);
+            drawable = ContextCompat.getDrawable(App.getContext(),R.drawable.shape_divider_vertical);
             mVerticalDrawable = new WeakReference<Drawable>(drawable);
         }
         return drawable;

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/common_bg_touch"
+                android:orientation="vertical"
+                android:padding="10dp"
+                xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/review_tv_portrait"
+        android:layout_width="45dp"
+        android:layout_height="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/ic_default_portrait"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/review_tv_book_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/review_tv_portrait"
+        android:ellipsize="end"
+        android:singleLine="true"
+        tools:text="诛仙"
+        android:textColor="@color/light_coffee"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/review_tv_book_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/review_tv_book_name"
+        android:ellipsize="end"
+        android:singleLine="true"
+        tools:text="@string/nb.book.type"
+        android:textColor="@color/light_coffee"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/review_tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="昨天"
+        android:visibility="gone"
+        android:textColor="@color/nb.text.common_h3"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/review_tv_hot"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/shape_hot_bg"
+        android:drawableLeft="@drawable/ic_topic_hot"
+        android:drawablePadding="5dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:padding="5dp"
+        android:visibility="gone"
+        android:singleLine="true"
+        android:text="热门"
+        android:textColor="@color/white"
+        android:textSize="8dp" />
+
+    <TextView
+        android:id="@+id/review_tv_distillate"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/shape_distillate_bg"
+        android:drawableLeft="@drawable/ic_topic_distillate"
+        android:drawablePadding="5dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:padding="5dp"
+        android:singleLine="true"
+        android:text="精品"
+        android:visibility="gone"
+        android:textColor="@color/white"
+        android:textSize="8dp" />
+
+    <TextView
+        android:id="@+id/review_tv_brief"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/review_tv_book_name"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/review_tv_portrait"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="越到后面越索然无味"
+        android:textColor="@color/nb.divider.common" />
+
+    <TextView
+        android:id="@+id/review_tv_recommend"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_below="@id/review_tv_brief"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/review_tv_portrait"
+        android:drawableLeft="@drawable/ic_recommend"
+        android:drawablePadding="5dp"
+        android:gravity="center"
+        android:text="@string/nb.book.recommend"
+        android:textColor="@color/nb.text.common_h3"
+        android:textSize="13dp" />
+</RelativeLayout>

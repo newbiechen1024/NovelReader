@@ -1,13 +1,9 @@
 package com.example.newbiechen.ireader.ui.activity;
 
 import android.app.Dialog;
-import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -17,36 +13,33 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.ui.base.BaseActivity;
+import com.example.newbiechen.ireader.ui.base.BaseTabActivity;
 import com.example.newbiechen.ireader.ui.fragment.BookShelfFragment;
 import com.example.newbiechen.ireader.ui.fragment.CommunityFragment;
-import com.example.newbiechen.ireader.ui.fragment.DiscoveryFragment;
+import com.example.newbiechen.ireader.ui.fragment.FindFragment;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.SharedPreUtils;
 import com.example.newbiechen.ireader.widget.SexChooseDialog;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 
-public class MainActivity extends BaseActivity{
-
+public class MainActivity extends BaseTabActivity{
+    /*************Constant**********/
     private static final int WAIT_INTERVAL = 2000;
-
+    /***************View*******************/
     @BindView(R.id.main_tl_tab) TabLayout mTlTab;
     @BindView(R.id.main_vp) ViewPager mVp;
-
+    /***************Object*********************/
     private final ArrayList<Fragment> mFragmentList = new ArrayList<>();
-
+    /*****************Params*********************/
     private boolean isPrepareFinish = false;
 
-    @Override
-    protected int getContentId() {
-        return R.layout.activity_main;
-    }
-
+    /**************init method***********************/
     @Override
     protected void setUpToolbar(Toolbar toolbar) {
         super.setUpToolbar(toolbar);
@@ -56,8 +49,31 @@ public class MainActivity extends BaseActivity{
     }
 
     @Override
+    protected List<Fragment> createTabFragments() {
+        initFragment();
+        return mFragmentList;
+    }
+
+    private void initFragment(){
+        Fragment bookShelfFragment = new BookShelfFragment();
+        Fragment communityFragment = new CommunityFragment();
+        Fragment discoveryFragment = new FindFragment();
+
+        mFragmentList.add(bookShelfFragment);
+        mFragmentList.add(communityFragment);
+        mFragmentList.add(discoveryFragment);
+    }
+
+    @Override
+    protected List<String> createTabTitles() {
+        String [] titles = getResources().getStringArray(R.array.nb_fragment_title);
+        return Arrays.asList(titles);
+    }
+
+    @Override
     protected void initWidget() {
-        setUpTabLayout();
+        super.initWidget();
+        //性别选择框
         showSexChooseDialog();
     }
 
@@ -70,24 +86,6 @@ public class MainActivity extends BaseActivity{
                 dialog.show();
             },500);
         }
-    }
-
-    private void setUpTabLayout(){
-        initFragment();
-        MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
-        mVp.setAdapter(adapter);
-
-        mTlTab.setupWithViewPager(mVp);
-    }
-
-    private void initFragment(){
-        Fragment bookShelfFragment = new BookShelfFragment();
-        Fragment communityFragment = new CommunityFragment();
-        Fragment discoveryFragment = new DiscoveryFragment();
-
-        mFragmentList.add(bookShelfFragment);
-        mFragmentList.add(communityFragment);
-        mFragmentList.add(discoveryFragment);
     }
 
     @Override
@@ -151,28 +149,6 @@ public class MainActivity extends BaseActivity{
         }
         else {
             super.onBackPressed();
-        }
-    }
-
-    private class MyPagerAdapter extends FragmentPagerAdapter {
-
-        public MyPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position){
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return getResources().getStringArray(R.array.nb_fragment_title)[position];
         }
     }
 }

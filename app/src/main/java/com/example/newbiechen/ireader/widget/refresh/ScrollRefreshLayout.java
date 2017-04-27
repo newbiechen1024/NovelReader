@@ -21,28 +21,86 @@ import butterknife.ButterKnife;
 
 /**
  * Created by newbiechen on 17-4-18.
- * 1.  设置不同属性的empty
+ * 自带错误提示、数据为空、下拉刷新的控件
  */
 
 public abstract class ScrollRefreshLayout extends SwipeRefreshLayout {
     private static final int ATTR_NULL = -1;
-
-    private Context mContext;
-
+    /********************************************/
     private FrameLayout mFlContent;
     private TextView mTvTip;
-
     private View mEmptyView;
     private View mContentView;
-
+    /*****************************************/
+    private Context mContext;
     private Animation mTipOpenAnim;
     private Animation mTopCloseAnim;
-
+    /*********************************************/
     @LayoutRes
     private int mEmptyId = R.layout.view_empty;
 
+    /****************************abstract method***********************************************/
     public abstract View getContentView(ViewGroup parent);
 
+    /****************************public method**************************************************/
+    /*需要自己关闭*/
+    public void toggleTip(){
+        initAnim();
+        cancelAnim();
+        if (mTvTip.getVisibility() == GONE){
+            mTvTip.setVisibility(VISIBLE);
+            mTvTip.startAnimation(mTipOpenAnim);
+        }
+        else {
+            mTvTip.startAnimation(mTopCloseAnim);
+            mTvTip.setVisibility(GONE);
+        }
+    }
+
+    private void initAnim(){
+        if (mTipOpenAnim == null || mTopCloseAnim == null){
+            mTipOpenAnim = AnimationUtils.loadAnimation(mContext,R.anim.slide_top_in);
+            mTopCloseAnim = AnimationUtils.loadAnimation(mContext,R.anim.slide_top_out);
+
+            mTipOpenAnim.setFillAfter(true);
+            mTopCloseAnim.setFillAfter(true);
+        }
+    }
+
+    /*自动关闭*/
+    public void showTip(){
+        //自动关闭
+        Runnable runnable = ()-> {
+            mTvTip.startAnimation(mTopCloseAnim);
+            mTvTip.setVisibility(GONE);
+        };
+        //取消正在进行的动画和callback
+        cancelAnim();
+        mTvTip.removeCallbacks(runnable);
+        //再次发送
+        if (mTvTip.getVisibility() == GONE){
+            mTvTip.postDelayed(runnable,2000);
+        }
+    }
+
+    private void cancelAnim(){
+        if (mTipOpenAnim.hasStarted()){
+            mTipOpenAnim.cancel();
+        }
+        if (mTopCloseAnim.hasStarted()){
+            mTipOpenAnim.cancel();
+        }
+    }
+    /********************************protected method*********************************************/
+    protected void showEmptyView(){
+        mEmptyView.setVisibility(VISIBLE);
+    }
+
+    protected void hideEmptyView(){
+        mEmptyView.setVisibility(GONE);
+    }
+
+    /******************************init **************************************8*/
     public ScrollRefreshLayout(Context context) {
         this(context,null);
     }
@@ -84,63 +142,8 @@ public abstract class ScrollRefreshLayout extends SwipeRefreshLayout {
         }
     }
 
-    protected View inflateId(ViewGroup parent,@LayoutRes int id){
+    private View inflateId(ViewGroup parent,@LayoutRes int id){
         return LayoutInflater.from(mContext)
                 .inflate(id,parent,false);
-    }
-
-    /*需要自己关闭*/
-    public void toggleTip(){
-        if (mTipOpenAnim == null || mTopCloseAnim == null){
-            mTipOpenAnim = AnimationUtils.loadAnimation(mContext,R.anim.slide_top_in);
-            mTopCloseAnim = AnimationUtils.loadAnimation(mContext,R.anim.slide_top_out);
-
-            mTipOpenAnim.setFillAfter(true);
-            mTopCloseAnim.setFillAfter(true);
-        }
-
-        cancelAnim();
-
-        if (mTvTip.getVisibility() == GONE){
-            mTvTip.setVisibility(VISIBLE);
-            mTvTip.startAnimation(mTipOpenAnim);
-        }
-        else {
-            mTvTip.startAnimation(mTopCloseAnim);
-            mTvTip.setVisibility(GONE);
-        }
-    }
-
-    /*自动关闭*/
-    public void showTip(){
-        //自动关闭
-        Runnable runnable = ()-> {
-            mTvTip.startAnimation(mTopCloseAnim);
-            mTvTip.setVisibility(GONE);
-        };
-        //取消正在进行的动画和callback
-        cancelAnim();
-        mTvTip.removeCallbacks(runnable);
-        //再次发送
-        if (mTvTip.getVisibility() == GONE){
-            mTvTip.postDelayed(runnable,2000);
-        }
-    }
-
-    private void cancelAnim(){
-        if (mTipOpenAnim.hasStarted()){
-            mTipOpenAnim.cancel();
-        }
-        if (mTopCloseAnim.hasStarted()){
-            mTipOpenAnim.cancel();
-        }
-    }
-
-    protected void showEmptyView(){
-        mEmptyView.setVisibility(VISIBLE);
-    }
-
-    protected void hideEmptyView(){
-        mEmptyView.setVisibility(GONE);
     }
 }

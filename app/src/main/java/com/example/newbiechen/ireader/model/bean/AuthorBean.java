@@ -1,9 +1,13 @@
 package com.example.newbiechen.ireader.model.bean;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Generated;
+
 /**
  * Created by newbiechen on 17-4-20.
  */
-
+@Entity
 public class AuthorBean {
     /**
      * _id : 553136ba70feaa764a096f6f
@@ -14,14 +18,31 @@ public class AuthorBean {
      * lv : 8
      * gender : female
      */
-
+    @Id
     private String _id;
+
     private String avatar;
     private String nickname;
     private String activityAvatar;
     private String type;
     private int lv;
     private String gender;
+
+    @Generated(hash = 1152582024)
+    public AuthorBean(String _id, String avatar, String nickname,
+            String activityAvatar, String type, int lv, String gender) {
+        this._id = _id;
+        this.avatar = avatar;
+        this.nickname = nickname;
+        this.activityAvatar = activityAvatar;
+        this.type = type;
+        this.lv = lv;
+        this.gender = gender;
+    }
+
+    @Generated(hash = 1694633584)
+    public AuthorBean() {
+    }
 
     public String get_id() {
         return _id;

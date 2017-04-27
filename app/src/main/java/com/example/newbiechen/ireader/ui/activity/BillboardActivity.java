@@ -74,9 +74,9 @@ public class BillboardActivity extends BaseActivity implements BillboardContract
     }
 
     @Override
-    public void finishLoading(BillboardListBean listBean) {
-        updateMaleBillboard(listBean.getMale());
-        updateFemaleBillboard(listBean.getFemale());
+    public void finishRefresh(BillboardListBean beans) {
+        updateMaleBillboard(beans.getMale());
+        updateFemaleBillboard(beans.getFemale());
         mRlRefresh.showFinish();
     }
 

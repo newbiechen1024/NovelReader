@@ -6,6 +6,7 @@ package com.example.newbiechen.ireader.model.bean;
 
 public class BillboardBean {
     /**
+     *
      * _id : 54d42d92321052167dfb75e3
      * title : 追书最热榜 Top100
      * cover : /ranking-cover/142319144267827

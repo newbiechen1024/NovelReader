@@ -12,22 +12,14 @@ import android.view.ViewGroup;
  */
 
 public class ScrollRefreshRecyclerView extends ScrollRefreshLayout {
+
     private static final String TAG = "RefreshRecyclerView";
+
     private RecyclerView mRecyclerView;
+
     private static boolean showLog = true;
-    public ScrollRefreshRecyclerView(Context context) {
-        super(context);
-    }
 
-    public ScrollRefreshRecyclerView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    @Override
-    public View getContentView(ViewGroup parent) {
-        mRecyclerView = new RecyclerView(getContext());
-        return mRecyclerView;
-    }
+    /**************************public method*******************************************/
 
     public void setLayoutManager(RecyclerView.LayoutManager manager){
         mRecyclerView.setLayoutManager(manager);
@@ -45,16 +37,38 @@ public class ScrollRefreshRecyclerView extends ScrollRefreshLayout {
     /**
      * 刚进入的时候不点击界面，自动刷新
      * */
-    public void initRefresh(){
+    public void startRefresh(){
         mRecyclerView.post(()-> setRefreshing(true));
+    }
+
+    public ScrollRefreshRecyclerView(Context context) {
+        super(context);
+    }
+
+    public ScrollRefreshRecyclerView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    /*************************init********************************************/
+    @Override
+    public View getContentView(ViewGroup parent) {
+        mRecyclerView = new RecyclerView(getContext());
+        return mRecyclerView;
     }
 
     public RecyclerView getReyclerView(){
         return mRecyclerView;
     }
 
-    class MyAdapterDataObserver extends RecyclerView.AdapterDataObserver {
+    /****************************inner method***********************************************/
+    public static void log(String str){
+        if (showLog){
+            Log.d(TAG, str);
+        }
+    }
 
+    /**************************inner class ************************************/
+    class MyAdapterDataObserver extends RecyclerView.AdapterDataObserver {
         @Override
         public void onChanged() {
             super.onChanged();
@@ -101,12 +115,6 @@ public class ScrollRefreshRecyclerView extends ScrollRefreshLayout {
                 hideEmptyView();
                 mRecyclerView.setVisibility(VISIBLE);
             }
-        }
-    }
-
-    public static void log(String str){
-        if (showLog){
-            Log.d(TAG, str);
         }
     }
 }

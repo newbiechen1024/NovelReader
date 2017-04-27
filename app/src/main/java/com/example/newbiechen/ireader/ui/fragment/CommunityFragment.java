@@ -6,8 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.model.flag.CommunityType;
 import com.example.newbiechen.ireader.model.bean.SectionBean;
-import com.example.newbiechen.ireader.ui.activity.SectionActivity;
+import com.example.newbiechen.ireader.ui.activity.BookDiscussionActivity;
 import com.example.newbiechen.ireader.ui.adapter.SectionAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
@@ -19,36 +20,35 @@ import butterknife.BindView;
 
 /**
  * Created by newbiechen on 17-4-15.
+ * 讨论区
  */
 
 public class CommunityFragment extends BaseFragment implements BaseListAdapter.OnItemClickListener{
+    /***************view******************/
     @BindView(R.id.community_rv_content)
     RecyclerView mRvContent;
 
     private SectionAdapter mAdapter;
+
     @Override
     protected int getContentId() {
         return R.layout.fragment_community;
     }
+
+    /***********************************init method*************************************************/
 
     @Override
     protected void initWidget(Bundle savedInstanceState) {
         setUpAdapter();
     }
 
-    @Override
-    protected void initClick() {
-        mAdapter.setOnItemClickListener(this);
-    }
-
     private void setUpAdapter(){
         ArrayList<SectionBean> sections = new ArrayList<>();
-        String [] fragmentSection = getResources().getStringArray(R.array.nb_fragment_section);
-        sections.add(new SectionBean(fragmentSection[0],R.drawable.ic_section_comment));
-        sections.add(new SectionBean(fragmentSection[1],R.drawable.ic_section_discuss));
-        sections.add(new SectionBean(fragmentSection[2],R.drawable.ic_section_help));
-        sections.add(new SectionBean(fragmentSection[3],R.drawable.ic_section_girl));
-        sections.add(new SectionBean(fragmentSection[4],R.drawable.ic_section_compose));
+
+        /*觉得采用枚举会好一些，要不然就是在Constant中创建Map类*/
+        for (CommunityType type : CommunityType.values()){
+            sections.add(new SectionBean(type.getTypeName(),type.getIconId()));
+        }
 
         mAdapter = new SectionAdapter();
         mRvContent.setHasFixedSize(true);
@@ -58,11 +58,17 @@ public class CommunityFragment extends BaseFragment implements BaseListAdapter.O
         mAdapter.addItems(sections);
     }
 
+    /****************************click method********************************/
+
+    @Override
+    protected void initClick() {
+        mAdapter.setOnItemClickListener(this);
+    }
+
     @Override
     public void onItemClick(View view, int pos) {
-        String section = mAdapter.getItems().get(pos)
-                .getName();
-
-        SectionActivity.startActivity(getContext(),section);
+        //根据类型，启动相应的Discussion区
+        CommunityType type = CommunityType.values()[pos];
+        BookDiscussionActivity.startActivity(getContext(),type);
     }
 }

@@ -1,5 +1,8 @@
 package com.example.newbiechen.ireader.event;
 
+import com.example.newbiechen.ireader.model.flag.BookDistillate;
+import com.example.newbiechen.ireader.model.flag.BookSort;
+import com.example.newbiechen.ireader.model.flag.BookType;
 import com.example.newbiechen.ireader.utils.Constant;
 
 /**
@@ -8,21 +11,17 @@ import com.example.newbiechen.ireader.utils.Constant;
 
 public class SelectorEvent {
 
-    public String distillate;
+    public BookDistillate distillate;
 
-    public String type;
+    public BookType type;
 
-    public String sort;
+    public BookSort sort;
 
-    public SelectorEvent(String distillate,
-                         String type,
-                         String sort) {
+    public SelectorEvent(BookDistillate distillate,
+                         BookType type,
+                         BookSort sort) {
         this.distillate = distillate;
         this.type = type;
-        this.sort = sort;
-    }
-
-    public SelectorEvent(String sort) {
         this.sort = sort;
     }
 }

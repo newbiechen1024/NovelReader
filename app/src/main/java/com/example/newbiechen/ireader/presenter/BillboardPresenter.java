@@ -1,14 +1,10 @@
 package com.example.newbiechen.ireader.presenter;
 
-import com.example.newbiechen.ireader.RxBus;
 import com.example.newbiechen.ireader.model.bean.BillboardListBean;
-import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
-import com.example.newbiechen.ireader.model.net.NetWorkRepository;
+import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.BillboardContract;
 
-import java.util.List;
-
-import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -38,28 +34,23 @@ public class BillboardPresenter implements BillboardContract.Presenter {
 
     @Override
     public void loadBillboardList() {
-        NetWorkRepository.getInstance()
-                .getBillboardListBean()
+        RemoteRepository.getInstance()
+                .getBillboardPackage()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<BillboardListBean>() {
+                .subscribe(new SingleObserver<BillboardListBean>() {
                     @Override
                     public void onSubscribe(Disposable d) {
 
                     }
 
                     @Override
-                    public void onNext(BillboardListBean value) {
-                        mView.finishLoading(value);
+                    public void onSuccess(BillboardListBean value) {
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.loadError();
-                    }
-
-                    @Override
-                    public void onComplete() {
 
                     }
                 });

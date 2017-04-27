@@ -35,7 +35,7 @@ public abstract class BaseFragment extends Fragment{
     /**
      * 逻辑使用区
      */
-    protected void processLogic(Bundle savedInstanceState){
+    protected void processLogic(){
     }
 
     /**
@@ -60,7 +60,7 @@ public abstract class BaseFragment extends Fragment{
         unbinder = ButterKnife.bind(this,root);
         initWidget(savedInstanceState);
         initClick();
-        processLogic(savedInstanceState);
+        processLogic();
     }
 
     @Override

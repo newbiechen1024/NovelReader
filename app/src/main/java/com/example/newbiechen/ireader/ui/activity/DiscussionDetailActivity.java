@@ -57,7 +57,7 @@ public class DiscussionDetailActivity extends BaseActivity {
             //创建
         }
         else if (typeNames[3].equals(typeName)){
-
+            //创建
         }
         else if (typeNames[4].equals(typeName)){
             //
