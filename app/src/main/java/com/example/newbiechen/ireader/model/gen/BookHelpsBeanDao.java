@@ -1,16 +1,18 @@
 package com.example.newbiechen.ireader.model.gen;
 
+import java.util.List;
+import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
+import org.greenrobot.greendao.internal.SqlUtils;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
 
 import com.example.newbiechen.ireader.model.bean.AuthorBean;
-import com.example.newbiechen.ireader.model.gen.convert.AuthorConvert;
 
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
 
@@ -28,7 +30,7 @@ public class BookHelpsBeanDao extends AbstractDao<BookHelpsBean, String> {
      */
     public static class Properties {
         public final static Property _id = new Property(0, String.class, "_id", true, "_ID");
-        public final static Property Author = new Property(1, String.class, "author", false, "AUTHOR");
+        public final static Property AuthorId = new Property(1, String.class, "authorId", false, "AUTHOR_ID");
         public final static Property Title = new Property(2, String.class, "title", false, "TITLE");
         public final static Property LikeCount = new Property(3, int.class, "likeCount", false, "LIKE_COUNT");
         public final static Property HaveImage = new Property(4, boolean.class, "haveImage", false, "HAVE_IMAGE");
@@ -38,7 +40,8 @@ public class BookHelpsBeanDao extends AbstractDao<BookHelpsBean, String> {
         public final static Property CommentCount = new Property(8, int.class, "commentCount", false, "COMMENT_COUNT");
     }
 
-    private final AuthorConvert authorConverter = new AuthorConvert();
+    private DaoSession daoSession;
+
 
     public BookHelpsBeanDao(DaoConfig config) {
         super(config);
@@ -46,6 +49,7 @@ public class BookHelpsBeanDao extends AbstractDao<BookHelpsBean, String> {
     
     public BookHelpsBeanDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -53,7 +57,7 @@ public class BookHelpsBeanDao extends AbstractDao<BookHelpsBean, String> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"BOOK_HELPS_BEAN\" (" + //
                 "\"_ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: _id
-                "\"AUTHOR\" TEXT," + // 1: author
+                "\"AUTHOR_ID\" TEXT," + // 1: authorId
                 "\"TITLE\" TEXT," + // 2: title
                 "\"LIKE_COUNT\" INTEGER NOT NULL ," + // 3: likeCount
                 "\"HAVE_IMAGE\" INTEGER NOT NULL ," + // 4: haveImage
@@ -81,9 +85,9 @@ public class BookHelpsBeanDao extends AbstractDao<BookHelpsBean, String> {
             stmt.bindString(1, _id);
         }
  
-        AuthorBean author = entity.getAuthor();
-        if (author != null) {
-            stmt.bindString(2, authorConverter.convertToDatabaseValue(author));
+        String authorId = entity.getAuthorId();
+        if (authorId != null) {
+            stmt.bindString(2, authorId);
         }
  
         String title = entity.getTitle();
@@ -119,9 +123,9 @@ public class BookHelpsBeanDao extends AbstractDao<BookHelpsBean, String> {
             stmt.bindString(1, _id);
         }
  
-        AuthorBean author = entity.getAuthor();
-        if (author != null) {
-            stmt.bindString(2, authorConverter.convertToDatabaseValue(author));
+        String authorId = entity.getAuthorId();
+        if (authorId != null) {
+            stmt.bindString(2, authorId);
         }
  
         String title = entity.getTitle();
@@ -149,6 +153,12 @@ public class BookHelpsBeanDao extends AbstractDao<BookHelpsBean, String> {
     }
 
     @Override
+    protected final void attachEntity(BookHelpsBean entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
+    }
+
+    @Override
     public String readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
     }    
@@ -157,7 +167,7 @@ public class BookHelpsBeanDao extends AbstractDao<BookHelpsBean, String> {
     public BookHelpsBean readEntity(Cursor cursor, int offset) {
         BookHelpsBean entity = new BookHelpsBean( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // _id
-            cursor.isNull(offset + 1) ? null : authorConverter.convertToEntityProperty(cursor.getString(offset + 1)), // author
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // authorId
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // title
             cursor.getInt(offset + 3), // likeCount
             cursor.getShort(offset + 4) != 0, // haveImage
@@ -172,7 +182,7 @@ public class BookHelpsBeanDao extends AbstractDao<BookHelpsBean, String> {
     @Override
     public void readEntity(Cursor cursor, BookHelpsBean entity, int offset) {
         entity.set_id(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
-        entity.setAuthor(cursor.isNull(offset + 1) ? null : authorConverter.convertToEntityProperty(cursor.getString(offset + 1)));
+        entity.setAuthorId(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setTitle(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setLikeCount(cursor.getInt(offset + 3));
         entity.setHaveImage(cursor.getShort(offset + 4) != 0);
@@ -206,4 +216,95 @@ public class BookHelpsBeanDao extends AbstractDao<BookHelpsBean, String> {
         return true;
     }
     
+    private String selectDeep;
+
+    protected String getSelectDeep() {
+        if (selectDeep == null) {
+            StringBuilder builder = new StringBuilder("SELECT ");
+            SqlUtils.appendColumns(builder, "T", getAllColumns());
+            builder.append(',');
+            SqlUtils.appendColumns(builder, "T0", daoSession.getAuthorBeanDao().getAllColumns());
+            builder.append(" FROM BOOK_HELPS_BEAN T");
+            builder.append(" LEFT JOIN AUTHOR_BEAN T0 ON T.\"AUTHOR_ID\"=T0.\"_ID\"");
+            builder.append(' ');
+            selectDeep = builder.toString();
+        }
+        return selectDeep;
+    }
+    
+    protected BookHelpsBean loadCurrentDeep(Cursor cursor, boolean lock) {
+        BookHelpsBean entity = loadCurrent(cursor, 0, lock);
+        int offset = getAllColumns().length;
+
+        AuthorBean author = loadCurrentOther(daoSession.getAuthorBeanDao(), cursor, offset);
+        entity.setAuthor(author);
+
+        return entity;    
+    }
+
+    public BookHelpsBean loadDeep(Long key) {
+        assertSinglePk();
+        if (key == null) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder(getSelectDeep());
+        builder.append("WHERE ");
+        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
+        String sql = builder.toString();
+        
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+        
+        try {
+            boolean available = cursor.moveToFirst();
+            if (!available) {
+                return null;
+            } else if (!cursor.isLast()) {
+                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+            }
+            return loadCurrentDeep(cursor, true);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
+    public List<BookHelpsBean> loadAllDeepFromCursor(Cursor cursor) {
+        int count = cursor.getCount();
+        List<BookHelpsBean> list = new ArrayList<BookHelpsBean>(count);
+        
+        if (cursor.moveToFirst()) {
+            if (identityScope != null) {
+                identityScope.lock();
+                identityScope.reserveRoom(count);
+            }
+            try {
+                do {
+                    list.add(loadCurrentDeep(cursor, false));
+                } while (cursor.moveToNext());
+            } finally {
+                if (identityScope != null) {
+                    identityScope.unlock();
+                }
+            }
+        }
+        return list;
+    }
+    
+    protected List<BookHelpsBean> loadDeepAllAndCloseCursor(Cursor cursor) {
+        try {
+            return loadAllDeepFromCursor(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
+    public List<BookHelpsBean> queryDeep(String where, String... selectionArg) {
+        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
+        return loadDeepAllAndCloseCursor(cursor);
+    }
+ 
 }

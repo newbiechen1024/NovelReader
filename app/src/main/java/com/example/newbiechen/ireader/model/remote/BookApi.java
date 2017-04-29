@@ -1,6 +1,6 @@
 package com.example.newbiechen.ireader.model.remote;
 
-import com.example.newbiechen.ireader.model.bean.BillboardListBean;
+import com.example.newbiechen.ireader.model.bean.BillboardPackageBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsPackageBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewPackageBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentPackageBean;
@@ -34,7 +34,7 @@ public interface BookApi {
      * @return
      */
     @GET("/post/by-block")
-    Single<BookCommentPackageBean> getBookDiscussionList(@Query("block") String block, @Query("duration") String duration, @Query("sort") String sort, @Query("type") String type, @Query("start") String start, @Query("limit") String limit, @Query("distillate") String distillate);
+    Single<BookCommentPackageBean> getBookCommentList(@Query("block") String block, @Query("duration") String duration, @Query("sort") String sort, @Query("type") String type, @Query("start") String start, @Query("limit") String limit, @Query("distillate") String distillate);
 
 
     /**
@@ -79,7 +79,7 @@ public interface BookApi {
      * @return
      */
     @GET("/ranking/gender")
-    Single<BillboardListBean> getBillboardList();
+    Single<BillboardPackageBean> getBillboardPackage();
 
     /**
      * 获取分类
@@ -87,5 +87,5 @@ public interface BookApi {
      * @return
      */
     @GET("/cats/lv2/statistics")
-    Single<BookSortPackageBean> getSortListBean();
+    Single<BookSortPackageBean> getBookSortPackage();
 }

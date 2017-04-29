@@ -1,6 +1,6 @@
 package com.example.newbiechen.ireader.model.remote;
 
-import com.example.newbiechen.ireader.model.bean.BillboardListBean;
+import com.example.newbiechen.ireader.model.bean.BillboardPackageBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
@@ -41,7 +41,8 @@ public class RemoteRepository {
     }
 
     public Single<List<BookCommentBean>> getBookComment(String block, String sort, int start, int limit, String distillate){
-        return mBookApi.getBookDiscussionList(block,"all",sort,"all",start+"",limit+"",distillate)
+
+        return mBookApi.getBookCommentList(block,"all",sort,"all",start+"",limit+"",distillate)
                 .map((listBean)-> listBean.getPosts());
     }
 
@@ -50,16 +51,16 @@ public class RemoteRepository {
                 .map((listBean)-> listBean.getHelps());
     }
 
-    public Single<List<BookReviewBean>> getBookReviewList(String sort, String bookType, int start, int limited, String distillate){
+    public Single<List<BookReviewBean>> getBookReviews(String sort, String bookType, int start, int limited, String distillate){
         return mBookApi.getBookReviewList("all",sort,bookType,start+"",limited+"",distillate)
                 .map(listBean-> listBean.getReviews());
     }
 
-    public Single<BillboardListBean> getBillboardPackage(){
-        return mBookApi.getBillboardList();
+    public Single<BillboardPackageBean> getBillboardPackage(){
+        return mBookApi.getBillboardPackage();
     }
 
-    public Single<BookSortPackageBean> getSortListBean(){
-        return mBookApi.getSortListBean();
+    public Single<BookSortPackageBean> getBookSortPackage(){
+        return mBookApi.getBookSortPackage();
     }
 }

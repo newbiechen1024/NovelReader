@@ -2,6 +2,8 @@ package com.example.newbiechen.ireader.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -100,7 +102,7 @@ public class RefreshLayout extends FrameLayout {
     @Override
     public void addView(View child) {
         if (getChildCount() > 4) {
-            throw new IllegalStateException("ScrollView can host only one direct child");
+            throw new IllegalStateException("RefreshLayout can host only one direct child");
         }
         super.addView(child);
     }
@@ -108,7 +110,7 @@ public class RefreshLayout extends FrameLayout {
     @Override
     public void addView(View child, int index) {
         if (getChildCount() > 4) {
-            throw new IllegalStateException("ScrollView can host only one direct child");
+            throw new IllegalStateException("RefreshLayout can host only one direct child");
         }
 
         super.addView(child, index);
@@ -117,7 +119,7 @@ public class RefreshLayout extends FrameLayout {
     @Override
     public void addView(View child, ViewGroup.LayoutParams params) {
         if (getChildCount() > 4) {
-            throw new IllegalStateException("ScrollView can host only one direct child");
+            throw new IllegalStateException("RefreshLayout can host only one direct child");
         }
 
         super.addView(child, params);
@@ -126,7 +128,7 @@ public class RefreshLayout extends FrameLayout {
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         if (getChildCount() > 4) {
-            throw new IllegalStateException("ScrollView can host only one direct child");
+            throw new IllegalStateException("RefreshLayout can host only one direct child");
         }
 
         super.addView(child, index, params);
@@ -202,11 +204,55 @@ public class RefreshLayout extends FrameLayout {
         mListener = listener;
     }
 
-
-
     private View inflateView(int id){
         return LayoutInflater.from(mContext)
                 .inflate(id,this,false);
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superParcel = super.onSaveInstanceState();
+        SavedState savedState = new SavedState(superParcel);
+        savedState.status = mStatus;
+        return savedState;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        SavedState savedState = (SavedState) state;
+        super.onRestoreInstanceState(savedState.getSuperState());
+        //刷新状态
+        toggleStatus(savedState.status);
+    }
+
+    static class SavedState extends BaseSavedState {
+        int status;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        private SavedState(Parcel in) {
+            super(in);
+            status = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeInt(status);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR
+                = new Parcelable.Creator<SavedState>() {
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
     }
 
     public interface OnReloadingListener{

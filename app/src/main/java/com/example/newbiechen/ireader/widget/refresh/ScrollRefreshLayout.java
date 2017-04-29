@@ -68,17 +68,15 @@ public abstract class ScrollRefreshLayout extends SwipeRefreshLayout {
     }
 
     /*自动关闭*/
-    public void showTip(){
+    public void showNetTip(){
         //自动关闭
+        toggleTip();
         Runnable runnable = ()-> {
             mTvTip.startAnimation(mTopCloseAnim);
             mTvTip.setVisibility(GONE);
         };
-        //取消正在进行的动画和callback
-        cancelAnim();
         mTvTip.removeCallbacks(runnable);
-        //再次发送
-        if (mTvTip.getVisibility() == GONE){
+        if (mTvTip.getVisibility() == VISIBLE){
             mTvTip.postDelayed(runnable,2000);
         }
     }

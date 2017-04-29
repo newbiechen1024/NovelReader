@@ -1,6 +1,7 @@
 package com.example.newbiechen.ireader.ui.adapter.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +10,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.example.newbiechen.ireader.App;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
 import com.example.newbiechen.ireader.ui.base.IAdapter;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.StringUtils;
+import com.example.newbiechen.ireader.widget.CircleTransform;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,17 +63,16 @@ public class DiscCommentView extends RelativeLayout implements IAdapter<BookComm
     public void onBind(BookCommentBean value, int pos) {
         //头像
         Glide.with(App.getContext())
-                .load(Constant.IMG_BASE_URL+value.getAuthor().getAvatar())
+                .load(Constant.IMG_BASE_URL+value.getAuthorBean().getAvatar())
                 .placeholder(R.drawable.ic_default_portrait)
                 .error(R.drawable.ic_load_error)
-                .centerCrop()
-                .fitCenter()
+                .transform(new CircleTransform(App.getContext()))
                 .into(mIvPortrait);
         //名字
-        mTvName.setText(value.getAuthor().getNickname());
+        mTvName.setText(value.getAuthorBean().getNickname());
         //等级
         mTvLv.setText(getResources().getString(R.string.nb_user_user_lv,
-                value.getAuthor().getLv()));
+                value.getAuthorBean().getLv()));
         //简介
         mTvBrief.setText(value.getTitle());
         //label

@@ -1,17 +1,14 @@
 package com.example.newbiechen.ireader.ui.activity;
 
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BillboardBean;
-import com.example.newbiechen.ireader.model.bean.BillboardListBean;
+import com.example.newbiechen.ireader.model.bean.BillboardPackageBean;
 import com.example.newbiechen.ireader.presenter.BillboardPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BillboardContract;
 import com.example.newbiechen.ireader.ui.adapter.BillboardAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseActivity;
+import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ import butterknife.BindView;
  * 3. 制作数据获取类。
  */
 
-public class BillboardActivity extends BaseActivity implements BillboardContract.View{
+public class BillboardActivity extends BaseRxActivity<BillboardContract.Presenter> implements BillboardContract.View{
     private static final String TAG = "BillboardActivity";
 
     @BindView(R.id.billboard_rl_refresh)
@@ -36,8 +33,6 @@ public class BillboardActivity extends BaseActivity implements BillboardContract
     ExpandableListView mElvBoy;
     @BindView(R.id.billboard_elv_girl)
     ExpandableListView mElvGirl;
-
-    private BillboardContract.Presenter mPresenter;
 
     private BillboardAdapter mBoyAdapter;
     private BillboardAdapter mGirlAdapter;
@@ -60,32 +55,35 @@ public class BillboardActivity extends BaseActivity implements BillboardContract
     }
 
     @Override
+    protected void initClick() {
+        super.initClick();
+        mRlRefresh.setOnReloadingListener(
+                () -> mPresenter.loadBillboardList()
+        );
+    }
+
+    @Override
+    protected BillboardContract.Presenter bindPresenter() {
+        return new BillboardPresenter();
+    }
+
+    @Override
     protected void processLogic() {
         super.processLogic();
-        new BillboardPresenter(this).subscribe();
 
         mRlRefresh.showLoading();
         mPresenter.loadBillboardList();
     }
 
     @Override
-    public void setPresenter(BillboardContract.Presenter presenter) {
-        mPresenter = presenter;
-    }
-
-    @Override
-    public void finishRefresh(BillboardListBean beans) {
+    public void finishRefresh(BillboardPackageBean beans) {
+        if (beans == null || beans.getMale() == null || beans.getFemale() == null
+                || beans.getMale().size() == 0 || beans.getFemale().size() == 0){
+            mRlRefresh.showEmpty();
+            return;
+        }
         updateMaleBillboard(beans.getMale());
         updateFemaleBillboard(beans.getFemale());
-        mRlRefresh.showFinish();
-    }
-
-    @Override
-    public void loadError() {
-        mRlRefresh.showError();
-        mRlRefresh.setOnReloadingListener(
-                () -> mPresenter.loadBillboardList()
-        );
     }
 
     private void updateMaleBillboard(List<BillboardBean> disposes){
@@ -119,5 +117,15 @@ public class BillboardActivity extends BaseActivity implements BillboardContract
         femaleGroups.add(new BillboardBean("别人家的排行榜"));
         mGirlAdapter.addGroups(femaleGroups);
         mGirlAdapter.addChildren(femaleChildren);
+    }
+
+    @Override
+    public void showError() {
+        mRlRefresh.showError();
+    }
+
+    @Override
+    public void complete() {
+        mRlRefresh.showFinish();
     }
 }

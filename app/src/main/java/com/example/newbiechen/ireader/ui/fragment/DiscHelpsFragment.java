@@ -12,7 +12,7 @@ import com.example.newbiechen.ireader.model.flag.BookSort;
 import com.example.newbiechen.ireader.presenter.DiscHelpsPresenter;
 import com.example.newbiechen.ireader.presenter.contract.DiscHelpsContract;
 import com.example.newbiechen.ireader.ui.adapter.DiscHelpsAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseFragment;
+import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.widget.itemdecoration.DashItemDecoration;
 import com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView;
@@ -22,19 +22,22 @@ import java.util.List;
 
 import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by newbiechen on 17-4-21.
  */
 
-public class DiscHelpsFragment extends BaseFragment implements DiscHelpsContract.View{
+public class DiscHelpsFragment extends BaseRxFragment<DiscHelpsContract.Presenter> implements DiscHelpsContract.View{
+    private static final String BUNDLE_SORT = "bundle_sort";
+    private static final String BUNDLE_DISTILLATE = "bundle_distillate";
+    private static final String BUNDLE_START = "bundle_start";
     /*****************View********************/
     @BindView(R.id.discussion_rv_content)
     ScrollRefreshRecyclerView mRvContent;
     /******************Object******************/
     private DiscHelpsAdapter mDiscHelpsAdapter;
-    private DiscHelpsContract.Presenter mPresenter;
-    /******************Parms*******************/
+    /******************Params*******************/
     private String mSortType = BookSort.DEFAULT.getNetName();
     private String mDistillate = BookDistillate.ALL.getNetName();
     private int mStart = 0;
@@ -44,6 +47,16 @@ public class DiscHelpsFragment extends BaseFragment implements DiscHelpsContract
     @Override
     protected int getContentId() {
         return R.layout.fragment_discussion;
+    }
+
+    @Override
+    protected void initData(Bundle savedInstanceState) {
+        super.initData(savedInstanceState);
+        if (savedInstanceState != null){
+            mSortType = savedInstanceState.getString(BUNDLE_SORT);
+            mDistillate = savedInstanceState.getString(BUNDLE_DISTILLATE);
+            mStart = savedInstanceState.getInt(BUNDLE_START);
+        }
     }
 
     @Override
@@ -68,7 +81,7 @@ public class DiscHelpsFragment extends BaseFragment implements DiscHelpsContract
                 () -> mPresenter.loadingBookHelps(mSortType,mStart, mLimited,mDistillate)
         );
 
-        RxBus.getInstance()
+        Disposable eventDispo = RxBus.getInstance()
                 .toObservable(Constant.MSG_SELECTOR, SelectorEvent.class)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -78,50 +91,68 @@ public class DiscHelpsFragment extends BaseFragment implements DiscHelpsContract
                             startRefresh();
                         }
                 );
+        addDisposable(eventDispo);
+    }
+
+    @Override
+    protected DiscHelpsContract.Presenter bindPresenter() {
+        return new DiscHelpsPresenter();
     }
 
     /*****************************logic method*****************************/
     @Override
     protected void processLogic() {
-        new DiscHelpsPresenter(this).subscribe();
-        startRefresh();
+        super.processLogic();
+
+        mRvContent.autoRefresh();
+        mPresenter.firstLoading(mSortType,mStart,mLimited,mDistillate);
     }
 
     private void startRefresh(){
         mStart = 0;
-        mRvContent.startRefresh();
         mPresenter.refreshBookHelps(mSortType,mStart,mLimited,mDistillate);
     }
 
     /**************************rewrite method****************************************/
-
     @Override
-    public void setPresenter(DiscHelpsContract.Presenter presenter) {
-        mPresenter = presenter;
-    }
-
-    @Override
-    public void finishRefresh(List<BookHelpsBean> discussionBeans) {
-        mDiscHelpsAdapter.refreshItems(discussionBeans);
-        mStart = discussionBeans.size();
+    public void finishRefresh(List<BookHelpsBean> beans) {
+        mDiscHelpsAdapter.refreshItems(beans);
+        mStart = beans.size();
         mRvContent.setRefreshing(false);
     }
 
     @Override
-    public void finishLoading(List<BookHelpsBean> discussionBeans) {
-        mDiscHelpsAdapter.addItems(discussionBeans);
-        mStart += discussionBeans.size();
+    public void finishLoading(List<BookHelpsBean> beans) {
+        mDiscHelpsAdapter.addItems(beans);
+        mStart += beans.size();
     }
 
     @Override
-    public void loadError() {
+    public void showErrorTip() {
+        mRvContent.showNetTip();
+    }
+
+    @Override
+    public void showError() {
         mDiscHelpsAdapter.showLoadError();
     }
 
-    /***************************lifecycle method***********************************/
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mPresenter.unSubscribe();
+    public void complete() {
+        mRvContent.finishRefresh();
+    }
+    /****************************************************************************/
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(BUNDLE_SORT,mSortType);
+        outState.putString(BUNDLE_DISTILLATE,mDistillate);
+        outState.putInt(BUNDLE_START,mStart);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mPresenter.saveBookHelps(mDiscHelpsAdapter.getItems());
     }
 }

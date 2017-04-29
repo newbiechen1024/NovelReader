@@ -57,17 +57,17 @@ public class DiscHelpsView extends RelativeLayout implements IAdapter<BookHelpsB
     public void onBind(BookHelpsBean value, int pos) {
         //头像
         Glide.with(App.getContext())
-                .load(Constant.IMG_BASE_URL+value.getAuthor().getAvatar())
+                .load(Constant.IMG_BASE_URL+value.getAuthorBean().getAvatar())
                 .placeholder(R.drawable.ic_default_portrait)
                 .error(R.drawable.ic_load_error)
                 .centerCrop()
                 .fitCenter()
                 .into(mIvPortrait);
         //名字
-        mTvName.setText(value.getAuthor().getNickname());
+        mTvName.setText(value.getAuthorBean().getNickname());
         //等级
         mTvLv.setText(getResources().getString(R.string.nb_user_user_lv,
-                value.getAuthor().getLv()));
+                value.getAuthorBean().getLv()));
         //简介
         mTvBrief.setText(value.getTitle());
         //label

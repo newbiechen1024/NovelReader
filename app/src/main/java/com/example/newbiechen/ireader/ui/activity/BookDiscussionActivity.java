@@ -115,7 +115,7 @@ public class BookDiscussionActivity extends BaseActivity implements SelectorView
         switch (mType){
             case COMMENT:
                 setUpSelectorView(TYPE_FIRST);
-                fragment = DiscCommentFragment.newInstance(mType.getTypeName());
+                fragment = DiscCommentFragment.newInstance(mType.getNetName());
                 break;
             case REVIEW:
                 setUpSelectorView(TYPE_SECOND);
@@ -127,11 +127,11 @@ public class BookDiscussionActivity extends BaseActivity implements SelectorView
                 break;
             case GIRL:
                 setUpSelectorView(TYPE_FIRST);
-                fragment = DiscCommentFragment.newInstance(mType.getTypeName());
+                fragment = DiscCommentFragment.newInstance(mType.getNetName());
                 break;
             case COMPOSE:
                 setUpSelectorView(TYPE_FIRST);
-                fragment = DiscCommentFragment.newInstance(mType.getTypeName());
+                fragment = DiscCommentFragment.newInstance(mType.getNetName());
                 break;
             default:
                 break;

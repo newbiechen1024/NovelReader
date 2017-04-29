@@ -99,4 +99,17 @@ public class AuthorBean {
     public void setGender(String gender) {
         this.gender = gender;
     }
+
+    @Override
+    public String toString() {
+        return "AuthorBean{" +
+                "_id='" + _id + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", activityAvatar='" + activityAvatar + '\'' +
+                ", type='" + type + '\'' +
+                ", lv=" + lv +
+                ", gender='" + gender + '\'' +
+                '}';
+    }
 }

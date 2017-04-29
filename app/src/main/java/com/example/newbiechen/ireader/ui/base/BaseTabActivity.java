@@ -20,9 +20,9 @@ import butterknife.Unbinder;
 public abstract class BaseTabActivity extends BaseActivity {
     /**************View***************/
     @BindView(R.id.tab_tl_indicator)
-    TabLayout mTlIndicator;
+    protected TabLayout mTlIndicator;
     @BindView(R.id.tab_vp)
-    ViewPager mVp;
+    protected ViewPager mVp;
     /************Params*******************/
     private List<Fragment> mFragmentList;
     private List<String> mTitleList;

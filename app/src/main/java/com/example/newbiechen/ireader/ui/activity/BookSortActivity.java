@@ -9,6 +9,7 @@ import com.example.newbiechen.ireader.presenter.BookSortPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookSortContract;
 import com.example.newbiechen.ireader.ui.adapter.BookSortAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseActivity;
+import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
 
@@ -20,7 +21,7 @@ import butterknife.BindView;
  *
  */
 
-public class BookSortActivity extends BaseActivity implements BookSortContract.View{
+public class BookSortActivity extends BaseRxActivity<BookSortContract.Presenter> implements BookSortContract.View{
     /*******************Constant*********************/
     private static final String TAG = "SortActivity";
     private static final int SPAN_COUNT = 3;
@@ -34,8 +35,6 @@ public class BookSortActivity extends BaseActivity implements BookSortContract.V
 
     private BookSortAdapter mBoyAdapter;
     private BookSortAdapter mGirlAdapter;
-    private BookSortContract.Presenter mPresenter;
-
     /**********************init***********************************/
     @Override
     protected int getContentId() {
@@ -63,36 +62,40 @@ public class BookSortActivity extends BaseActivity implements BookSortContract.V
         mRvGirl.setAdapter(mGirlAdapter);
     }
 
+    @Override
+    protected BookSortContract.Presenter bindPresenter() {
+        return new BookSortPresenter();
+    }
+
     /*********************logic*******************************/
 
     @Override
     protected void processLogic() {
         super.processLogic();
-        new BookSortPresenter(this).subscribe();
 
-        loadSortBean();
-    }
-
-    private void loadSortBean(){
         mRlRefresh.showLoading();
         mPresenter.loadSortBean();
     }
 
     /***********************rewrite**********************************/
     @Override
-    public void setPresenter(BookSortContract.Presenter presenter) {
-        mPresenter = presenter;
+    public void finishRefresh(BookSortPackageBean bean) {
+        if (bean == null || bean.getMale().size() == 0 || bean.getFemale().size() == 0){
+            mRlRefresh.showEmpty();
+        }
+        else {
+            mBoyAdapter.refreshItems(bean.getMale());
+            mGirlAdapter.refreshItems(bean.getFemale());
+        }
     }
 
     @Override
-    public void finishLoading(BookSortPackageBean bean) {
-        mRlRefresh.showFinish();
-        mBoyAdapter.refreshItems(bean.getMale());
-        mGirlAdapter.refreshItems(bean.getFemale());
-    }
-
-    @Override
-    public void loadError() {
+    public void showError() {
         mRlRefresh.showError();
+    }
+
+    @Override
+    public void complete() {
+        mRlRefresh.showFinish();
     }
 }

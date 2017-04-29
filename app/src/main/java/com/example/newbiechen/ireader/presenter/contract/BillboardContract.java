@@ -1,8 +1,7 @@
 package com.example.newbiechen.ireader.presenter.contract;
 
-import com.example.newbiechen.ireader.model.bean.BillboardListBean;
-import com.example.newbiechen.ireader.ui.base.BasePresenter;
-import com.example.newbiechen.ireader.ui.base.BaseView;
+import com.example.newbiechen.ireader.model.bean.BillboardPackageBean;
+import com.example.newbiechen.ireader.ui.base.BaseContract;
 
 /**
  * Created by newbiechen on 17-4-23.
@@ -10,11 +9,11 @@ import com.example.newbiechen.ireader.ui.base.BaseView;
 
 public interface BillboardContract {
 
-    interface View extends BaseView<Presenter> {
-        void finishRefresh(BillboardListBean beans);
+    interface View extends BaseContract.BaseView{
+        void finishRefresh(BillboardPackageBean beans);
     }
 
-    interface Presenter extends BasePresenter{
+    interface Presenter extends BaseContract.BasePresenter<View>{
         void loadBillboardList();
     }
 }

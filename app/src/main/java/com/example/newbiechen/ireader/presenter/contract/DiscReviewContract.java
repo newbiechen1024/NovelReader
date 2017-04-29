@@ -1,8 +1,7 @@
 package com.example.newbiechen.ireader.presenter.contract;
 
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
-import com.example.newbiechen.ireader.ui.base.BasePresenter;
-import com.example.newbiechen.ireader.ui.base.BaseView;
+import com.example.newbiechen.ireader.ui.base.BaseContract;
 
 import java.util.List;
 
@@ -11,13 +10,16 @@ import java.util.List;
  */
 
 public interface DiscReviewContract {
-    interface View extends BaseView<Presenter> {
-        void finishRefresh(List<BookReviewBean> discussionBeans);
-        void finishLoading(List<BookReviewBean> discussionBeans);
+    interface View extends BaseContract.BaseView {
+        void finishRefresh(List<BookReviewBean> beans);
+        void finishLoading(List<BookReviewBean> beans);
+        void showErrorTip();
     }
 
-    interface Presenter extends BasePresenter {
+    interface Presenter extends BaseContract.BasePresenter<View> {
+        void firstLoading(String sort, String bookType, int start, int limited, String distillate);
         void refreshBookReview(String sort, String bookType, int start, int limited, String distillate);
         void loadingBookReview(String sort, String bookType, int start, int limited, String distillate);
+        void saveBookReview(List<BookReviewBean> beans);
     }
 }

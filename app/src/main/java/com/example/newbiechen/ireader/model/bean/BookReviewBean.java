@@ -1,13 +1,16 @@
 package com.example.newbiechen.ireader.model.bean;
 
-import com.example.newbiechen.ireader.model.gen.convert.BookConvert;
-import com.example.newbiechen.ireader.model.gen.convert.BookHelpfulConvert;
-
-import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.ToOne;
+import org.greenrobot.greendao.DaoException;
+import com.example.newbiechen.ireader.model.gen.DaoSession;
+import com.example.newbiechen.ireader.model.gen.BookHelpfulBeanDao;
+import com.example.newbiechen.ireader.model.gen.BookReviewBeanDao;
+import com.example.newbiechen.ireader.model.gen.BookBeanDao;
 
 /**
  * Created by newbiechen on 17-4-21.
@@ -28,25 +31,33 @@ public class BookReviewBean {
      */
     @Id
     private String _id;
-    private String title;
-    @Convert(converter = BookConvert.class,columnType = String.class)
-    private BookBean book;
-    @Convert(converter = BookHelpfulConvert.class,columnType = Long.class)
-    private BookHelpfulBean helpful;
+    //获取Book的外键
+    private String bookId;
 
+
+    private String title;
+    @ToOne(joinProperty = "bookId")
+    private BookBean book;
+    @ToOne(joinProperty = "_id")
+    private BookHelpfulBean helpful;
     private int likeCount;
     private boolean haveImage;
     @Index
     private String state;
     private String updated;
     private String created;
+    /** Used to resolve relations */
+    @Generated(hash = 2040040024)
+    private transient DaoSession daoSession;
+    /** Used for active entity operations. */
+    @Generated(hash = 1457560531)
+    private transient BookReviewBeanDao myDao;
 
-    @Generated(hash = 55680806)
-    public BookReviewBean(String _id, String title, BookBean book, BookHelpfulBean helpful, int likeCount, boolean haveImage, String state, String updated, String created) {
+    @Generated(hash = 765371588)
+    public BookReviewBean(String _id, String bookId, String title, int likeCount, boolean haveImage, String state, String updated, String created) {
         this._id = _id;
+        this.bookId = bookId;
         this.title = title;
-        this.book = book;
-        this.helpful = helpful;
         this.likeCount = likeCount;
         this.haveImage = haveImage;
         this.state = state;
@@ -58,6 +69,11 @@ public class BookReviewBean {
     public BookReviewBean() {
     }
 
+    @Generated(hash = 168832412)
+    private transient String helpful__resolvedKey;
+    @Generated(hash = 1195315420)
+    private transient String book__resolvedKey;
+    
     public String get_id() {
         return _id;
     }
@@ -72,22 +88,6 @@ public class BookReviewBean {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public BookBean getBook() {
-        return book;
-    }
-
-    public void setBook(BookBean book) {
-        this.book = book;
-    }
-
-    public BookHelpfulBean getHelpful() {
-        return helpful;
-    }
-
-    public void setHelpful(BookHelpfulBean helpful) {
-        this.helpful = helpful;
     }
 
     public int getLikeCount() {
@@ -132,6 +132,141 @@ public class BookReviewBean {
 
     public boolean getHaveImage() {
         return this.haveImage;
+    }
+
+    /**
+     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
+     * Entity must attached to an entity context.
+     */
+    @Generated(hash = 128553479)
+    public void delete() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }
+        myDao.delete(this);
+    }
+
+    /**
+     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
+     * Entity must attached to an entity context.
+     */
+    @Generated(hash = 1942392019)
+    public void refresh() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }
+        myDao.refresh(this);
+    }
+
+    /**
+     * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
+     * Entity must attached to an entity context.
+     */
+    @Generated(hash = 713229351)
+    public void update() {
+        if (myDao == null) {
+            throw new DaoException("Entity is detached from DAO context");
+        }
+        myDao.update(this);
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 582781380)
+    public void __setDaoSession(DaoSession daoSession) {
+        this.daoSession = daoSession;
+        myDao = daoSession != null ? daoSession.getBookReviewBeanDao() : null;
+    }
+
+    public String getBookId() {
+        return this.bookId;
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 449598324)
+    public BookBean getBook() {
+        String __key = this.bookId;
+        if (book__resolvedKey == null || book__resolvedKey != __key) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            BookBeanDao targetDao = daoSession.getBookBeanDao();
+            BookBean bookNew = targetDao.load(__key);
+            synchronized (this) {
+                book = bookNew;
+                book__resolvedKey = __key;
+            }
+        }
+        return book;
+    }
+
+    @Keep
+    public BookBean getBookBean(){
+        if (bookId == null){
+            setBook(book);
+        }
+        if (daoSession == null){
+            return book;
+        }
+        else {
+            return getBook();
+        }
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 781581027)
+    public void setBook(BookBean book) {
+        synchronized (this) {
+            this.book = book;
+            bookId = book == null ? null : book.get_id();
+            book__resolvedKey = bookId;
+        }
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 2081731991)
+    public BookHelpfulBean getHelpful() {
+        String __key = this._id;
+        if (helpful__resolvedKey == null || helpful__resolvedKey != __key) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            BookHelpfulBeanDao targetDao = daoSession.getBookHelpfulBeanDao();
+            BookHelpfulBean helpfulNew = targetDao.load(__key);
+            synchronized (this) {
+                helpful = helpfulNew;
+                helpful__resolvedKey = __key;
+            }
+        }
+        return helpful;
+    }
+
+    @Keep
+    public BookHelpfulBean getHelpfulBean(){
+        if (helpful != null){
+            helpful.set_id(get_id());
+        }
+        if (daoSession == null){
+            return helpful;
+        }
+        else {
+            return getHelpful();
+        }
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 849553614)
+    public void setHelpful(BookHelpfulBean helpful) {
+        synchronized (this) {
+            this.helpful = helpful;
+            _id = helpful == null ? null : helpful.get_id();
+            helpful__resolvedKey = _id;
+        }
     }
 
 

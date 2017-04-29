@@ -15,7 +15,7 @@ import com.example.newbiechen.ireader.model.bean.BookHelpfulBean;
 /** 
  * DAO for table "BOOK_HELPFUL_BEAN".
 */
-public class BookHelpfulBeanDao extends AbstractDao<BookHelpfulBean, Long> {
+public class BookHelpfulBeanDao extends AbstractDao<BookHelpfulBean, String> {
 
     public static final String TABLENAME = "BOOK_HELPFUL_BEAN";
 
@@ -24,7 +24,7 @@ public class BookHelpfulBeanDao extends AbstractDao<BookHelpfulBean, Long> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, long.class, "id", true, "_id");
+        public final static Property _id = new Property(0, String.class, "_id", true, "_ID");
         public final static Property Total = new Property(1, int.class, "total", false, "TOTAL");
         public final static Property No = new Property(2, int.class, "no", false, "NO");
         public final static Property Yes = new Property(3, int.class, "yes", false, "YES");
@@ -43,7 +43,7 @@ public class BookHelpfulBeanDao extends AbstractDao<BookHelpfulBean, Long> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"BOOK_HELPFUL_BEAN\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ," + // 0: id
+                "\"_ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: _id
                 "\"TOTAL\" INTEGER NOT NULL ," + // 1: total
                 "\"NO\" INTEGER NOT NULL ," + // 2: no
                 "\"YES\" INTEGER NOT NULL );"); // 3: yes
@@ -58,7 +58,11 @@ public class BookHelpfulBeanDao extends AbstractDao<BookHelpfulBean, Long> {
     @Override
     protected final void bindValues(DatabaseStatement stmt, BookHelpfulBean entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
+ 
+        String _id = entity.get_id();
+        if (_id != null) {
+            stmt.bindString(1, _id);
+        }
         stmt.bindLong(2, entity.getTotal());
         stmt.bindLong(3, entity.getNo());
         stmt.bindLong(4, entity.getYes());
@@ -67,21 +71,25 @@ public class BookHelpfulBeanDao extends AbstractDao<BookHelpfulBean, Long> {
     @Override
     protected final void bindValues(SQLiteStatement stmt, BookHelpfulBean entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getId());
+ 
+        String _id = entity.get_id();
+        if (_id != null) {
+            stmt.bindString(1, _id);
+        }
         stmt.bindLong(2, entity.getTotal());
         stmt.bindLong(3, entity.getNo());
         stmt.bindLong(4, entity.getYes());
     }
 
     @Override
-    public Long readKey(Cursor cursor, int offset) {
-        return cursor.getLong(offset + 0);
+    public String readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
     }    
 
     @Override
     public BookHelpfulBean readEntity(Cursor cursor, int offset) {
         BookHelpfulBean entity = new BookHelpfulBean( //
-            cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // _id
             cursor.getInt(offset + 1), // total
             cursor.getInt(offset + 2), // no
             cursor.getInt(offset + 3) // yes
@@ -91,22 +99,21 @@ public class BookHelpfulBeanDao extends AbstractDao<BookHelpfulBean, Long> {
      
     @Override
     public void readEntity(Cursor cursor, BookHelpfulBean entity, int offset) {
-        entity.setId(cursor.getLong(offset + 0));
+        entity.set_id(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setTotal(cursor.getInt(offset + 1));
         entity.setNo(cursor.getInt(offset + 2));
         entity.setYes(cursor.getInt(offset + 3));
      }
     
     @Override
-    protected final Long updateKeyAfterInsert(BookHelpfulBean entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
+    protected final String updateKeyAfterInsert(BookHelpfulBean entity, long rowId) {
+        return entity.get_id();
     }
     
     @Override
-    public Long getKey(BookHelpfulBean entity) {
+    public String getKey(BookHelpfulBean entity) {
         if(entity != null) {
-            return entity.getId();
+            return entity.get_id();
         } else {
             return null;
         }
@@ -114,7 +121,7 @@ public class BookHelpfulBeanDao extends AbstractDao<BookHelpfulBean, Long> {
 
     @Override
     public boolean hasKey(BookHelpfulBean entity) {
-        throw new UnsupportedOperationException("Unsupported for entities with a non-null key");
+        return entity.get_id() != null;
     }
 
     @Override

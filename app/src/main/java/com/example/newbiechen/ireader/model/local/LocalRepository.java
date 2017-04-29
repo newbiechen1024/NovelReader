@@ -1,19 +1,36 @@
 package com.example.newbiechen.ireader.model.local;
 
+import android.util.Log;
+
 import com.example.newbiechen.ireader.model.bean.AuthorBean;
+import com.example.newbiechen.ireader.model.bean.BillboardBean;
+import com.example.newbiechen.ireader.model.bean.BillboardPackageBean;
+import com.example.newbiechen.ireader.model.bean.BookBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
+import com.example.newbiechen.ireader.model.bean.BookHelpfulBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
+import com.example.newbiechen.ireader.model.bean.BookReviewBean;
+import com.example.newbiechen.ireader.model.bean.BookSortBean;
+import com.example.newbiechen.ireader.model.bean.BookSortPackageBean;
 import com.example.newbiechen.ireader.model.flag.BookDistillate;
 import com.example.newbiechen.ireader.model.flag.BookSort;
 import com.example.newbiechen.ireader.model.gen.AuthorBeanDao;
+import com.example.newbiechen.ireader.model.gen.BookBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookCommentBeanDao;
+import com.example.newbiechen.ireader.model.gen.BookHelpfulBeanDao;
+import com.example.newbiechen.ireader.model.gen.BookHelpsBeanDao;
+import com.example.newbiechen.ireader.model.gen.BookReviewBeanDao;
 import com.example.newbiechen.ireader.model.gen.DaoSession;
+import com.example.newbiechen.ireader.utils.Constant;
+import com.example.newbiechen.ireader.utils.SharedPreUtils;
+import com.google.gson.Gson;
 
+import org.greenrobot.greendao.query.Join;
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
@@ -22,11 +39,12 @@ import io.reactivex.SingleOnSubscribe;
  * Created by newbiechen on 17-4-26.
  */
 
-public class LocalRepository {
+public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
+    private static final String TAG = "LocalRepository";
     private static final String DISTILLATE_ALL = "normal";
     private static final String DISTILLATE_BOUTIQUES = "distillate";
 
-    private static LocalRepository sInstance;
+    private static volatile LocalRepository sInstance;
     private DaoSession mSession;
     private LocalRepository(){
         mSession = DaoDbHelper.getInstance().getSession();
@@ -43,19 +61,92 @@ public class LocalRepository {
         return sInstance;
     }
 
+    /*************************************数据存储*******************************************/
     /**
      * 存储BookComment
      * @param beans
      */
-    public void saveBookComment(List<BookCommentBean> beans){
+    public void saveBookComments(List<BookCommentBean> beans){
+        //存储Author,为了保证高效性，所以首先转换成List进行统一存储。
+        List<AuthorBean> authorBeans = new ArrayList<>(beans.size());
+        for (int i=0; i<beans.size(); ++i){
+            BookCommentBean commentBean = beans.get(i);
+            authorBeans.add(commentBean.getAuthorBean());
+        }
+        saveAuthors(authorBeans);
+        //
         mSession.getBookCommentBeanDao()
                 .insertOrReplaceInTx(beans);
     }
 
-    public void saveAuthor(AuthorBean bean){
-        mSession.getAuthorBeanDao()
-                .insertOrReplace(bean);
+    public void saveBookHelps(List<BookHelpsBean> beans){
+        mSession.startAsyncSession()
+                .runInTx(
+                        ()->{
+                            //存储Author,为了保证高效性，所以首先转换成List进行统一存储。
+                            List<AuthorBean> authorBeans = new ArrayList<>(beans.size());
+                            for (BookHelpsBean helpsBean : beans){
+                                authorBeans.add(helpsBean.getAuthorBean());
+                            }
+                            saveAuthors(authorBeans);
+
+                            mSession.getBookHelpsBeanDao()
+                                    .insertOrReplaceInTx(beans);
+                        }
+                );
+
     }
+
+    public void saveBookReviews(List<BookReviewBean> beans){
+        mSession.startAsyncSession()
+                .runInTx(
+                        ()->{
+                            //数据转换
+                            List<BookBean> bookBeans = new ArrayList<>(beans.size());
+                            List<BookHelpfulBean> helpfulBeans = new ArrayList<>(beans.size());
+                            for (BookReviewBean reviewBean : beans){
+                                bookBeans.add(reviewBean.getBookBean());
+                                helpfulBeans.add(reviewBean.getHelpfulBean());
+                            }
+                            saveBookHelpfuls(helpfulBeans);
+                            saveBooks(bookBeans);
+                            //存储BookReview
+                            mSession.getBookReviewBeanDao()
+                                    .insertOrReplaceInTx(beans);
+                        }
+                );
+    }
+
+    public void saveBooks(List<BookBean> beans){
+        mSession.getBookBeanDao()
+                .insertOrReplaceInTx(beans);
+    }
+
+    public void saveAuthors(List<AuthorBean> beans){
+        mSession.getAuthorBeanDao()
+                .insertOrReplaceInTx(beans);
+    }
+
+    public void saveBookHelpfuls(List<BookHelpfulBean> beans){
+        mSession.getBookHelpfulBeanDao()
+                .insertOrReplaceInTx(beans);
+    }
+
+    @Override
+    public void saveBookSortPackage(BookSortPackageBean bean) {
+        String json = new Gson().toJson(bean);
+        SharedPreUtils.getInstance()
+                .putString(Constant.SHARED_SAVE_BOOK_SORT,json);
+    }
+
+    @Override
+    public void saveBillboardPackage(BillboardPackageBean bean) {
+        String json = new Gson().toJson(bean);
+        SharedPreUtils.getInstance()
+                .putString(Constant.SHARED_SAVE_BILLBOARD,json);
+    }
+
+    /***************************************read data****************************************************/
 
     /**
      * 获取数据
@@ -66,13 +157,9 @@ public class LocalRepository {
      * @param limited
      * @return
      */
-    public Single<List<BookCommentBean>> getBookComment(String block, String sort, int start, int limited, String distillate){
-        if (distillate.equals(BookDistillate.ALL.getNetName())){
-            distillate = DISTILLATE_ALL;
-        }
-        else {
-            distillate = DISTILLATE_BOUTIQUES;
-        }
+    public Single<List<BookCommentBean>> getBookComments(String block, String sort, int start, int limited, String distillate){
+        //数据转换
+        distillate = convertDistillate(distillate);
 
         QueryBuilder<BookCommentBean> queryBuilder = mSession.getBookCommentBeanDao()
                 .queryBuilder()
@@ -93,15 +180,94 @@ public class LocalRepository {
         else if (sort.equals(BookSort.HELPFUL.getNetName())){
             queryBuilder.orderDesc(BookCommentBeanDao.Properties.LikeCount);
         }
-        Single<List<BookCommentBean>> observable = Single.create(
-                new SingleOnSubscribe<List<BookCommentBean>>() {
-                    @Override
-                    public void subscribe(SingleEmitter<List<BookCommentBean>> e) throws Exception {
-                        e.onSuccess(queryBuilder.list());
-                    }
-                }
-        );
-        return observable;
+        return queryToRx(queryBuilder);
+    }
+
+    /**
+     *
+     * @param sort
+     * @param start
+     * @param limited
+     * @param distillate
+     * @return
+     */
+    public Single<List<BookHelpsBean>> getBookHelps(String sort, int start, int limited, String distillate){
+        distillate = convertDistillate(distillate);
+        QueryBuilder<BookHelpsBean> queryBuilder = mSession.getBookHelpsBeanDao()
+                .queryBuilder()
+                .where(BookHelpsBeanDao.Properties.State.eq(distillate))
+                .offset(start)
+                .limit(limited);
+
+        if (sort.equals(BookSort.DEFAULT.getNetName())){
+            queryBuilder.orderDesc(BookHelpsBeanDao.Properties.Updated);
+        }
+        else if (sort.equals(BookSort.CREATED.getNetName())){
+            queryBuilder.orderDesc(BookHelpsBeanDao.Properties.Created);
+        }
+        else if (sort.equals(BookSort.COMMENT_COUNT.getNetName())){
+            queryBuilder.orderDesc(BookHelpsBeanDao.Properties.CommentCount);
+        }
+        else if (sort.equals(BookSort.HELPFUL.getNetName())){
+            queryBuilder.orderDesc(BookHelpsBeanDao.Properties.LikeCount);
+        }
+
+        return queryToRx(queryBuilder);
+    }
+
+    public Single<List<BookReviewBean>> getBookReviews(String sort, String bookType, int start, int limited, String distillate){
+        distillate = convertDistillate(distillate);
+        QueryBuilder<BookReviewBean> queryBuilder = mSession.getBookReviewBeanDao()
+                .queryBuilder()
+                .where(BookReviewBeanDao.Properties.State.eq(distillate))
+                .limit(limited)
+                .offset(start);
+        //多表关联
+        Join bookJoin = queryBuilder.join(BookReviewBeanDao.Properties.BookId,BookBean.class)
+                .where(BookBeanDao.Properties.Type.eq(bookType));
+
+        queryBuilder.join(bookJoin,BookReviewBeanDao.Properties._id,
+                BookHelpfulBean.class,BookHelpsBeanDao.Properties._id);
+
+
+        //这里的代码复杂且重复，需要修改
+        if (sort.equals(BookSort.DEFAULT.getNetName())){
+            queryBuilder.orderDesc(BookReviewBeanDao.Properties.Updated);
+        }
+        else if (sort.equals(BookSort.CREATED.getNetName())){
+            queryBuilder.orderDesc(BookReviewBeanDao.Properties.Created);
+        }
+        else if (sort.equals(BookSort.HELPFUL.getNetName())){
+            queryBuilder.orderDesc(BookHelpfulBeanDao.Properties.Yes);
+        }
+        else if (sort.equals(BookSort.COMMENT_COUNT.getNetName())){
+            queryBuilder.orderDesc(BookReviewBeanDao.Properties.LikeCount);
+        }
+        return queryToRx(queryBuilder);
+    }
+
+    @Override
+    public BookSortPackageBean getBookSortPackage() {
+        String json = SharedPreUtils.getInstance()
+                .getString(Constant.SHARED_SAVE_BOOK_SORT);
+        if (json == null){
+            return null;
+        }
+        else {
+            return new Gson().fromJson(json,BookSortPackageBean.class);
+        }
+    }
+
+    @Override
+    public BillboardPackageBean getBillboardPackage() {
+        String json = SharedPreUtils.getInstance()
+                .getString(Constant.SHARED_SAVE_BILLBOARD);
+        if (json == null){
+            return null;
+        }
+        else {
+            return new Gson().fromJson(json,BillboardPackageBean.class);
+        }
     }
 
     public AuthorBean getAuthor(String id){
@@ -109,5 +275,157 @@ public class LocalRepository {
                 .queryBuilder()
                 .where(AuthorBeanDao.Properties._id.eq(id))
                 .unique();
+    }
+
+    public BookBean getBook(String id){
+        return mSession.getBookBeanDao()
+                .queryBuilder()
+                .where(BookBeanDao.Properties._id.eq(id))
+                .unique();
+    }
+
+    public BookHelpfulBean getBookHelpful(String id){
+        return mSession.getBookHelpfulBeanDao()
+                .queryBuilder()
+                .where(BookHelpfulBeanDao.Properties._id.eq(id))
+                .unique();
+    }
+
+    private String convertDistillate(String distillate){
+        if (distillate.equals(BookDistillate.ALL.getNetName())){
+            distillate = DISTILLATE_ALL;
+        }
+        else {
+            distillate = DISTILLATE_BOUTIQUES;
+        }
+        return distillate;
+    }
+
+    private <T> Single<List<T>> queryToRx(QueryBuilder<T> builder){
+        return Single.create(new SingleOnSubscribe<List<T>>() {
+            @Override
+            public void subscribe(SingleEmitter<List<T>> e) throws Exception {
+                List<T> data = builder.list();
+                if (data == null){
+                    data = new ArrayList<T>(1);
+                }
+                e.onSuccess(data);
+            }
+        });
+    }
+
+    /*******************************************************************************************/
+    /**
+     * 处理多出来的数据,一般在退出程序的时候进行
+     */
+    public void disposeOverflowData(){
+        //固定存储100条数据，剩下的数据都删除
+        mSession.startAsyncSession()
+                .runInTx(
+                        ()->{
+                            disposeBookComment();
+                            disposeBookHelps();
+                            disposeBookReviews();
+                        }
+                );
+    }
+
+    private void disposeBookComment(){
+        //第一种方法:使用get获取对象之后再依次删除。
+        //第二种方法:直接调用Sqlite语句进行删除
+        BookCommentBeanDao commentBeanDao = mSession.getBookCommentBeanDao();
+        int count = (int)commentBeanDao.count();
+        List<BookCommentBean> bookCommentBeans = commentBeanDao
+                .queryBuilder()
+                .orderDesc(BookCommentBeanDao.Properties.Updated)
+                .limit(count)
+                .offset(100)
+                .list();
+        //存储Author,为了保证高效性，所以首先转换成List进行统一存储。
+        List<AuthorBean> authorBeans = new ArrayList<>(bookCommentBeans.size());
+        for (BookCommentBean commentBean : bookCommentBeans){
+            authorBeans.add(commentBean.getAuthorBean());
+        }
+        deleteAuthors(authorBeans);
+        deleteBookComments(bookCommentBeans);
+    }
+
+    private void disposeBookHelps(){
+        BookHelpsBeanDao helpfulDao = mSession.getBookHelpsBeanDao();
+        int count = (int) helpfulDao.count();
+        List<BookHelpsBean> helpsBeans = helpfulDao
+                .queryBuilder()
+                .orderDesc(BookHelpsBeanDao.Properties.Updated)
+                .limit(count)
+                .offset(100)
+                .list();
+        List<AuthorBean> authorBeans = new ArrayList<>(helpsBeans.size());
+        for (BookHelpsBean commentBean : helpsBeans){
+            authorBeans.add(commentBean.getAuthorBean());
+        }
+        deleteAuthors(authorBeans);
+        deleteBookHelps(helpsBeans);
+    }
+
+    private void disposeBookReviews(){
+        BookReviewBeanDao reviewDao = mSession.getBookReviewBeanDao();
+        int count = (int) reviewDao.count();
+        List<BookReviewBean> reviewBeans = reviewDao
+                .queryBuilder()
+                .orderDesc(BookHelpsBeanDao.Properties.Updated)
+                .limit(count)
+                .offset(100)
+                .list();
+        List<BookBean> bookBeans = new ArrayList<>(reviewBeans.size());
+        List<BookHelpfulBean> helpfulBeans = new ArrayList<>(reviewBeans.size());
+        for (BookReviewBean reviewBean : reviewBeans){
+            bookBeans.add(reviewBean.getBookBean());
+            helpfulBeans.add(reviewBean.getHelpfulBean());
+        }
+        deleteBooks(bookBeans);
+        deleteBookHelpful(helpfulBeans);
+        deleteBookReviews(reviewBeans);
+    }
+
+    /************************************delete********************************************/
+    @Override
+    public void deleteBookComments(List<BookCommentBean> beans) {
+        mSession.getBookCommentBeanDao()
+                .deleteInTx(beans);
+    }
+
+    @Override
+    public void deleteBookReviews(List<BookReviewBean> beans) {
+        mSession.getBookReviewBeanDao()
+                .deleteInTx(beans);
+    }
+
+    @Override
+    public void deleteBookHelps(List<BookHelpsBean> beans) {
+        mSession.getBookHelpsBeanDao()
+                .deleteInTx(beans);
+    }
+
+    @Override
+    public void deleteAuthors(List<AuthorBean> beans) {
+        mSession.getAuthorBeanDao()
+                .deleteInTx(beans);
+    }
+
+    @Override
+    public void deleteBooks(List<BookBean> beans) {
+        mSession.getBookBeanDao()
+                .deleteInTx(beans);
+    }
+
+    @Override
+    public void deleteBookHelpful(List<BookHelpfulBean> beans) {
+        mSession.getBookHelpfulBeanDao()
+                .deleteInTx(beans);
+    }
+
+    @Override
+    public void deleteAll() {
+        //清空全部数据。
     }
 }

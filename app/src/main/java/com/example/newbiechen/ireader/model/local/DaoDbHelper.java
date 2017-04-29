@@ -13,7 +13,7 @@ import com.example.newbiechen.ireader.model.gen.DaoSession;
 public class DaoDbHelper {
     private static final String DB_NAME = "IReader_DB";
 
-    private static DaoDbHelper sInstance;
+    private static volatile DaoDbHelper sInstance;
     private SQLiteDatabase mDb;
     private DaoMaster mDaoMaster;
     private DaoSession mSession;

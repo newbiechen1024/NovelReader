@@ -12,7 +12,7 @@ import io.reactivex.disposables.Disposable;
 
 public abstract class BaseRxActivity<T extends BaseContract.BasePresenter> extends BaseActivity{
     protected CompositeDisposable mDisposable;
-    private T mPresenter;
+    protected T mPresenter;
 
     protected abstract T bindPresenter();
 

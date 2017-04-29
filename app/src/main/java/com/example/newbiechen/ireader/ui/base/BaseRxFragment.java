@@ -10,10 +10,10 @@ import io.reactivex.disposables.Disposable;
  * Created by newbiechen on 17-4-25.
  */
 
-public abstract class BaseRxFragment<T extends BaseContract.BasePresenter> extends BaseFragment {
+public abstract class BaseRxFragment<T extends BaseContract.BasePresenter> extends BaseFragment implements BaseContract.BaseView{
 
     protected CompositeDisposable mDisposable;
-    private T mPresenter;
+    protected T mPresenter;
 
     protected abstract T bindPresenter();
 

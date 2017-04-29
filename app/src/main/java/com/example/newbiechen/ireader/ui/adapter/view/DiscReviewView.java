@@ -56,16 +56,16 @@ public class DiscReviewView extends RelativeLayout implements IAdapter<BookRevie
     public void onBind(BookReviewBean value, int pos) {
         //头像
         Glide.with(App.getContext())
-                .load(Constant.IMG_BASE_URL+value.getBook().getCover())
+                .load(Constant.IMG_BASE_URL+value.getBookBean().getCover())
                 .placeholder(R.drawable.ic_default_portrait)
                 .error(R.drawable.ic_load_error)
                 .centerCrop()
                 .fitCenter()
                 .into(mIvPortrait);
         //名字
-        mTvBookName.setText(value.getBook().getTitle());
+        mTvBookName.setText(value.getBookBean().getTitle());
         //类型
-        String bookType = Constant.bookType.get(value.getBook().getType());
+        String bookType = Constant.bookType.get(value.getBookBean().getType());
         mTvBookType.setText(getResources().getString(R.string.nb_book_type,bookType));
         //简介
         mTvBrief.setText(value.getTitle());
@@ -79,6 +79,6 @@ public class DiscReviewView extends RelativeLayout implements IAdapter<BookRevie
             mTvLabelDistillate.setVisibility(GONE);
         }
         //response count
-        mTvRecommendCount.setText(getResources().getString(R.string.nb_book_recommend,value.getHelpful().getYes()));
+        mTvRecommendCount.setText(getResources().getString(R.string.nb_book_recommend,value.getHelpfulBean().getYes()));
     }
 }

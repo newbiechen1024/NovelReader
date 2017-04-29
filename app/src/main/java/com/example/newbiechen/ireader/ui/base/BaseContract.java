@@ -18,6 +18,5 @@ public interface BaseContract {
         void showError();
 
         void complete();
-
     }
 }

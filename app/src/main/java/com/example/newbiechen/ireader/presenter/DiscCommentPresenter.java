@@ -1,18 +1,19 @@
 package com.example.newbiechen.ireader.presenter;
 
-import com.example.newbiechen.ireader.model.ModelRepository;
+import android.util.Log;
+
+import static com.example.newbiechen.ireader.utils.LogUtils.*;
+
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
+import com.example.newbiechen.ireader.model.local.LocalRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.DiscCommentContact;
-
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
+import com.example.newbiechen.ireader.ui.base.RxPresenter;
 
 import java.util.List;
 
-import io.reactivex.SingleObserver;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -20,104 +21,102 @@ import io.reactivex.schedulers.Schedulers;
  * Created by newbiechen on 17-4-20.
  */
 
-public class DiscCommentPresenter implements DiscCommentContact.Presenter {
-    private DiscCommentContact.View mView;
+public class DiscCommentPresenter extends RxPresenter<DiscCommentContact.View> implements DiscCommentContact.Presenter{
+    private static final String TAG = "DiscCommentPresenter";
+    //是否采取直接从数据库加载
     private boolean isLocalLoad = true;
-    private final CompositeDisposable mDisposable = new CompositeDisposable();
-    public DiscCommentPresenter(DiscCommentContact.View view){
-        mView = view;
-        mView.setPresenter(this);
+
+    @Override
+    public void firstLoading(String block, String sort, int start, int limited, String distillate) {
+        //获取数据库中的数据
+        Single<List<BookCommentBean>> localObserver = LocalRepository.getInstance()
+                .getBookComments(block, sort, start, limited, distillate);
+        Single<List<BookCommentBean>> remoteObserver = RemoteRepository.getInstance()
+                .getBookComment(block, sort, start, limited, distillate);
+
+        //这里有问题，但是作者却用的好好的，可能是2.0之后的问题
+        Disposable disposable =  localObserver
+                .concatWith(remoteObserver)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        (beans) -> {
+                            mView.finishRefresh(beans);
+                        }
+                        ,
+                        (e) ->{
+                            isLocalLoad = true;
+                            mView.complete();
+                            mView.showErrorTip();
+                            e(e);
+                        }
+                        ,
+                        ()-> {
+                            isLocalLoad = false;
+                            mView.complete();
+                        }
+                );
+        addDisposable(disposable);
     }
 
     @Override
-    public void subscribe() {
-        //加载数据，并且自动刷新
-    }
-
-    @Override
-    public void unSubscribe() {
-        mView = null;
-        mDisposable.dispose();
-        //将数据存储到数据库中 (其实可以在onStop中存储数据)
-    }
-
-    @Override
-    public void refreshDiscussion(String block,String sort,int start,int limited,String distillate) {
-        mView.showRefreshView();
-        if (isLocalLoad){
-            ModelRepository.getInstance()
-                    .getBookComment(block, sort, start, limited, distillate)
-                    .subscribe(new Subscriber<List<BookCommentBean>>() {
-                        @Override
-                        public void onSubscribe(Subscription s) {
-
-                        }
-
-                        @Override
-                        public void onNext(List<BookCommentBean> bookCommentBeen) {
-                            mView.finishRefresh(bookCommentBeen);
-                        }
-
-                        @Override
-                        public void onError(Throwable t) {
-                            //错误日志
-                            mView.loadError();
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            mView.finishRefreshView();
-                        }
-                    });
-        }
-        else {
-            //刷新数据，然后将数据加入到缓存中
-            RemoteRepository.getInstance()
-                    .getBookComment(block,sort,start,limited,distillate)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SingleObserver<List<BookCommentBean>>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-                            mDisposable.add(d);
-                        }
-
-                        @Override
-                        public void onSuccess(List<BookCommentBean> value) {
-                            mView.finishRefresh(value);
-                            mView.finishRefreshView();
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            mView.loadError();
-                        }
-                    });
-        }
-    }
-
-    @Override
-    public void loadingDiscussion(String block,String sort,int start,int limited,String distillate) {
-        //单纯的加载数据
-        RemoteRepository.getInstance()
+    public void refreshComment(String block, String sort, int start, int limited, String distillate) {//刷新数据，然后将数据加入到缓存中
+        Disposable refreshDispo = RemoteRepository.getInstance()
                 .getBookComment(block,sort,start,limited,distillate)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<List<BookCommentBean>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+                .subscribe(
+                        (beans)-> {
+                            isLocalLoad = false;
+                            mView.finishRefresh(beans);
+                            mView.complete();
+                        }
+                        ,
+                        (e) ->{
+                            mView.complete();
+                            mView.showErrorTip();
+                            e(e);
+                        }
+                );
+        addDisposable(refreshDispo);
+    }
 
-                    }
+    @Override
+    public void loadingComment(String block, String sort, int start, int limited, String distillate) {
+        if (isLocalLoad){
+            Single<List<BookCommentBean>> single = LocalRepository.getInstance()
+                    .getBookComments(block, sort, start, limited, distillate);
+            loadComment(single);
+        }
 
-                    @Override
-                    public void onSuccess(List<BookCommentBean> value) {
+        else{
+            //单纯的加载数据
+            Single<List<BookCommentBean>> single = RemoteRepository.getInstance()
+                    .getBookComment(block,sort,start,limited,distillate);
+            loadComment(single);
 
-                    }
+        }
+    }
 
-                    @Override
-                    public void onError(Throwable e) {
+    @Override
+    public void saveComment(List<BookCommentBean> beans) {
+        LocalRepository.getInstance()
+                .saveBookComments(beans);
+    }
 
-                    }
-                });
+    private void loadComment(Single<List<BookCommentBean>> observable){
+        Disposable loadDispo =observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        (beans) -> {
+                            mView.finishLoading(beans);
+                        }
+                        ,
+                        (e) -> {
+                            mView.showError();
+                            e(e);
+                        }
+                );
+        addDisposable(loadDispo);
     }
 }

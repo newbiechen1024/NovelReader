@@ -31,9 +31,6 @@ import butterknife.BindView;
 public class MainActivity extends BaseTabActivity{
     /*************Constant**********/
     private static final int WAIT_INTERVAL = 2000;
-    /***************View*******************/
-    @BindView(R.id.main_tl_tab) TabLayout mTlTab;
-    @BindView(R.id.main_vp) ViewPager mVp;
     /***************Object*********************/
     private final ArrayList<Fragment> mFragmentList = new ArrayList<>();
     /*****************Params*********************/

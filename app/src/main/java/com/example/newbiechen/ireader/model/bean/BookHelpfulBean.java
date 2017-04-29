@@ -14,37 +14,37 @@ public class BookHelpfulBean {
      * no : 5
      * yes : 6
      */
-    @Id(autoincrement = true)
-    private long id;
+    @Id
+    private String _id;
 
     private int total;
     private int no;
     private int yes;
 
-
-    @Generated(hash = 1595070628)
-    public BookHelpfulBean(long id, int total, int no, int yes) {
-        this.id = id;
+    @Generated(hash = 1641622044)
+    public BookHelpfulBean(String _id, int total, int no, int yes) {
+        this._id = _id;
         this.total = total;
         this.no = no;
         this.yes = yes;
     }
 
+
     @Generated(hash = 534892841)
     public BookHelpfulBean() {
     }
 
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public int getTotal() {
         return total;
+    }
+
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public void setTotal(int total) {
