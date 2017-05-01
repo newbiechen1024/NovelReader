@@ -6,7 +6,7 @@ import java.util.List;
  * Created by newbiechen on 17-4-20.
  */
 
-public class BookHelpsPackageBean extends BaseBean{
+public class BookHelpsPackage extends BaseBean{
 
     private List<BookHelpsBean> helps;
 

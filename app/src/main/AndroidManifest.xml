@@ -20,11 +20,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.BookDiscussionActivity"/>
-        <activity android:name=".ui.activity.DiscussionDetailActivity"/>
+        <activity android:name=".ui.activity.DiscDetailActivity"/>
         <activity android:name=".ui.activity.BillboardActivity"/>
         <activity android:name=".ui.activity.BookSortActivity"/>
         <activity android:name=".ui.activity.SortListActivity">
-
         </activity>
         <activity android:name=".ui.activity.SearchActivity">
         </activity>

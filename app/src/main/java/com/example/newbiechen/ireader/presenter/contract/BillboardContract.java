@@ -1,6 +1,6 @@
 package com.example.newbiechen.ireader.presenter.contract;
 
-import com.example.newbiechen.ireader.model.bean.BillboardPackageBean;
+import com.example.newbiechen.ireader.model.bean.BillboardPackage;
 import com.example.newbiechen.ireader.ui.base.BaseContract;
 
 /**
@@ -10,7 +10,7 @@ import com.example.newbiechen.ireader.ui.base.BaseContract;
 public interface BillboardContract {
 
     interface View extends BaseContract.BaseView{
-        void finishRefresh(BillboardPackageBean beans);
+        void finishRefresh(BillboardPackage beans);
     }
 
     interface Presenter extends BaseContract.BasePresenter<View>{

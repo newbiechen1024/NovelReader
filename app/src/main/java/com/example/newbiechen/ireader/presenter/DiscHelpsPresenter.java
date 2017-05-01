@@ -1,6 +1,8 @@
 package com.example.newbiechen.ireader.presenter;
 
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
+import com.example.newbiechen.ireader.model.flag.BookDistillate;
+import com.example.newbiechen.ireader.model.flag.BookSort;
 import com.example.newbiechen.ireader.model.local.LocalRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.DiscHelpsContract;
@@ -23,12 +25,12 @@ public class DiscHelpsPresenter extends RxPresenter<DiscHelpsContract.View> impl
     private boolean isLocalLoad = false;
 
     @Override
-    public void firstLoading(String sort, int start, int limited, String distillate) {
+    public void firstLoading(BookSort sort, int start, int limited, BookDistillate distillate) {
         //获取数据库中的数据
         Single<List<BookHelpsBean>> localObserver = LocalRepository.getInstance()
-                .getBookHelps(sort, start, limited, distillate);
+                .getBookHelps(sort.getDbName(), start, limited, distillate.getDbName());
         Single<List<BookHelpsBean>> remoteObserver = RemoteRepository.getInstance()
-                .getBookHelps(sort, start, limited, distillate);
+                .getBookHelps(sort.getNetName(), start, limited, distillate.getNetName());
 
         Single.concat(localObserver,remoteObserver)
                 .subscribeOn(Schedulers.io())
@@ -50,13 +52,12 @@ public class DiscHelpsPresenter extends RxPresenter<DiscHelpsContract.View> impl
                             mView.complete();
                         }
                 );
-
     }
 
     @Override
-    public void refreshBookHelps(String sort, int start, int limited, String distillate) {
+    public void refreshBookHelps(BookSort sort, int start, int limited, BookDistillate distillate) {
         Disposable refreshDispo = RemoteRepository.getInstance()
-                .getBookHelps(sort,start,limited,distillate)
+                .getBookHelps(sort.getNetName(), start, limited, distillate.getNetName())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -76,16 +77,16 @@ public class DiscHelpsPresenter extends RxPresenter<DiscHelpsContract.View> impl
     }
 
     @Override
-    public void loadingBookHelps(String sort, int start, int limited, String distillate) {
+    public void loadingBookHelps(BookSort sort, int start, int limited, BookDistillate distillate) {
         if (isLocalLoad){
             Single<List<BookHelpsBean>> single = LocalRepository.getInstance()
-                    .getBookHelps(sort, start, limited, distillate);
+                    .getBookHelps(sort.getDbName(), start, limited, distillate.getDbName());
             loadBookHelps(single);
         }
 
         else{
             Single<List<BookHelpsBean>> single = RemoteRepository.getInstance()
-                    .getBookHelps(sort,start,limited,distillate);
+                    .getBookHelps(sort.getNetName(), start, limited, distillate.getNetName());
             loadBookHelps(single);
         }
     }

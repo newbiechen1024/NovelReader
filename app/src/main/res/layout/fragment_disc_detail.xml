@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.example.newbiechen.ireader.widget.RefreshLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/disc_detail_rl_refresh"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/disc_detail_rv_content"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+	</android.support.v7.widget.RecyclerView>
+</com.example.newbiechen.ireader.widget.RefreshLayout>

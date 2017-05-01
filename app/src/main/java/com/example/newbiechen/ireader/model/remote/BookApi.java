@@ -1,13 +1,18 @@
 package com.example.newbiechen.ireader.model.remote;
 
-import com.example.newbiechen.ireader.model.bean.BillboardPackageBean;
-import com.example.newbiechen.ireader.model.bean.BookHelpsPackageBean;
-import com.example.newbiechen.ireader.model.bean.BookReviewPackageBean;
-import com.example.newbiechen.ireader.model.bean.BookCommentPackageBean;
-import com.example.newbiechen.ireader.model.bean.BookSortPackageBean;
+import com.example.newbiechen.ireader.model.bean.BillboardPackage;
+import com.example.newbiechen.ireader.model.bean.BookHelpsPackage;
+import com.example.newbiechen.ireader.model.bean.BookReviewPackage;
+import com.example.newbiechen.ireader.model.bean.BookCommentPackage;
+import com.example.newbiechen.ireader.model.bean.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.CommentDetailPackage;
+import com.example.newbiechen.ireader.model.bean.CommentsPackage;
+import com.example.newbiechen.ireader.model.bean.HelpsDetailPackage;
+import com.example.newbiechen.ireader.model.bean.ReviewDetailPackage;
 
 import io.reactivex.Single;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -15,6 +20,8 @@ import retrofit2.http.Query;
  */
 
 public interface BookApi {
+
+    /*******************************Community *******************************************************/
     /**
      * 获取综合讨论区、原创区，女生区帖子列表
      * 全部、默认排序  http://api.zhuishushenqi.com/post/by-block?block=ramble&duration=all&sort=updated&type=all&start=0&limit=20&distillate=
@@ -34,7 +41,7 @@ public interface BookApi {
      * @return
      */
     @GET("/post/by-block")
-    Single<BookCommentPackageBean> getBookCommentList(@Query("block") String block, @Query("duration") String duration, @Query("sort") String sort, @Query("type") String type, @Query("start") String start, @Query("limit") String limit, @Query("distillate") String distillate);
+    Single<BookCommentPackage> getBookCommentList(@Query("block") String block, @Query("duration") String duration, @Query("sort") String sort, @Query("type") String type, @Query("start") String start, @Query("limit") String limit, @Query("distillate") String distillate);
 
 
     /**
@@ -52,7 +59,7 @@ public interface BookApi {
      * @return
      */
     @GET("/post/help")
-    Single<BookHelpsPackageBean> getBookHelpList(@Query("duration") String duration, @Query("sort") String sort, @Query("start") String start, @Query("limit") String limit, @Query("distillate") String distillate);
+    Single<BookHelpsPackage> getBookHelpList(@Query("duration") String duration, @Query("sort") String sort, @Query("start") String start, @Query("limit") String limit, @Query("distillate") String distillate);
 
     /**
      * 获取书评区帖子列表
@@ -71,7 +78,64 @@ public interface BookApi {
      * @return
      */
     @GET("/post/review")
-    Single<BookReviewPackageBean> getBookReviewList(@Query("duration") String duration, @Query("sort") String sort, @Query("type") String type, @Query("start") String start, @Query("limit") String limit, @Query("distillate") String distillate);
+    Single<BookReviewPackage> getBookReviewList(@Query("duration") String duration, @Query("sort") String sort, @Query("type") String type, @Query("start") String start, @Query("limit") String limit, @Query("distillate") String distillate);
+
+
+    /***********************************帖子详情*******************************************************/
+    /**
+     * 获取综合讨论区帖子详情 :/post/{detailId}
+     * @param detailId ->_id
+     * @return
+     */
+    @GET("/post/{detailId}")
+    Single<CommentDetailPackage> getCommentDetailPackage(@Path("detailId") String detailId);
+
+
+    /**
+     * 获取书评区帖子详情
+     *
+     * @param detailId->_id
+     * @return
+     * */
+    @GET("/post/review/{detailId}")
+    Single<ReviewDetailPackage> getReviewDetailPacakge(@Path("detailId") String detailId);
+
+
+    /**
+     * 获取书荒区帖子详情
+     *
+     * @param detailId->_id
+     * @return
+     **/
+    @GET("/post/help/{detailId}")
+    Single<HelpsDetailPackage> getHelpsDetailPackage(@Path("detailId") String detailId);
+
+
+     /**
+     * 获取神评论列表(综合讨论区、书评区、书荒区皆为同一接口)
+     *
+     * @param detailId -> _id
+     * @return
+     **/
+    @GET("/post/{detailId}/comment/best")
+    Single<CommentsPackage> getBestCommentPackage(@Path("detailId") String detailId);
+
+     /**
+     * 获取综合讨论区帖子详情内的评论列表        :/post/{disscussionId}/comment
+     * 获取书评区、书荒区帖子详情内的评论列表     :/post/review/{disscussionId}/comment
+     * @param detailId->_id
+     * @param start              0
+     * @param limit              30
+     * @return
+     **/
+     @GET("/post/{detailId}/comment")
+     Single<CommentsPackage> getCommentPackage(@Path("detailId") String detailId, @Query("start") String start, @Query("limit") String limit);
+
+     @GET("/post/review/{detailId}/comment")
+     Single<CommentsPackage> getBookCommentPackage( @Path("detailId") String detailId, @Query("start") String start, @Query("limit") String limit);
+
+
+    /************************************find****************************************************/
 
     /**
      * 获取所有排行榜
@@ -79,7 +143,7 @@ public interface BookApi {
      * @return
      */
     @GET("/ranking/gender")
-    Single<BillboardPackageBean> getBillboardPackage();
+    Single<BillboardPackage> getBillboardPackage();
 
     /**
      * 获取分类
@@ -87,5 +151,5 @@ public interface BookApi {
      * @return
      */
     @GET("/cats/lv2/statistics")
-    Single<BookSortPackageBean> getBookSortPackage();
+    Single<BookSortPackage> getBookSortPackage();
 }

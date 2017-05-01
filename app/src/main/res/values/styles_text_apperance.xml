@@ -6,7 +6,7 @@
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:childDivider">@drawable/shape_divider_dash</item>
 		<item name="android:groupIndicator">@null</item>
-		<item name="android:listSelector">@drawable/common_bg_touch</item>
+		<item name="android:listSelector">@drawable/selector_common_bg</item>
 	</style>
 	
 	<!--表示领域-->

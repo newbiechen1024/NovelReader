@@ -14,6 +14,7 @@ import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 import com.example.newbiechen.ireader.ui.base.IAdapter;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.StringUtils;
+import com.example.newbiechen.ireader.widget.transform.CircleTransform;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,7 +60,6 @@ public class DiscReviewView extends RelativeLayout implements IAdapter<BookRevie
                 .load(Constant.IMG_BASE_URL+value.getBookBean().getCover())
                 .placeholder(R.drawable.ic_default_portrait)
                 .error(R.drawable.ic_load_error)
-                .centerCrop()
                 .fitCenter()
                 .into(mIvPortrait);
         //名字

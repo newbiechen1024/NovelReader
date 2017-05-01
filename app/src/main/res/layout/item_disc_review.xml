@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/common_bg_touch"
+                android:background="@drawable/selector_common_bg"
                 android:orientation="vertical"
                 android:padding="10dp"
                 xmlns:tools="http://schemas.android.com/tools">
@@ -46,7 +46,6 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:text="昨天"
-        android:visibility="gone"
         android:textColor="@color/nb.text.common_h3"
         android:textSize="13sp" />
 

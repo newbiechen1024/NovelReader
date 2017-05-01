@@ -1,6 +1,9 @@
 package com.example.newbiechen.ireader.presenter.contract;
 
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
+import com.example.newbiechen.ireader.model.flag.BookDistillate;
+import com.example.newbiechen.ireader.model.flag.BookSort;
+import com.example.newbiechen.ireader.model.flag.CommunityType;
 import com.example.newbiechen.ireader.ui.base.BaseContract;
 
 import java.util.List;
@@ -18,9 +21,9 @@ public interface DiscCommentContact {
     }
 
     interface Presenter extends BaseContract.BasePresenter<View>{
-        void firstLoading(String block, String sort, int start, int limited, String distillate);
-        void refreshComment(String block, String sort, int start, int limited, String distillate);
-        void loadingComment(String block, String sort, int start, int limited, String distillate);
+        void firstLoading(CommunityType block, BookSort sort, int start, int limited, BookDistillate distillate);
+        void refreshComment(CommunityType block, BookSort sort, int start, int limited, BookDistillate distillate);
+        void loadingComment(CommunityType block, BookSort sort, int start, int limited, BookDistillate distillate);
         void saveComment(List<BookCommentBean> beans);
     }
 }

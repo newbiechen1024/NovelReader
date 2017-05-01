@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="10dp"
+		android:gravity="center_vertical"
+		android:padding="15dp">
+		
+		<ImageView
+			android:id="@+id/disc_detail_iv_portrait"
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_alignParentLeft="true"
+			android:layout_centerVertical="true"
+			android:layout_marginRight="10dp"
+			android:scaleType="centerInside"
+			android:src="@drawable/ic_default_portrait" />
+		
+		<TextView
+			android:id="@+id/disc_detail_tv_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/disc_detail_iv_portrait"
+			android:ellipsize="end"
+			android:singleLine="true"
+			android:text="我就是静静"
+			android:textColor="@color/light_coffee"
+			android:textSize="13sp" />
+		
+		<TextView
+			android:id="@+id/disc_detail_tv_time"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/disc_detail_tv_name"
+			android:layout_marginTop="5dp"
+			android:layout_toRightOf="@id/disc_detail_iv_portrait"
+			android:ellipsize="end"
+			android:singleLine="true"
+			android:text="昨天"
+			android:textColor="@color/nb.text.common_h3" />
+	</RelativeLayout>
+	
+	<TextView
+		android:id="@+id/disc_detail_tv_title"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="10dp"
+		android:paddingLeft="15dp"
+		android:paddingRight="15dp"
+		android:text="1111"
+		android:textColor="@color/nb.text.default"
+		android:textSize="16dp" />
+	
+	<com.example.newbiechen.ireader.widget.BookTextView
+		android:id="@+id/disc_detail_btv_content"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="10dp"
+		android:lineSpacingExtra="1dp"
+		android:paddingLeft="15dp"
+		android:paddingRight="15dp"
+		android:text=""
+		android:textColor="@color/nb.text.common_h2"
+		android:textSize="16dp"/>
+</merge>

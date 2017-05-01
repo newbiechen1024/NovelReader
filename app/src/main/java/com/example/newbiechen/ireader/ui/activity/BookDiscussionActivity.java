@@ -45,9 +45,9 @@ public class BookDiscussionActivity extends BaseActivity implements SelectorView
     //当前的讨论组
     private CommunityType mType;
     //每个讨论组中的选择分类
-    private BookSort bookSort = BookSort.DEFAULT;
-    private BookDistillate distillate = BookDistillate.ALL;
-    private BookType bookType = BookType.ALL;
+    private BookSort mBookSort = BookSort.DEFAULT;
+    private BookDistillate mDistillate = BookDistillate.ALL;
+    private BookType mBookType = BookType.ALL;
 
     /*****************************open method******************************************/
     public static void startActivity(Context context, CommunityType type){
@@ -64,8 +64,10 @@ public class BookDiscussionActivity extends BaseActivity implements SelectorView
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        mType = (CommunityType) getIntent().getSerializableExtra(EXTRA_COMMUNITY);
         if (savedInstanceState != null){
+            mType = (CommunityType) savedInstanceState.getSerializable(EXTRA_COMMUNITY);
+        }
+        else {
             mType = (CommunityType) getIntent().getSerializableExtra(EXTRA_COMMUNITY);
         }
     }
@@ -87,25 +89,25 @@ public class BookDiscussionActivity extends BaseActivity implements SelectorView
         //转换器
         switch (type) {
             case 0:
-                distillate = BookDistillate.values()[pos];
+                mDistillate = BookDistillate.values()[pos];
                 break;
             case 1:
                 if (mSvSelector.getChildCount() == 2) {
                     //当size = 2的时候，就会到Sort这里。
-                    bookSort = BookSort.values()[pos];
+                    mBookSort = BookSort.values()[pos];
                 } else if (mSvSelector.getChildCount() == 3) {
-                    bookType = BookType.values()[pos];
+                    mBookType = BookType.values()[pos];
                 }
                 break;
             case 2:
-                bookSort = BookSort.values()[pos];
+                mBookSort = BookSort.values()[pos];
                 break;
             default:
                 break;
         }
 
         RxBus.getInstance()
-                .post(Constant.MSG_SELECTOR, new SelectorEvent(distillate,bookType,bookSort));
+                .post(Constant.MSG_SELECTOR, new SelectorEvent(mDistillate, mBookType, mBookSort));
     }
     /*******************************logic method***********************************************/
     @Override
@@ -113,10 +115,6 @@ public class BookDiscussionActivity extends BaseActivity implements SelectorView
         Fragment fragment = null;
 
         switch (mType){
-            case COMMENT:
-                setUpSelectorView(TYPE_FIRST);
-                fragment = DiscCommentFragment.newInstance(mType.getNetName());
-                break;
             case REVIEW:
                 setUpSelectorView(TYPE_SECOND);
                 fragment = new DiscReviewFragment();
@@ -125,15 +123,9 @@ public class BookDiscussionActivity extends BaseActivity implements SelectorView
                 setUpSelectorView(TYPE_FIRST);
                 fragment = new DiscHelpsFragment();
                 break;
-            case GIRL:
-                setUpSelectorView(TYPE_FIRST);
-                fragment = DiscCommentFragment.newInstance(mType.getNetName());
-                break;
-            case COMPOSE:
-                setUpSelectorView(TYPE_FIRST);
-                fragment = DiscCommentFragment.newInstance(mType.getNetName());
-                break;
             default:
+                setUpSelectorView(TYPE_FIRST);
+                fragment = DiscCommentFragment.newInstance(mType);
                 break;
         }
 

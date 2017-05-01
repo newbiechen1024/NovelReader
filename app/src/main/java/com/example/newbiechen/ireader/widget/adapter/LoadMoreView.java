@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 
 public class LoadMoreView extends FrameLayout {
     private static final String TAG = "LoadMoreView";
-
+    public static final int TYPE_HIDE = 0;
     public static final int TYPE_LOAD_MORE = 1;
     public static final int TYPE_NO_MORE = 2;
     public static final int TYPE_LOAD_ERROR = 3;
@@ -26,7 +26,7 @@ public class LoadMoreView extends FrameLayout {
 
     private OnLoadMoreListener mListener;
 
-    private int mStatus = TYPE_LOAD_MORE;
+    private int mStatus = TYPE_HIDE;
 
     public LoadMoreView(Context context,@LayoutRes int loadMoreId,
                         @LayoutRes int errorId,@LayoutRes int noMoreId) {
@@ -61,6 +61,9 @@ public class LoadMoreView extends FrameLayout {
 
     public void refreshView(){
         switch (mStatus){
+            case TYPE_HIDE:
+                setHide();
+                break;
             case TYPE_LOAD_MORE:
                 setLoadMore();
                 break;
@@ -75,6 +78,12 @@ public class LoadMoreView extends FrameLayout {
 
     public void setLoadMoreStatus(int status){
         mStatus = status;
+    }
+
+    private void setHide(){
+        mLoadMoreView.setVisibility(GONE);
+        mErrorView.setVisibility(GONE);
+        mNoMoreView.setVisibility(GONE);
     }
 
     private void setLoadMore(){

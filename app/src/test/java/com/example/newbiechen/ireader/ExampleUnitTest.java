@@ -16,9 +16,17 @@ public class ExampleUnitTest {
 
     @Test
     public void addition_isCorrect() throws Exception {
-        String date = "2017-04-22";
-        String pattern = "yyyy-MM-dd";
-        String value = StringUtils.dateConvert(date,pattern);
-        System.out.print(value);
+        int indexStart = 0;
+        int indexEnd = 0;
+        String value = "《Son of Bitch》it's a good book《empty》";
+        indexStart = value.indexOf("《",indexStart);
+        indexEnd = value.indexOf("》",indexEnd);
+
+        while(indexStart != -1 || indexEnd != -1){
+            System.out.println(indexStart+"  "+indexEnd);
+            System.out.println(value.substring(indexStart+1, indexEnd));
+            indexStart = value.indexOf("《",indexStart+1);
+            indexEnd = value.indexOf("》",indexEnd+1);
+        }
     }
 }

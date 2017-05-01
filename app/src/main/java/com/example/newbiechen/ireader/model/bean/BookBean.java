@@ -16,8 +16,6 @@ public class BookBean {
      * title : 我的26岁女房客
      * site : zhuishuvip
      * type : dsyn
-     * latelyFollower : null
-     * retentionRatio : null
      */
     @Id
     private String _id;

@@ -6,7 +6,7 @@ import java.util.List;
  * Created by newbiechen on 17-4-23.
  */
 
-public class BookSortPackageBean extends BaseBean {
+public class BookSortPackage extends BaseBean {
 
     private List<BookSortBean> male;
     private List<BookSortBean> female;

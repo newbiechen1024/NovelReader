@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by newbiechen on 17-4-20.
  */
-public class BookCommentPackageBean extends BaseBean {
+public class BookCommentPackage extends BaseBean {
 
     private List<BookCommentBean> posts;
 

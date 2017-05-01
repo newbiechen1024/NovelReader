@@ -1,10 +1,8 @@
 package com.example.newbiechen.ireader.ui.fragment;
 
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.RxBus;
@@ -15,6 +13,7 @@ import com.example.newbiechen.ireader.model.flag.BookSort;
 import com.example.newbiechen.ireader.model.flag.CommunityType;
 import com.example.newbiechen.ireader.presenter.DiscCommentPresenter;
 import com.example.newbiechen.ireader.presenter.contract.DiscCommentContact;
+import com.example.newbiechen.ireader.ui.activity.DiscDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.DiscCommentAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
 import com.example.newbiechen.ireader.utils.Constant;
@@ -41,7 +40,6 @@ public class DiscCommentFragment extends BaseRxFragment<DiscCommentContact.Prese
     private static final String BUNDLE_BLOCK = "bundle_block";
     private static final String BUNDLE_SORT = "bundle_sort";
     private static final String BUNDLE_DISTILLATE = "bundle_distillate";
-    private static final String BUNDLE_START = "bundle_start";
     /***********************view********************************/
     @BindView(R.id.discussion_rv_content)
     ScrollRefreshRecyclerView mRvContent;
@@ -50,16 +48,16 @@ public class DiscCommentFragment extends BaseRxFragment<DiscCommentContact.Prese
     private DiscCommentAdapter mDiscCommentAdapter;
 
     /*************************Params*******************************/
-    private String mBlock = CommunityType.COMMENT.getNetName();
-    private String mBookSort = BookSort.DEFAULT.getNetName();
-    private String mDistillate = BookDistillate.ALL.getNetName();
+    private CommunityType mBlock = CommunityType.COMMENT;
+    private BookSort mBookSort = BookSort.DEFAULT;
+    private BookDistillate mDistillate = BookDistillate.ALL;
     private int mStart = 0;
     private final int mLimited = 20;
 
     /****************************open method**********************************/
-    public static Fragment newInstance(String block){
+    public static Fragment newInstance(CommunityType block){
         Bundle bundle = new Bundle();
-        bundle.putString(EXTRA_BLOCK,block);
+        bundle.putSerializable(EXTRA_BLOCK,block);
         Fragment fragment = new DiscCommentFragment();
         fragment.setArguments(bundle);
         return fragment;
@@ -74,12 +72,13 @@ public class DiscCommentFragment extends BaseRxFragment<DiscCommentContact.Prese
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        mBlock = getArguments().getString(EXTRA_BLOCK);
         if (savedInstanceState != null){
-            mBlock = savedInstanceState.getString(BUNDLE_BLOCK);
-            mBookSort = savedInstanceState.getString(BUNDLE_SORT);
-            mDistillate = savedInstanceState.getString(BUNDLE_DISTILLATE);
-            mStart = savedInstanceState.getInt(BUNDLE_START);
+            mBlock = (CommunityType) savedInstanceState.getSerializable(BUNDLE_BLOCK);
+            mBookSort = (BookSort) savedInstanceState.getSerializable(BUNDLE_SORT);
+            mDistillate = (BookDistillate) savedInstanceState.getSerializable(BUNDLE_DISTILLATE);
+        }
+        else {
+            mBlock = (CommunityType) getArguments().getSerializable(EXTRA_BLOCK);
         }
     }
 
@@ -105,15 +104,21 @@ public class DiscCommentFragment extends BaseRxFragment<DiscCommentContact.Prese
         mDiscCommentAdapter.setOnLoadMoreListener(
                 () -> mPresenter.loadingComment(mBlock, mBookSort, mStart, mLimited, mDistillate)
         );
-
+        mDiscCommentAdapter.setOnItemClickListener(
+                (view,pos) -> {
+                    BookCommentBean bean = mDiscCommentAdapter.getItem(pos);
+                    String detailId = bean.get_id();
+                    DiscDetailActivity.startActivity(getContext(),mBlock,detailId);
+                }
+        );
         //选择刷新
         RxBus.getInstance()
                 .toObservable(Constant.MSG_SELECTOR, SelectorEvent.class)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         (event) -> {
-                            mBookSort = event.sort.getNetName();
-                            mDistillate = event.distillate.getNetName();
+                            mBookSort = event.sort;
+                            mDistillate = event.distillate;
                             refreshData();
                         }
                 );
@@ -170,10 +175,9 @@ public class DiscCommentFragment extends BaseRxFragment<DiscCommentContact.Prese
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(BUNDLE_BLOCK, mBlock);
-        outState.putString(BUNDLE_SORT,mBookSort);
-        outState.putString(BUNDLE_DISTILLATE,mDistillate);
-        outState.putInt(BUNDLE_START,mStart);
+        outState.putSerializable(BUNDLE_BLOCK, mBlock);
+        outState.putSerializable(BUNDLE_SORT,mBookSort);
+        outState.putSerializable(BUNDLE_DISTILLATE,mDistillate);
     }
 
     @Override

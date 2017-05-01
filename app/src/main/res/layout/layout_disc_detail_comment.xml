@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools">
+	<TextView
+		android:id="@+id/disc_detail_tv_best_comment"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/common_gray"
+		android:padding="15dp"
+		android:text="@string/nb.comment.best_comment"
+		android:textColor="@color/nb.text.common_h3"
+		android:visibility="gone"
+		tools:visibility="visible" />
+	
+	<android.support.v7.widget.RecyclerView
+		android:id="@+id/disc_detail_rv_best_comments"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:visibility="gone"
+		tools:visibility="visible" />
+	
+	<TextView
+		android:id="@+id/disc_detail_tv_comment_count"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/common_gray"
+		android:padding="15dp"
+		android:text="@string/nb.comment.comment_count"
+		android:textColor="@color/nb.text.common_h3" />
+</merge>

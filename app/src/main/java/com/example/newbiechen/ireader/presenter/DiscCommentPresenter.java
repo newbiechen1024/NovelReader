@@ -1,10 +1,11 @@
 package com.example.newbiechen.ireader.presenter;
 
-import android.util.Log;
-
 import static com.example.newbiechen.ireader.utils.LogUtils.*;
 
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
+import com.example.newbiechen.ireader.model.flag.BookDistillate;
+import com.example.newbiechen.ireader.model.flag.BookSort;
+import com.example.newbiechen.ireader.model.flag.CommunityType;
 import com.example.newbiechen.ireader.model.local.LocalRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.DiscCommentContact;
@@ -27,12 +28,14 @@ public class DiscCommentPresenter extends RxPresenter<DiscCommentContact.View> i
     private boolean isLocalLoad = true;
 
     @Override
-    public void firstLoading(String block, String sort, int start, int limited, String distillate) {
+    public void firstLoading(CommunityType block, BookSort sort, int start, int limited, BookDistillate distillate) {
         //获取数据库中的数据
         Single<List<BookCommentBean>> localObserver = LocalRepository.getInstance()
-                .getBookComments(block, sort, start, limited, distillate);
+                .getBookComments(block.getNetName(), sort.getDbName(),
+                        start, limited, distillate.getDbName());
         Single<List<BookCommentBean>> remoteObserver = RemoteRepository.getInstance()
-                .getBookComment(block, sort, start, limited, distillate);
+                .getBookComment(block.getNetName(), sort.getNetName(),
+                        start, limited, distillate.getNetName());
 
         //这里有问题，但是作者却用的好好的，可能是2.0之后的问题
         Disposable disposable =  localObserver
@@ -60,9 +63,11 @@ public class DiscCommentPresenter extends RxPresenter<DiscCommentContact.View> i
     }
 
     @Override
-    public void refreshComment(String block, String sort, int start, int limited, String distillate) {//刷新数据，然后将数据加入到缓存中
+    public void refreshComment(CommunityType block, BookSort sort,
+                               int start, int limited, BookDistillate distillate) {
         Disposable refreshDispo = RemoteRepository.getInstance()
-                .getBookComment(block,sort,start,limited,distillate)
+                .getBookComment(block.getNetName(),sort.getNetName(),
+                        start,limited,distillate.getNetName())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -82,26 +87,22 @@ public class DiscCommentPresenter extends RxPresenter<DiscCommentContact.View> i
     }
 
     @Override
-    public void loadingComment(String block, String sort, int start, int limited, String distillate) {
+    public void loadingComment(CommunityType block, BookSort sort, int start, int limited, BookDistillate distillate) {
         if (isLocalLoad){
             Single<List<BookCommentBean>> single = LocalRepository.getInstance()
-                    .getBookComments(block, sort, start, limited, distillate);
+                    .getBookComments(block.getNetName(), sort.getDbName(),
+                            start, limited, distillate.getDbName());
             loadComment(single);
         }
 
         else{
             //单纯的加载数据
             Single<List<BookCommentBean>> single = RemoteRepository.getInstance()
-                    .getBookComment(block,sort,start,limited,distillate);
+                    .getBookComment(block.getNetName(),sort.getNetName(),
+                            start,limited,distillate.getNetName());
             loadComment(single);
 
         }
-    }
-
-    @Override
-    public void saveComment(List<BookCommentBean> beans) {
-        LocalRepository.getInstance()
-                .saveBookComments(beans);
     }
 
     private void loadComment(Single<List<BookCommentBean>> observable){
@@ -118,5 +119,11 @@ public class DiscCommentPresenter extends RxPresenter<DiscCommentContact.View> i
                         }
                 );
         addDisposable(loadDispo);
+    }
+
+    @Override
+    public void saveComment(List<BookCommentBean> beans) {
+        LocalRepository.getInstance()
+                .saveBookComments(beans);
     }
 }

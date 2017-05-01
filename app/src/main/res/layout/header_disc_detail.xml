@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@color/white"
+	android:orientation="vertical">
+	
+	<include layout="@layout/layout_disc_detail"/>
+	
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:padding="15dp">
+		
+		<TextView
+			android:id="@+id/disc_detail_tv_type"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:background="@drawable/shape_common_corner"
+			android:gravity="center"
+			android:paddingBottom="5dp"
+			android:paddingLeft="10dp"
+			android:paddingRight="10dp"
+			android:paddingTop="5dp"
+			android:text="同感"
+			android:textColor="@color/colorPrimary"
+			android:textSize="12dp" />
+		
+		<ImageView
+			android:id="@+id/disc_detail_iv_more"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:layout_alignParentRight="true"
+			android:src="@drawable/ic_detail_tool" />
+		
+		<ImageView
+			android:id="@+id/disc_detail_iv_share"
+			android:layout_width="30dp"
+			android:layout_height="30dp"
+			android:layout_marginRight="10dp"
+			android:layout_toLeftOf="@+id/disc_detail_iv_more"
+			android:src="@drawable/ic_detail_share" />
+	</RelativeLayout>
+	
+	<include layout="@layout/layout_disc_detail_comment"/>
+</LinearLayout>

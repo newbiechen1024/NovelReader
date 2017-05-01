@@ -4,7 +4,7 @@ import android.widget.ExpandableListView;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BillboardBean;
-import com.example.newbiechen.ireader.model.bean.BillboardPackageBean;
+import com.example.newbiechen.ireader.model.bean.BillboardPackage;
 import com.example.newbiechen.ireader.presenter.BillboardPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BillboardContract;
 import com.example.newbiechen.ireader.ui.adapter.BillboardAdapter;
@@ -76,7 +76,7 @@ public class BillboardActivity extends BaseRxActivity<BillboardContract.Presente
     }
 
     @Override
-    public void finishRefresh(BillboardPackageBean beans) {
+    public void finishRefresh(BillboardPackage beans) {
         if (beans == null || beans.getMale() == null || beans.getFemale() == null
                 || beans.getMale().size() == 0 || beans.getFemale().size() == 0){
             mRlRefresh.showEmpty();

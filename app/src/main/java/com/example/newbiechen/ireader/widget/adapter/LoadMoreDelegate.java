@@ -12,12 +12,6 @@ import android.widget.FrameLayout;
 public class LoadMoreDelegate implements WholeAdapter.ItemView {
     private LoadMoreView mLoadMoreView;
 
-    private int mLoadMoreId;
-    private int mErrorId;
-    private int mNoMoreId;
-
-    private LoadMoreView.OnLoadMoreListener mLoadMoreListener;
-
     public LoadMoreDelegate(Context context, WholeAdapter.Options options){
         LoadMoreView view = new LoadMoreView(context,
                 options.loadMoreId,options.errorId,options.noMoreId);

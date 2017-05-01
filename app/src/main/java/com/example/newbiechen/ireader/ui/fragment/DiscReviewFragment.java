@@ -10,8 +10,10 @@ import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 import com.example.newbiechen.ireader.model.flag.BookDistillate;
 import com.example.newbiechen.ireader.model.flag.BookSort;
 import com.example.newbiechen.ireader.model.flag.BookType;
+import com.example.newbiechen.ireader.model.flag.CommunityType;
 import com.example.newbiechen.ireader.presenter.DiscReviewPresenter;
 import com.example.newbiechen.ireader.presenter.contract.DiscReviewContract;
+import com.example.newbiechen.ireader.ui.activity.DiscDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.DiscReviewAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
 import com.example.newbiechen.ireader.utils.Constant;
@@ -32,16 +34,15 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
     private static final String BUNDLE_BOOK = "bundle_book";
     private static final String BUNDLE_SORT = "bundle_sort";
     private static final String BUNDLE_DISTILLATE = "bundle_distillate";
-    private static final String BUNDLE_START = "bundle_start";
     /*******************View**********************/
     @BindView(R.id.discussion_rv_content)
     ScrollRefreshRecyclerView mRvContent;
     /*******************Object*********************/
     private DiscReviewAdapter mDiscReviewAdapter;
     /*******************Params**********************/
-    private String mSortType = BookSort.DEFAULT.getNetName();
-    private String mBookType = BookType.ALL.getNetName();
-    private String mDistillate = BookDistillate.ALL.getNetName();
+    private BookSort mBookSort = BookSort.DEFAULT;
+    private BookType mBookType = BookType.ALL;
+    private BookDistillate mDistillate = BookDistillate.ALL;
     private int mStart = 0;
     private int mLimited = 20;
 
@@ -55,10 +56,9 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
     protected void initData(Bundle savedInstanceState) {
         super.initData(savedInstanceState);
         if (savedInstanceState != null){
-            mBookType = savedInstanceState.getString(BUNDLE_BOOK);
-            mSortType = savedInstanceState.getString(BUNDLE_SORT);
-            mDistillate = savedInstanceState.getString(BUNDLE_DISTILLATE);
-            mStart = savedInstanceState.getInt(BUNDLE_START);
+            mBookType = (BookType) savedInstanceState.getSerializable(BUNDLE_BOOK);
+            mBookSort = (BookSort) savedInstanceState.getSerializable(BUNDLE_SORT);
+            mDistillate = (BookDistillate) savedInstanceState.getSerializable(BUNDLE_DISTILLATE);
         }
     }
 
@@ -87,7 +87,16 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
 
         mRvContent.setOnRefreshListener(() -> startRefresh());
         mDiscReviewAdapter.setOnLoadMoreListener(
-                () -> mPresenter.loadingBookReview(mSortType,mBookType,mStart, mLimited,mDistillate)
+                () -> {
+                    mPresenter.loadingBookReview(mBookSort,mBookType,mStart, mLimited,mDistillate);
+                }
+        );
+        mDiscReviewAdapter.setOnItemClickListener(
+                (view,pos) -> {
+                    BookReviewBean bean = mDiscReviewAdapter.getItem(pos);
+                    String detailId = bean.get_id();
+                    DiscDetailActivity.startActivity(getContext(), CommunityType.REVIEW,detailId);
+                }
         );
 
         RxBus.getInstance()
@@ -95,9 +104,9 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         (event) ->{
-                            mSortType = event.sort.getNetName();
-                            mBookType = event.type.getNetName();
-                            mDistillate = event.distillate.getNetName();
+                            mBookSort = event.sort;
+                            mBookType = event.type;
+                            mDistillate = event.distillate;
                             startRefresh();
                         }
                 );
@@ -109,12 +118,12 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
         super.processLogic();
         //首次自动刷新
         mRvContent.autoRefresh();
-        mPresenter.firstLoading(mSortType,mBookType,mStart,mLimited,mDistillate);
+        mPresenter.firstLoading(mBookSort,mBookType,mStart,mLimited,mDistillate);
     }
 
     private void startRefresh(){
         mStart = 0;
-        mPresenter.refreshBookReview(mSortType,mBookType,mStart,mLimited,mDistillate);
+        mPresenter.refreshBookReview(mBookSort,mBookType,mStart,mLimited,mDistillate);
     }
 
     /****************************rewrite method******************************************/
@@ -149,10 +158,9 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(BUNDLE_BOOK, mBookType);
-        outState.putString(BUNDLE_SORT,mSortType);
-        outState.putString(BUNDLE_DISTILLATE,mDistillate);
-        outState.putInt(BUNDLE_START,mStart);
+        outState.putSerializable(BUNDLE_BOOK, mBookType);
+        outState.putSerializable(BUNDLE_SORT, mBookSort);
+        outState.putSerializable(BUNDLE_DISTILLATE,mDistillate);
     }
 
     @Override

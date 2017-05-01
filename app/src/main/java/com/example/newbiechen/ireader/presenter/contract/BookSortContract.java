@@ -1,6 +1,6 @@
 package com.example.newbiechen.ireader.presenter.contract;
 
-import com.example.newbiechen.ireader.model.bean.BookSortPackageBean;
+import com.example.newbiechen.ireader.model.bean.BookSortPackage;
 import com.example.newbiechen.ireader.ui.base.BaseContract;
 
 /**
@@ -10,7 +10,7 @@ import com.example.newbiechen.ireader.ui.base.BaseContract;
 public interface BookSortContract {
 
     interface View extends BaseContract.BaseView{
-        void finishRefresh(BookSortPackageBean bean);
+        void finishRefresh(BookSortPackage bean);
     }
 
     interface Presenter extends BaseContract.BasePresenter<View>{

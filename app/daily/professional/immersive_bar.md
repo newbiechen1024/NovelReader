@@ -2,11 +2,11 @@
 
 参考:
 
-1. http://blog.csdn.net/lmj623565791/article/details/48649563
-2. http://blog.csdn.net/guolin_blog/article/details/51763825
+1. http://blog.csdn.net/lmj623565791/article/detail/48649563
+2. http://blog.csdn.net/guolin_blog/article/detail/51763825
 
 ## 什么叫做沉浸式
-这个可以参考:[郭霖——真正的沉浸式](http://blog.csdn.net/guolin_blog/article/details/51763825)
+这个可以参考:[郭霖——真正的沉浸式](http://blog.csdn.net/guolin_blog/article/detail/51763825)
 
 从郭神的文章中我们知道了，真正的沉浸式指的是一下两点:
 
@@ -84,6 +84,6 @@ actionBar.hide();
 ### 4.4以上StatusBar的实现
 
 鸿神交给新的方法，能够在4.4以上设置半透明的导航栏。
-当然就是详见:[](http://blog.csdn.net/lmj623565791/article/details/48649563)
+当然就是详见:[](http://blog.csdn.net/lmj623565791/article/detail/48649563)
 
 推荐使用鸿阳的方法。

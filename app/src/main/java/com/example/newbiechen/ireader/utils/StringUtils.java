@@ -27,7 +27,7 @@ public class StringUtils {
             long curTime = calendar.getTimeInMillis();
             calendar.setTime(date);
             //将MISC 转换成 sec
-            long difSec = (curTime - date.getTime())/1000;
+            long difSec = Math.abs((curTime - date.getTime())/1000);
             long difMin =  difSec/60;
             long difHour = difMin/60;
             long difDate = difHour/60;
@@ -69,5 +69,9 @@ public class StringUtils {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static String toFirstCapital(String str){
+        return str.substring(0,1).toUpperCase()+str.substring(1);
     }
 }

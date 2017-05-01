@@ -6,7 +6,7 @@ import java.util.List;
  * Created by newbiechen on 17-4-21.
  */
 
-public class BookReviewPackageBean extends BaseBean {
+public class BookReviewPackage extends BaseBean {
 
     private List<BookReviewBean> reviews;
 

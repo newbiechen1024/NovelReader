@@ -1,15 +1,13 @@
 package com.example.newbiechen.ireader.model.local;
 
 import com.example.newbiechen.ireader.model.bean.AuthorBean;
-import com.example.newbiechen.ireader.model.bean.BillboardPackageBean;
+import com.example.newbiechen.ireader.model.bean.BillboardPackage;
 import com.example.newbiechen.ireader.model.bean.BookBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpfulBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
-import com.example.newbiechen.ireader.model.bean.BookSortBean;
-import com.example.newbiechen.ireader.model.bean.BookSortPackageBean;
-import com.example.newbiechen.ireader.model.flag.BookSort;
+import com.example.newbiechen.ireader.model.bean.BookSortPackage;
 
 import java.util.List;
 
@@ -25,6 +23,6 @@ public interface SaveDbHelper {
     void saveBooks(List<BookBean> beans);
     void saveBookHelpfuls(List<BookHelpfulBean> beans);
 
-    void saveBookSortPackage(BookSortPackageBean bean);
-    void saveBillboardPackage(BillboardPackageBean bean);
+    void saveBookSortPackage(BookSortPackage bean);
+    void saveBillboardPackage(BillboardPackage bean);
 }

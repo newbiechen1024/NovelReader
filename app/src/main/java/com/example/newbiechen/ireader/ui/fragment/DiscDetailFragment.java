@@ -31,7 +31,7 @@ public class DiscDetailFragment extends BaseFragment {
 
     @Override
     protected int getContentId() {
-        return R.layout.fragment_discussion_detail;
+        return R.layout.fragment_disc_detail;
     }
 
 }

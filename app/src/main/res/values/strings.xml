@@ -29,6 +29,25 @@
     <string name="nb.fragment.community.girl">女生区</string>
     <string name="nb.fragment.community.compose">原创区</string>
     
+    <!--评论相关-->
+    <string name="nb.comment.floor">%1$d楼&#160;</string>
+    <string name="nb.comment.like_count">❤%1$d次同感</string>
+    <string name="nb.comment.best_comment">仰望神评论</string>
+    <string name="nb.comment.comment_count">共%1$d条评论</string>
+    <string name="nb.comment.reply_floor">(%1$d楼)</string>
+    <string name="nb.comment.reply_nickname">回复 %1$s</string>
+    <string name="nb.comment.empty_comment">暂无评论</string>
+    
+    <!--书评区相关-->
+    <string name="nb.review.book_type">[%1$s]</string>
+    <string name="nb.review.recommend">%1$d 人推荐</string>
+    <string name="nb.review.helpful">有用</string>
+    <string name="nb.review.unhelpful">无用</string>
+    <string name="nb.review.book_score">给书评打分</string>
+    <string name="nb.review.master_score">楼主打分：</string>
+    
+    
+    <!--find-->
     <string name="nb.fragment.find.top">排行榜</string>
     <string name="nb.fragment.find.topic">主题书单</string>
     <string name="nb.fragment.find.sort">分类</string>
@@ -53,7 +72,7 @@
     <string name="nb.splash.skip">跳过</string>
 
     <!--user:用户的信息-->
-    <string name="nb.user.user_lv">&#160;lv.%1$d</string>
+    <string name="nb.user.lv">&#160;lv.%1$d</string>
     <!--book:书籍的信息-->
     <string name="nb.book.type">[%1$s]</string>
     <string name="nb.book.recommend">%1$d 人推荐</string>

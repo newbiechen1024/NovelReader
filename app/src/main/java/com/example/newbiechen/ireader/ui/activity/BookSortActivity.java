@@ -4,11 +4,10 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.model.bean.BookSortPackageBean;
+import com.example.newbiechen.ireader.model.bean.BookSortPackage;
 import com.example.newbiechen.ireader.presenter.BookSortPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookSortContract;
 import com.example.newbiechen.ireader.ui.adapter.BookSortAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseActivity;
 import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
@@ -79,7 +78,7 @@ public class BookSortActivity extends BaseRxActivity<BookSortContract.Presenter>
 
     /***********************rewrite**********************************/
     @Override
-    public void finishRefresh(BookSortPackageBean bean) {
+    public void finishRefresh(BookSortPackage bean) {
         if (bean == null || bean.getMale().size() == 0 || bean.getFemale().size() == 0){
             mRlRefresh.showEmpty();
         }

@@ -1,17 +1,15 @@
 package com.example.newbiechen.ireader.model.local;
 
-import android.util.Log;
+import android.widget.TextView;
 
 import com.example.newbiechen.ireader.model.bean.AuthorBean;
-import com.example.newbiechen.ireader.model.bean.BillboardBean;
-import com.example.newbiechen.ireader.model.bean.BillboardPackageBean;
+import com.example.newbiechen.ireader.model.bean.BillboardPackage;
 import com.example.newbiechen.ireader.model.bean.BookBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpfulBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
-import com.example.newbiechen.ireader.model.bean.BookSortBean;
-import com.example.newbiechen.ireader.model.bean.BookSortPackageBean;
+import com.example.newbiechen.ireader.model.bean.BookSortPackage;
 import com.example.newbiechen.ireader.model.flag.BookDistillate;
 import com.example.newbiechen.ireader.model.flag.BookSort;
 import com.example.newbiechen.ireader.model.gen.AuthorBeanDao;
@@ -22,12 +20,16 @@ import com.example.newbiechen.ireader.model.gen.BookHelpsBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookReviewBeanDao;
 import com.example.newbiechen.ireader.model.gen.DaoSession;
 import com.example.newbiechen.ireader.utils.Constant;
+import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.SharedPreUtils;
+import com.example.newbiechen.ireader.utils.StringUtils;
 import com.google.gson.Gson;
 
+import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.query.Join;
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,14 +135,14 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
     }
 
     @Override
-    public void saveBookSortPackage(BookSortPackageBean bean) {
+    public void saveBookSortPackage(BookSortPackage bean) {
         String json = new Gson().toJson(bean);
         SharedPreUtils.getInstance()
                 .putString(Constant.SHARED_SAVE_BOOK_SORT,json);
     }
 
     @Override
-    public void saveBillboardPackage(BillboardPackageBean bean) {
+    public void saveBillboardPackage(BillboardPackage bean) {
         String json = new Gson().toJson(bean);
         SharedPreUtils.getInstance()
                 .putString(Constant.SHARED_SAVE_BILLBOARD,json);
@@ -158,8 +160,6 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
      * @return
      */
     public Single<List<BookCommentBean>> getBookComments(String block, String sort, int start, int limited, String distillate){
-        //数据转换
-        distillate = convertDistillate(distillate);
 
         QueryBuilder<BookCommentBean> queryBuilder = mSession.getBookCommentBeanDao()
                 .queryBuilder()
@@ -168,18 +168,7 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 .offset(start)
                 .limit(limited);
 
-        if (sort.equals(BookSort.DEFAULT.getNetName())){
-            queryBuilder.orderDesc(BookCommentBeanDao.Properties.Updated);
-        }
-        else if (sort.equals(BookSort.CREATED.getNetName())){
-            queryBuilder.orderDesc(BookCommentBeanDao.Properties.Created);
-        }
-        else if (sort.equals(BookSort.COMMENT_COUNT.getNetName())){
-            queryBuilder.orderDesc(BookCommentBeanDao.Properties.CommentCount);
-        }
-        else if (sort.equals(BookSort.HELPFUL.getNetName())){
-            queryBuilder.orderDesc(BookCommentBeanDao.Properties.LikeCount);
-        }
+        queryOrderBy(queryBuilder,BookCommentBeanDao.class,sort);
         return queryToRx(queryBuilder);
     }
 
@@ -192,31 +181,18 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
      * @return
      */
     public Single<List<BookHelpsBean>> getBookHelps(String sort, int start, int limited, String distillate){
-        distillate = convertDistillate(distillate);
         QueryBuilder<BookHelpsBean> queryBuilder = mSession.getBookHelpsBeanDao()
                 .queryBuilder()
                 .where(BookHelpsBeanDao.Properties.State.eq(distillate))
                 .offset(start)
                 .limit(limited);
 
-        if (sort.equals(BookSort.DEFAULT.getNetName())){
-            queryBuilder.orderDesc(BookHelpsBeanDao.Properties.Updated);
-        }
-        else if (sort.equals(BookSort.CREATED.getNetName())){
-            queryBuilder.orderDesc(BookHelpsBeanDao.Properties.Created);
-        }
-        else if (sort.equals(BookSort.COMMENT_COUNT.getNetName())){
-            queryBuilder.orderDesc(BookHelpsBeanDao.Properties.CommentCount);
-        }
-        else if (sort.equals(BookSort.HELPFUL.getNetName())){
-            queryBuilder.orderDesc(BookHelpsBeanDao.Properties.LikeCount);
-        }
 
+        queryOrderBy(queryBuilder,BookHelpsBean.class,sort);
         return queryToRx(queryBuilder);
     }
 
     public Single<List<BookReviewBean>> getBookReviews(String sort, String bookType, int start, int limited, String distillate){
-        distillate = convertDistillate(distillate);
         QueryBuilder<BookReviewBean> queryBuilder = mSession.getBookReviewBeanDao()
                 .queryBuilder()
                 .where(BookReviewBeanDao.Properties.State.eq(distillate))
@@ -229,44 +205,38 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
         queryBuilder.join(bookJoin,BookReviewBeanDao.Properties._id,
                 BookHelpfulBean.class,BookHelpsBeanDao.Properties._id);
 
-
-        //这里的代码复杂且重复，需要修改
-        if (sort.equals(BookSort.DEFAULT.getNetName())){
-            queryBuilder.orderDesc(BookReviewBeanDao.Properties.Updated);
-        }
-        else if (sort.equals(BookSort.CREATED.getNetName())){
-            queryBuilder.orderDesc(BookReviewBeanDao.Properties.Created);
-        }
-        else if (sort.equals(BookSort.HELPFUL.getNetName())){
+        //排序
+        if (sort.equals(BookSort.HELPFUL.getDbName())){
             queryBuilder.orderDesc(BookHelpfulBeanDao.Properties.Yes);
         }
-        else if (sort.equals(BookSort.COMMENT_COUNT.getNetName())){
-            queryBuilder.orderDesc(BookReviewBeanDao.Properties.LikeCount);
+        else {
+            queryOrderBy(queryBuilder,BookReviewBeanDao.class,sort);
         }
+
         return queryToRx(queryBuilder);
     }
 
     @Override
-    public BookSortPackageBean getBookSortPackage() {
+    public BookSortPackage getBookSortPackage() {
         String json = SharedPreUtils.getInstance()
                 .getString(Constant.SHARED_SAVE_BOOK_SORT);
         if (json == null){
             return null;
         }
         else {
-            return new Gson().fromJson(json,BookSortPackageBean.class);
+            return new Gson().fromJson(json,BookSortPackage.class);
         }
     }
 
     @Override
-    public BillboardPackageBean getBillboardPackage() {
+    public BillboardPackage getBillboardPackage() {
         String json = SharedPreUtils.getInstance()
                 .getString(Constant.SHARED_SAVE_BILLBOARD);
         if (json == null){
             return null;
         }
         else {
-            return new Gson().fromJson(json,BillboardPackageBean.class);
+            return new Gson().fromJson(json,BillboardPackage.class);
         }
     }
 
@@ -291,14 +261,31 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 .unique();
     }
 
-    private String convertDistillate(String distillate){
-        if (distillate.equals(BookDistillate.ALL.getNetName())){
-            distillate = DISTILLATE_ALL;
+    private <T> void queryOrderBy(QueryBuilder queryBuilder, Class<T> daoCls,String orderBy){
+        //获取Dao中的Properties
+        Class<?>[] innerCls = daoCls.getClasses();
+        Class<?> propertiesCls = null;
+        for (Class<?> cls : innerCls){
+            if (cls.getSimpleName().equals("Properties")){
+                propertiesCls = cls;
+                break;
+            }
         }
-        else {
-            distillate = DISTILLATE_BOUTIQUES;
+        //如果不存在则返回
+        if (propertiesCls == null) return;
+
+        //这里没有进行异常处理有点小问题
+        try {
+            Field field = propertiesCls.getField(orderBy);
+            Property property = (Property) field.get(propertiesCls);
+            queryBuilder.orderDesc(property);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            LogUtils.e(e);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            LogUtils.e(e);
         }
-        return distillate;
     }
 
     private <T> Single<List<T>> queryToRx(QueryBuilder<T> builder){

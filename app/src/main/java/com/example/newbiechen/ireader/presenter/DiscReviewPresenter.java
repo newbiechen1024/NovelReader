@@ -3,6 +3,9 @@ package com.example.newbiechen.ireader.presenter;
 import static com.example.newbiechen.ireader.utils.LogUtils.*;
 
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
+import com.example.newbiechen.ireader.model.flag.BookDistillate;
+import com.example.newbiechen.ireader.model.flag.BookSort;
+import com.example.newbiechen.ireader.model.flag.BookType;
 import com.example.newbiechen.ireader.model.local.LocalRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.DiscReviewContract;
@@ -24,12 +27,15 @@ public class DiscReviewPresenter extends RxPresenter<DiscReviewContract.View> im
     private boolean isLocalLoad = false;
 
     @Override
-    public void firstLoading(String sort, String bookType, int start, int limited, String distillate) {
+    public void firstLoading(BookSort sort, BookType bookType,
+                             int start, int limited, BookDistillate distillate) {
         //获取数据库中的数据
         Single<List<BookReviewBean>> localObserver = LocalRepository.getInstance()
-                .getBookReviews(sort, bookType, start, limited, distillate);
+                .getBookReviews(sort.getDbName(), bookType.getNetName(),
+                        start, limited, distillate.getDbName());
         Single<List<BookReviewBean>> remoteObserver = RemoteRepository.getInstance()
-                .getBookReviews(sort, bookType, start, limited, distillate);
+                .getBookReviews(sort.getNetName(), bookType.getNetName(),
+                        start, limited, distillate.getNetName());
 
         Single.concat(localObserver,remoteObserver)
                 .subscribeOn(Schedulers.io())
@@ -54,9 +60,11 @@ public class DiscReviewPresenter extends RxPresenter<DiscReviewContract.View> im
     }
 
     @Override
-    public void refreshBookReview(String sort, String bookType, int start, int limited, String distillate) {
+    public void refreshBookReview(BookSort sort, BookType bookType,
+                                  int start, int limited, BookDistillate distillate) {
         Disposable refreshDispo = RemoteRepository.getInstance()
-                .getBookReviews(sort,bookType,start,limited,distillate)
+                .getBookReviews(sort.getNetName(), bookType.getNetName(),
+                        start, limited, distillate.getNetName())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -76,19 +84,21 @@ public class DiscReviewPresenter extends RxPresenter<DiscReviewContract.View> im
     }
 
     @Override
-    public void loadingBookReview(String sort, String bookType, int start, int limited, String distillate) {
+    public void loadingBookReview(BookSort sort, BookType bookType,
+                                  int start, int limited, BookDistillate distillate) {
         if (isLocalLoad){
             Single<List<BookReviewBean>> single = LocalRepository.getInstance()
-                    .getBookReviews(sort,bookType,start,limited,distillate);
+                    .getBookReviews(sort.getDbName(), bookType.getNetName(),
+                            start, limited, distillate.getDbName());
             loadBookReview(single);
         }
 
         else{
             //单纯的加载数据
             Single<List<BookReviewBean>> single = RemoteRepository.getInstance()
-                    .getBookReviews(sort,bookType,start,limited,distillate);
+                    .getBookReviews(sort.getNetName(), bookType.getNetName(),
+                            start, limited, distillate.getNetName());
             loadBookReview(single);
-
         }
     }
 

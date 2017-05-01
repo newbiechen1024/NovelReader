@@ -1,6 +1,6 @@
 package com.example.newbiechen.ireader.presenter;
 
-import com.example.newbiechen.ireader.model.bean.BookSortPackageBean;
+import com.example.newbiechen.ireader.model.bean.BookSortPackage;
 import com.example.newbiechen.ireader.model.local.LocalRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.BookSortContract;
@@ -19,7 +19,7 @@ public class BookSortPresenter extends RxPresenter<BookSortContract.View> implem
     @Override
     public void loadSortBean() {
         //这个最好是设定一个默认时间采用Remote加载，如果Remote加载失败则采用数据中的数据。我这里先写死吧
-        BookSortPackageBean bean = LocalRepository.getInstance()
+        BookSortPackage bean = LocalRepository.getInstance()
                 .getBookSortPackage();
         if (bean == null){
             RemoteRepository.getInstance()
@@ -37,14 +37,14 @@ public class BookSortPresenter extends RxPresenter<BookSortContract.View> implem
                     )
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SingleObserver<BookSortPackageBean>() {
+                    .subscribe(new SingleObserver<BookSortPackage>() {
                         @Override
                         public void onSubscribe(Disposable d) {
                             addDisposable(d);
                         }
 
                         @Override
-                        public void onSuccess(BookSortPackageBean value) {
+                        public void onSuccess(BookSortPackage value) {
                             mView.finishRefresh(value);
                             mView.complete();
                         }

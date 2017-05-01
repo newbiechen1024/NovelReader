@@ -35,7 +35,7 @@ lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
 ```xml
 <item name="android:windowBackground">@color/transparent</item>
 ```
-其原因是:[Dialog无法占满横屏的原因](http://blog.csdn.net/u011183394/article/details/51445202)
+其原因是:[Dialog无法占满横屏的原因](http://blog.csdn.net/u011183394/article/detail/51445202)
 
 总结:
 1. Dialog的原理。(Dialog是由Window组成的，并且包含DecorView)
