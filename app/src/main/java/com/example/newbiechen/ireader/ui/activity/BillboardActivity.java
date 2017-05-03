@@ -1,5 +1,9 @@
 package com.example.newbiechen.ireader.ui.activity;
 
+import android.content.Intent;
+import android.database.DataSetObserver;
+import android.util.Log;
+import android.view.View;
 import android.widget.ExpandableListView;
 
 import com.example.newbiechen.ireader.R;
@@ -24,7 +28,8 @@ import butterknife.BindView;
  * 3. 制作数据获取类。
  */
 
-public class BillboardActivity extends BaseRxActivity<BillboardContract.Presenter> implements BillboardContract.View{
+public class BillboardActivity extends BaseRxActivity<BillboardContract.Presenter>
+        implements BillboardContract.View,ExpandableListView.OnGroupClickListener{
     private static final String TAG = "BillboardActivity";
 
     @BindView(R.id.billboard_rl_refresh)
@@ -59,6 +64,49 @@ public class BillboardActivity extends BaseRxActivity<BillboardContract.Presente
         super.initClick();
         mRlRefresh.setOnReloadingListener(
                 () -> mPresenter.loadBillboardList()
+        );
+        mElvBoy.setOnGroupClickListener(
+                (parent, v, groupPosition, id) -> {
+                    if (groupPosition != mBoyAdapter.getGroupCount()-1){
+                        BillboardBean bean = mBoyAdapter.getGroup(groupPosition);
+                        BillBookActivity.startActivity(this,bean.get_id(),
+                                bean.getMonthRank(),bean.getTotalRank());
+                        return true;
+                    }
+                    return false;
+                });
+        mElvBoy.setOnChildClickListener(
+                (parent, v, groupPosition, childPosition, id) -> {
+                    if (groupPosition == mBoyAdapter.getGroupCount()-1){
+                        BillboardBean bean = mBoyAdapter.getChild(groupPosition,childPosition);
+                        OtherBillBookActivity.startActivity(this,bean.getTitle(),bean.get_id());
+                        return true;
+                    }
+                    return false;
+                }
+        );
+
+        mElvGirl.setOnGroupClickListener(
+                (parent, v, groupPosition, id) -> {
+                    if (groupPosition != mGirlAdapter.getGroupCount()-1){
+                        BillboardBean bean = mGirlAdapter.getGroup(groupPosition);
+                        BillBookActivity.startActivity(this,bean.get_id(),
+                                bean.getMonthRank(),bean.getTotalRank());
+                        return true;
+                    }
+                    return false;
+                }
+        );
+
+        mElvGirl.setOnChildClickListener(
+                (parent, v, groupPosition, childPosition, id) -> {
+                    if (groupPosition == mGirlAdapter.getGroupCount()-1){
+                        BillboardBean bean = mGirlAdapter.getChild(groupPosition,childPosition);
+                        OtherBillBookActivity.startActivity(this,bean.getTitle(),bean.get_id());
+                        return  true;
+                    }
+                    return false;
+                }
         );
     }
 
@@ -127,5 +175,10 @@ public class BillboardActivity extends BaseRxActivity<BillboardContract.Presente
     @Override
     public void complete() {
         mRlRefresh.showFinish();
+    }
+
+    @Override
+    public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+        return false;
     }
 }

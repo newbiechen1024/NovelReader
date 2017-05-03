@@ -1,5 +1,6 @@
 package com.example.newbiechen.ireader.model.remote;
 
+import com.example.newbiechen.ireader.model.bean.BillBookPackage;
 import com.example.newbiechen.ireader.model.bean.BillboardPackage;
 import com.example.newbiechen.ireader.model.bean.BookHelpsPackage;
 import com.example.newbiechen.ireader.model.bean.BookListDetailPackage;
@@ -7,11 +8,14 @@ import com.example.newbiechen.ireader.model.bean.BookListPackage;
 import com.example.newbiechen.ireader.model.bean.BookReviewPackage;
 import com.example.newbiechen.ireader.model.bean.BookCommentPackage;
 import com.example.newbiechen.ireader.model.bean.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.BookSubSortBean;
+import com.example.newbiechen.ireader.model.bean.BookSubSortPackage;
 import com.example.newbiechen.ireader.model.bean.BookTagPackage;
 import com.example.newbiechen.ireader.model.bean.CommentDetailPackage;
 import com.example.newbiechen.ireader.model.bean.CommentsPackage;
 import com.example.newbiechen.ireader.model.bean.HelpsDetailPackage;
 import com.example.newbiechen.ireader.model.bean.ReviewDetailPackage;
+import com.example.newbiechen.ireader.model.bean.SortBookPackage;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -150,6 +154,19 @@ public interface BookApi {
     Single<BillboardPackage> getBillboardPackage();
 
     /**
+     * 获取单一排行榜
+     * 周榜：rankingId-> _id
+     * 月榜：rankingId-> monthRank
+     * 总榜：rankingId-> totalRank
+     *
+     * @return
+     */
+    @GET("/ranking/{rankingId}")
+    Single<BillBookPackage> getBillBookPackage(@Path("rankingId") String rankingId);
+
+
+    /*******************************分类***************************************/
+    /**
      * 获取分类
      *
      * @return
@@ -158,8 +175,27 @@ public interface BookApi {
     Single<BookSortPackage> getBookSortPackage();
 
     /**
-     * 主题书单
+     * 获取二级分类
+     *
+     * @return
      */
+    @GET("/cats/lv2")
+    Single<BookSubSortPackage> getBookSubSortPackage();
+
+    /**
+     * 按分类获取书籍列表
+     *
+     * @param gender male、female
+     * @param type   hot(热门)、new(新书)、reputation(好评)、over(完结)
+     * @param major  玄幻
+     * @param minor  东方玄幻、异界大陆、异界争霸、远古神话
+     * @param limit  50
+     * @return
+     */
+    @GET("/book/by-categories")
+    Single<SortBookPackage> getSortBookPackage(@Query("gender") String gender, @Query("type") String type, @Query("major") String major, @Query("minor") String minor, @Query("start") int start, @Query("limit") int limit);
+
+    /********************************主题书单**************************************8*/
 
     /**
      * 获取主题书单列表
@@ -186,8 +222,6 @@ public interface BookApi {
     @GET("/book-list/tagType")
     Single<BookTagPackage> getBookTagPackage();
 
-
-    /*****************************书单内容***********************************8*/
     /**
      * 获取书单详情
      *

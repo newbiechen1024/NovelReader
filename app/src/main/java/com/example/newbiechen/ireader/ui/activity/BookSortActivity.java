@@ -2,15 +2,21 @@ package com.example.newbiechen.ireader.ui.activity;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.model.bean.BookSortBean;
 import com.example.newbiechen.ireader.model.bean.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.BookSubSortBean;
+import com.example.newbiechen.ireader.model.bean.BookSubSortPackage;
 import com.example.newbiechen.ireader.presenter.BookSortPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookSortContract;
 import com.example.newbiechen.ireader.ui.adapter.BookSortAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -34,10 +40,19 @@ public class BookSortActivity extends BaseRxActivity<BookSortContract.Presenter>
 
     private BookSortAdapter mBoyAdapter;
     private BookSortAdapter mGirlAdapter;
+
+    private BookSubSortPackage mSubSortPackage;
     /**********************init***********************************/
     @Override
     protected int getContentId() {
         return R.layout.activity_book_sort;
+    }
+
+    @Override
+    protected void setUpToolbar(Toolbar toolbar) {
+        super.setUpToolbar(toolbar);
+        getSupportActionBar().setTitle(
+                getResources().getString(R.string.nb_fragment_find_sort));
     }
 
     @Override
@@ -66,6 +81,25 @@ public class BookSortActivity extends BaseRxActivity<BookSortContract.Presenter>
         return new BookSortPresenter();
     }
 
+    @Override
+    protected void initClick() {
+        super.initClick();
+        mBoyAdapter.setOnItemClickListener(
+                (view,pos) -> {
+                    BookSubSortBean subSortBean = mSubSortPackage.getMale().get(pos);
+                    //上传
+                    BookSortListActivity.startActivity(this,"male",subSortBean);
+                }
+        );
+        mGirlAdapter.setOnItemClickListener(
+                (view,pos) -> {
+                    BookSubSortBean subSortBean = mSubSortPackage.getFemale().get(pos);
+                    //上传
+                    BookSortListActivity.startActivity(this,"female",subSortBean);
+                }
+        );
+    }
+
     /*********************logic*******************************/
 
     @Override
@@ -73,19 +107,20 @@ public class BookSortActivity extends BaseRxActivity<BookSortContract.Presenter>
         super.processLogic();
 
         mRlRefresh.showLoading();
-        mPresenter.loadSortBean();
+        mPresenter.refreshSortBean();
     }
 
     /***********************rewrite**********************************/
     @Override
-    public void finishRefresh(BookSortPackage bean) {
-        if (bean == null || bean.getMale().size() == 0 || bean.getFemale().size() == 0){
+    public void finishRefresh(BookSortPackage sortPackage, BookSubSortPackage subSortPackage) {
+        if (sortPackage == null || sortPackage.getMale().size() == 0 || sortPackage.getFemale().size() == 0){
             mRlRefresh.showEmpty();
         }
         else {
-            mBoyAdapter.refreshItems(bean.getMale());
-            mGirlAdapter.refreshItems(bean.getFemale());
+            mBoyAdapter.refreshItems(sortPackage.getMale());
+            mGirlAdapter.refreshItems(sortPackage.getFemale());
         }
+        mSubSortPackage = subSortPackage;
     }
 
     @Override

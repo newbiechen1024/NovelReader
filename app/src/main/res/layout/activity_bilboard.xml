@@ -4,8 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
     
     <include layout="@layout/toolbar"/>
     
@@ -14,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-        
-        <com.example.newbiechen.ireader.widget.ReboundScrollView
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout
@@ -25,21 +23,21 @@
                 <TextView
                     style="@style/NB.Theme.TextAppearance.Billboard.Title"
                     android:text="男生" />
-                
+        
                 <com.example.newbiechen.ireader.widget.CustomExpandableListView
                     android:id="@+id/billboard_elv_boy"
                     style="@style/NB.Theme.Widget.DefaultExpandListView">
                 </com.example.newbiechen.ireader.widget.CustomExpandableListView>
-                
+        
                 <TextView
                     style="@style/NB.Theme.TextAppearance.Billboard.Title"
                     android:text="女生" />
-                
+        
                 <com.example.newbiechen.ireader.widget.CustomExpandableListView
                     android:id="@+id/billboard_elv_girl"
                     style="@style/NB.Theme.Widget.DefaultExpandListView">
                 </com.example.newbiechen.ireader.widget.CustomExpandableListView>
             </LinearLayout>
-        </com.example.newbiechen.ireader.widget.ReboundScrollView>
+        </ScrollView>
     </com.example.newbiechen.ireader.widget.RefreshLayout>
 </LinearLayout>

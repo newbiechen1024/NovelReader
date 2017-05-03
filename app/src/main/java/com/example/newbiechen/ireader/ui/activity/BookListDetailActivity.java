@@ -41,7 +41,7 @@ public class BookListDetailActivity extends BaseRxActivity<BookListDetailContrac
     private static final String EXTRA_DETAIL_ID = "extra_detail_id";
     @BindView(R.id.refresh_layout)
     RefreshLayout mRefreshLayout;
-    @BindView(R.id.scroll_refresh_rv_content)
+    @BindView(R.id.refresh_rv_content)
     RecyclerView mRvContent;
     /****************************/
     private BookListDetailAdapter mDetailAdapter;

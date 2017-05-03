@@ -1,12 +1,10 @@
 package com.example.newbiechen.ireader.ui.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,16 +25,11 @@ import butterknife.ButterKnife;
  */
 
 public class BillboardAdapter extends BaseExpandableListAdapter {
-
+    private static final String TAG = "BillboardAdapter";
     private List<BillboardBean> mGroups = new ArrayList<>();
     private List<BillboardBean> mChildren = new ArrayList<>();
 
-    private Animation mOpenAnim;
-    private Animation mCloseAnim;
-
     private Context mContext;
-    private boolean isOpen = false;
-
 
     public BillboardAdapter(Context context){
         mContext = context;
@@ -56,12 +49,12 @@ public class BillboardAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public Object getGroup(int groupPosition) {
+    public BillboardBean getGroup(int groupPosition) {
         return mGroups.get(groupPosition);
     }
 
     @Override
-    public Object getChild(int groupPosition, int childPosition) {
+    public BillboardBean getChild(int groupPosition, int childPosition) {
         //只有最后一个groups才有child
         if (groupPosition == mGroups.size() - 1){
             return mChildren.get(childPosition);
@@ -101,7 +94,7 @@ public class BillboardAdapter extends BaseExpandableListAdapter {
             holder = (GroupViewHolder) convertView.getTag();
         }
 
-        BillboardBean bean = (BillboardBean) getGroup(groupPosition);
+        BillboardBean bean = getGroup(groupPosition);
 
         if (bean.getCover() != null){
             Glide.with(parent.getContext())
@@ -119,36 +112,17 @@ public class BillboardAdapter extends BaseExpandableListAdapter {
 
         if (groupPosition == mGroups.size() - 1){
             holder.ivArrow.setVisibility(View.VISIBLE);
-            //设置动画
-            if (mOpenAnim == null || mCloseAnim == null){
-                mOpenAnim = AnimationUtils.loadAnimation(mContext,R.anim.rotate_0_to_180);
-                mCloseAnim = AnimationUtils.loadAnimation(mContext,R.anim.rotate_180_to_360);
-                mOpenAnim.setFillAfter(true);
-                mCloseAnim.setFillAfter(true);
+            if (isExpanded){
+                holder.ivArrow.setImageResource(R.drawable.ic_billboard_arrow_up);
             }
-            GroupViewHolder finalHolder = holder;
-            convertView.setOnTouchListener(
-                    (v, event) -> {
-                        if (!isOpen){
-                            finalHolder.ivArrow.startAnimation(mOpenAnim);
-                            isOpen = true;
-                        }
-                        else {
-                            finalHolder.ivArrow.startAnimation(mCloseAnim);
-                            isOpen = false;
-                        }
-                        return false;
-                    }
-            );
+            else if (!isExpanded){
+                holder.ivArrow.setImageResource(R.drawable.ic_billboard_arrow_down);
+            }
         }
         else {
             holder.ivArrow.setVisibility(View.GONE);
         }
         return convertView;
-    }
-
-    private void setExpandAnimation(View view){
-
     }
 
 
@@ -171,7 +145,7 @@ public class BillboardAdapter extends BaseExpandableListAdapter {
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return false;
+        return true;
     }
 
     public void addGroups(List<BillboardBean> beans){

@@ -46,6 +46,7 @@ public abstract class BaseTabActivity extends BaseActivity {
 
         TabFragmentPageAdapter adapter = new TabFragmentPageAdapter(getSupportFragmentManager());
         mVp.setAdapter(adapter);
+        mVp.setOffscreenPageLimit(3);
         mTlIndicator.setupWithViewPager(mVp);
     }
 

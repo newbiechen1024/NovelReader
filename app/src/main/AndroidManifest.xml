@@ -17,19 +17,22 @@
         </activity>
         <activity android:name=".ui.activity.BookDiscussionActivity"/>
         <activity android:name=".ui.activity.DiscDetailActivity"/>
-        <activity android:name=".ui.activity.BillboardActivity"/>
-        <activity android:name=".ui.activity.BookSortActivity"/>
-        <activity android:name=".ui.activity.SortListActivity">
+        <activity android:name=".ui.activity.BillboardActivity">
         </activity>
-        <activity android:name=".ui.activity.SearchActivity">
-        </activity>
-        <activity android:name=".ui.activity.BookListActivity">
+        <activity android:name=".ui.activity.BookSortActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activity.BookSortListActivity">
+        </activity>
+        <activity android:name=".ui.activity.SearchActivity">
+        </activity>
+        <activity android:name=".ui.activity.BookListActivity">
+        </activity>
         <activity android:name=".ui.activity.BookListDetailActivity"/>
+        <activity android:name=".ui.activity.BillBookActivity"/>
+        <activity android:name=".ui.activity.OtherBillBookActivity"/>
     </application>
-
 </manifest>

@@ -1,17 +1,20 @@
 package com.example.newbiechen.ireader.model.remote;
 
 import com.example.newbiechen.ireader.model.bean.BillboardPackage;
+import com.example.newbiechen.ireader.model.bean.BillBookBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
 import com.example.newbiechen.ireader.model.bean.BookListBean;
 import com.example.newbiechen.ireader.model.bean.BookListDetailBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
 import com.example.newbiechen.ireader.model.bean.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.BookSubSortPackage;
 import com.example.newbiechen.ireader.model.bean.BookTagBean;
 import com.example.newbiechen.ireader.model.bean.CommentBean;
 import com.example.newbiechen.ireader.model.bean.CommentDetailBean;
 import com.example.newbiechen.ireader.model.bean.HelpsDetailBean;
 import com.example.newbiechen.ireader.model.bean.ReviewDetailBean;
+import com.example.newbiechen.ireader.model.bean.SortBookBean;
 
 import java.util.List;
 
@@ -63,14 +66,6 @@ public class RemoteRepository {
                 .map(listBean-> listBean.getReviews());
     }
 
-    public Single<BillboardPackage> getBillboardPackage(){
-        return mBookApi.getBillboardPackage();
-    }
-
-    public Single<BookSortPackage> getBookSortPackage(){
-        return mBookApi.getBookSortPackage();
-    }
-
     public Single<CommentDetailBean> getCommentDetail(String detailId){
         return mBookApi.getCommentDetailPackage(detailId)
                 .map(bean -> bean.getPost());
@@ -114,6 +109,60 @@ public class RemoteRepository {
         return mBookApi.getBookCommentPackage(detailId,start+"",limit+"")
                 .map(bean -> bean.getComments());
     }
+
+    /*****************************************************************************/
+    /**
+     * 获取书籍的分类
+     * @return
+     */
+    public Single<BookSortPackage> getBookSortPackage(){
+        return mBookApi.getBookSortPackage();
+    }
+
+    /**
+     * 获取书籍的子分类
+     * @return
+     */
+    public Single<BookSubSortPackage> getBookSubSortPackage(){
+        return mBookApi.getBookSubSortPackage();
+    }
+
+    /**
+     * 根据分类获取书籍列表
+     * @param gender
+     * @param type
+     * @param major
+     * @param minor
+     * @param start
+     * @param limit
+     * @return
+     */
+    public Single<List<SortBookBean>> getSortBooks(String gender,String type,String major,String minor,int start,int limit){
+        return mBookApi.getSortBookPackage(gender, type, major, minor, start, limit)
+                .map(bean -> bean.getBooks());
+    }
+
+    /*******************************************************************************/
+
+    /**
+     * 排行榜的类型
+     * @return
+     */
+    public Single<BillboardPackage> getBillboardPackage(){
+        return mBookApi.getBillboardPackage();
+    }
+
+    /**
+     * 排行榜的书籍
+     * @param billId
+     * @return
+     */
+    public Single<List<BillBookBean>> getBillBookBriefs(String billId){
+        return mBookApi.getBillBookPackage(billId)
+                .map(bean -> bean.getRanking().getBooks());
+    }
+
+    /***********************************书单*************************************/
 
     /**
      * 获取书单列表

@@ -9,17 +9,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.model.bean.BookListBean;
+import com.example.newbiechen.ireader.model.bean.BillBookBean;
 import com.example.newbiechen.ireader.ui.base.IAdapter;
 import com.example.newbiechen.ireader.utils.Constant;
 
 import butterknife.ButterKnife;
 
 /**
- * Created by newbiechen on 17-5-1.
+ * Created by newbiechen on 17-5-3.
  */
 
-public class BookListView extends RelativeLayout implements IAdapter<BookListBean> {
+public class BillBookView extends RelativeLayout implements IAdapter<BillBookBean> {
 
     private ImageView mIvPortrait;
     private TextView mTvTitle;
@@ -27,7 +27,8 @@ public class BookListView extends RelativeLayout implements IAdapter<BookListBea
     private TextView mTvBrief;
     private TextView mTvMsg;
 
-    public BookListView(Context context) {
+
+    public BillBookView(Context context) {
         super(context);
         initView(context);
     }
@@ -45,7 +46,7 @@ public class BookListView extends RelativeLayout implements IAdapter<BookListBea
     }
 
     @Override
-    public void onBind(BookListBean value, int pos) {
+    public void onBind(BillBookBean value, int pos) {
 
         //头像
         Glide.with(getContext())
@@ -59,9 +60,9 @@ public class BookListView extends RelativeLayout implements IAdapter<BookListBea
         //作者
         mTvAuthor.setText(value.getAuthor());
         //简介
-        mTvBrief.setText(value.getDesc());
+        mTvBrief.setText(value.getShortIntro());
         //信息
-        mTvMsg.setText(getResources().getString(R.string.nb_fragment_book_list_message,
-                value.getBookCount(),value.getCollectorCount()));
+        mTvMsg.setText(getResources().getString(R.string.nb_book_message,
+                value.getLatelyFollower(),value.getRetentionRatio()));
     }
 }

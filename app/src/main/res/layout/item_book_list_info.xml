@@ -24,13 +24,10 @@
             android:layout_height="wrap_content">
 
             <ImageView
+                style="@style/NB.Theme.Widget.ImageView.Book"
                 android:id="@+id/book_list_info_iv_cover"
-                android:layout_width="45dp"
-                android:layout_height="60dp"
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_book_loading"
                 tools:src="@drawable/ic_book_loading" />
 
             <RelativeLayout
@@ -42,14 +39,9 @@
                 android:layout_toRightOf="@+id/book_list_info_iv_cover">
 
                 <TextView
+                    style="@style/NB.Theme.TextAppearance.Book.Name"
                     android:id="@+id/book_list_info_tv_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:ellipsize="end"
-                    android:singleLine="true"
-                    android:textColor="@color/nb.text.default"
-                    android:textSize="16sp"
                     tools:text="此单在手，书荒不再有！" />
 
                 <TextView

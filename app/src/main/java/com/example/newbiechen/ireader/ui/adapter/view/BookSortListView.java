@@ -9,17 +9,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.model.bean.BookListBean;
+import com.example.newbiechen.ireader.model.bean.SortBookBean;
 import com.example.newbiechen.ireader.ui.base.IAdapter;
 import com.example.newbiechen.ireader.utils.Constant;
 
 import butterknife.ButterKnife;
 
 /**
- * Created by newbiechen on 17-5-1.
+ * Created by newbiechen on 17-5-3.
  */
 
-public class BookListView extends RelativeLayout implements IAdapter<BookListBean> {
+public class BookSortListView extends RelativeLayout implements IAdapter<SortBookBean> {
 
     private ImageView mIvPortrait;
     private TextView mTvTitle;
@@ -27,7 +27,8 @@ public class BookListView extends RelativeLayout implements IAdapter<BookListBea
     private TextView mTvBrief;
     private TextView mTvMsg;
 
-    public BookListView(Context context) {
+
+    public BookSortListView(Context context) {
         super(context);
         initView(context);
     }
@@ -38,15 +39,14 @@ public class BookListView extends RelativeLayout implements IAdapter<BookListBea
 
         addView(view);
         mIvPortrait = ButterKnife.findById(view,R.id.book_brief_iv_portrait);
-        mTvTitle = ButterKnife.findById(view,R.id.book_brief_tv_title);
+        mTvTitle = ButterKnife.findById(view, R.id.book_brief_tv_title);
         mTvAuthor = ButterKnife.findById(view,R.id.book_brief_tv_author);
         mTvBrief = ButterKnife.findById(view,R.id.book_brief_tv_brief);
         mTvMsg = ButterKnife.findById(view,R.id.book_brief_tv_msg);
     }
 
     @Override
-    public void onBind(BookListBean value, int pos) {
-
+    public void onBind(SortBookBean value, int pos) {
         //头像
         Glide.with(getContext())
                 .load(Constant.IMG_BASE_URL+value.getCover())
@@ -59,9 +59,9 @@ public class BookListView extends RelativeLayout implements IAdapter<BookListBea
         //作者
         mTvAuthor.setText(value.getAuthor());
         //简介
-        mTvBrief.setText(value.getDesc());
+        mTvBrief.setText(value.getShortIntro());
         //信息
-        mTvMsg.setText(getResources().getString(R.string.nb_fragment_book_list_message,
-                value.getBookCount(),value.getCollectorCount()));
+        mTvMsg.setText(getResources().getString(R.string.nb_book_message,
+                value.getLatelyFollower(),value.getRetentionRatio()));
     }
 }

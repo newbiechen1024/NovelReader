@@ -59,8 +59,26 @@
     <style name="NB.Theme" parent="AppTheme"/>
     <!-- Widget:修改View的样式的-->
     <style name="NB.Theme.Widget"/>
+
+    <!--ExpandListView-->
+    <style name="NB.Theme.Widget.DefaultExpandListView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:childDivider">@drawable/shape_divider_dash</item>
+        <item name="android:groupIndicator">@null</item>
+        <item name="android:listSelector">@drawable/selector_common_bg</item>
+    </style>
+    
+    <!--图片-->
+    <style name="NB.Theme.Widget.ImageView"/>
+    <!---->
+    <style name="NB.Theme.Widget.ImageView.Book">
+        <item name="android:layout_width">@dimen/nb.book.cover.width</item>
+        <item name="android:layout_height">@dimen/nb.book.cover.height</item>
+        <item name="android:src">@drawable/ic_book_loading</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+    
     <!-- TextAppearance:修改 -->
     <style name="NB.Theme.TextAppearance"/>
-    
-    
 </resources>

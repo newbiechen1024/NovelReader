@@ -17,6 +17,13 @@
         <item>@string/nb.fragment.community.compose</item>
     </string-array>
 
+    <!--榜单分裂-->
+    <string-array name="nb_fragment_bill_book">
+        <item>周榜</item>
+        <item>月榜</item>
+        <item>总榜</item>
+    </string-array>
+    
     <!--fragment_title:主页的名字-->
     <string name="nb.fragment.title.bookshelf">书架</string>
     <string name="nb.fragment.title.community">社区</string>
