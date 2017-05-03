@@ -34,7 +34,7 @@ public class DiscHelpsFragment extends BaseRxFragment<DiscHelpsContract.Presente
     private static final String BUNDLE_SORT = "bundle_sort";
     private static final String BUNDLE_DISTILLATE = "bundle_distillate";
     /*****************View********************/
-    @BindView(R.id.discussion_rv_content)
+    @BindView(R.id.scroll_refresh_rv_content)
     ScrollRefreshRecyclerView mRvContent;
     /******************Object******************/
     private DiscHelpsAdapter mDiscHelpsAdapter;
@@ -47,7 +47,7 @@ public class DiscHelpsFragment extends BaseRxFragment<DiscHelpsContract.Presente
     /************************init method*********************************/
     @Override
     protected int getContentId() {
-        return R.layout.fragment_discussion;
+        return R.layout.fragment_scroll_refresh_list;
     }
 
     @Override

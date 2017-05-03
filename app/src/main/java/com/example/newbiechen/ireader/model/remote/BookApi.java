@@ -2,14 +2,18 @@ package com.example.newbiechen.ireader.model.remote;
 
 import com.example.newbiechen.ireader.model.bean.BillboardPackage;
 import com.example.newbiechen.ireader.model.bean.BookHelpsPackage;
+import com.example.newbiechen.ireader.model.bean.BookListDetailPackage;
+import com.example.newbiechen.ireader.model.bean.BookListPackage;
 import com.example.newbiechen.ireader.model.bean.BookReviewPackage;
 import com.example.newbiechen.ireader.model.bean.BookCommentPackage;
 import com.example.newbiechen.ireader.model.bean.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.BookTagPackage;
 import com.example.newbiechen.ireader.model.bean.CommentDetailPackage;
 import com.example.newbiechen.ireader.model.bean.CommentsPackage;
 import com.example.newbiechen.ireader.model.bean.HelpsDetailPackage;
 import com.example.newbiechen.ireader.model.bean.ReviewDetailPackage;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -152,4 +156,44 @@ public interface BookApi {
      */
     @GET("/cats/lv2/statistics")
     Single<BookSortPackage> getBookSortPackage();
+
+    /**
+     * 主题书单
+     */
+
+    /**
+     * 获取主题书单列表
+     * 本周最热：duration=last-seven-days&sort=collectorCount
+     * 最新发布：duration=all&sort=created
+     * 最多收藏：duration=all&sort=collectorCount
+     *
+     * 如:http://api.zhuishushenqi.com/book-list?duration=last-seven-days&sort=collectorCount&start=0&limit=20&tag=%E9%83%BD%E5%B8%82&gender=male
+     * @param tag    都市、古代、架空、重生、玄幻、网游
+     * @param gender male、female
+     * @param limit  20
+     * @return
+     */
+    @GET("/book-list")
+    Single<BookListPackage> getBookListPackage(@Query("duration") String duration, @Query("sort") String sort,
+                                             @Query("start") String start, @Query("limit") String limit,
+                                             @Query("tag") String tag, @Query("gender") String gender);
+
+    /**
+     * 获取主题书单标签列表
+     *
+     * @return
+     */
+    @GET("/book-list/tagType")
+    Single<BookTagPackage> getBookTagPackage();
+
+
+    /*****************************书单内容***********************************8*/
+    /**
+     * 获取书单详情
+     *
+     * @return
+     */
+    @GET("/book-list/{bookListId}")
+    Single<BookListDetailPackage> getBookListDetailPackage(@Path("bookListId") String bookListId);
+
 }

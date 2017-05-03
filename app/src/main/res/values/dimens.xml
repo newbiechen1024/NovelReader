@@ -26,4 +26,7 @@
     <!--text-->
     <!--二级标题-->
     <dimen name="nb.text.large">18dp</dimen>
+    <!--小标签-->
+    <dimen name="nb.text.small">13sp</dimen>
+    
 </resources>

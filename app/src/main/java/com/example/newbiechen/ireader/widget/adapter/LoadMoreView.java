@@ -78,6 +78,7 @@ public class LoadMoreView extends FrameLayout {
 
     public void setLoadMoreStatus(int status){
         mStatus = status;
+        refreshView();
     }
 
     private void setHide(){

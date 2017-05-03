@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--通用刷新列表-->
 <com.example.newbiechen.ireader.widget.RefreshLayout
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:id="@+id/disc_detail_rl_refresh"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/refresh_layout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 	<android.support.v7.widget.RecyclerView
-		android:id="@+id/disc_detail_rv_content"
+		android:id="@+id/refresh_rv_content"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 	</android.support.v7.widget.RecyclerView>

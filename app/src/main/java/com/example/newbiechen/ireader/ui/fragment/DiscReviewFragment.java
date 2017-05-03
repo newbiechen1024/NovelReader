@@ -35,7 +35,7 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
     private static final String BUNDLE_SORT = "bundle_sort";
     private static final String BUNDLE_DISTILLATE = "bundle_distillate";
     /*******************View**********************/
-    @BindView(R.id.discussion_rv_content)
+    @BindView(R.id.scroll_refresh_rv_content)
     ScrollRefreshRecyclerView mRvContent;
     /*******************Object*********************/
     private DiscReviewAdapter mDiscReviewAdapter;
@@ -49,7 +49,7 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
     /**********************init method****************************/
     @Override
     protected int getContentId() {
-        return R.layout.fragment_discussion;
+        return R.layout.fragment_scroll_refresh_list;
     }
 
     @Override

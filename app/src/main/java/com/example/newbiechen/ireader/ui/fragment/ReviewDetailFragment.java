@@ -46,9 +46,9 @@ public class ReviewDetailFragment extends BaseRxFragment<ReviewDetailContract.Pr
         implements ReviewDetailContract.View{
     private static final String TAG = "ReviewDetailFragment";
     private static final String EXTRA_DETAIL_ID = "extra_detail_id";
-    @BindView(R.id.disc_detail_rl_refresh)
+    @BindView(R.id.refresh_layout)
     RefreshLayout mRefreshLayout;
-    @BindView(R.id.disc_detail_rv_content)
+    @BindView(R.id.refresh_rv_content)
     RecyclerView mRvContent;
     /***********************************/
     private CommentAdapter mCommentAdapter;
@@ -68,7 +68,7 @@ public class ReviewDetailFragment extends BaseRxFragment<ReviewDetailContract.Pr
 
     @Override
     protected int getContentId() {
-        return R.layout.fragment_disc_detail;
+        return R.layout.fragment_refresh_list;
     }
 
     @Override

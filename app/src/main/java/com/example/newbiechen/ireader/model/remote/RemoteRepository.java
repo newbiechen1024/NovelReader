@@ -2,17 +2,17 @@ package com.example.newbiechen.ireader.model.remote;
 
 import com.example.newbiechen.ireader.model.bean.BillboardPackage;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
+import com.example.newbiechen.ireader.model.bean.BookListBean;
+import com.example.newbiechen.ireader.model.bean.BookListDetailBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
 import com.example.newbiechen.ireader.model.bean.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.BookTagBean;
 import com.example.newbiechen.ireader.model.bean.CommentBean;
 import com.example.newbiechen.ireader.model.bean.CommentDetailBean;
-import com.example.newbiechen.ireader.model.bean.CommentDetailPackage;
 import com.example.newbiechen.ireader.model.bean.HelpsDetailBean;
 import com.example.newbiechen.ireader.model.bean.ReviewDetailBean;
-import com.example.newbiechen.ireader.model.bean.ReviewDetailPackage;
 
-import java.io.File;
 import java.util.List;
 
 import io.reactivex.Single;
@@ -113,5 +113,41 @@ public class RemoteRepository {
     public Single<List<CommentBean>> getDetailBookComments(String detailId, int start, int limit){
         return mBookApi.getBookCommentPackage(detailId,start+"",limit+"")
                 .map(bean -> bean.getComments());
+    }
+
+    /**
+     * 获取书单列表
+     * @param duration
+     * @param sort
+     * @param start
+     * @param limit
+     * @param tag
+     * @param gender
+     * @return
+     */
+    public Single<List<BookListBean>> getBookLists(String duration, String sort,
+                                                   int start, int limit,
+                                                   String tag, String gender){
+        return mBookApi.getBookListPackage(duration, sort, start+"", limit+"", tag, gender)
+                .map(bean -> bean.getBookLists());
+    }
+
+    /**
+     * 获取书单的标签|类型
+     * @return
+     */
+    public Single<List<BookTagBean>> getBookTags(){
+        return mBookApi.getBookTagPackage()
+                .map(bean -> bean.getData());
+    }
+
+    /**
+     * 获取书单的详情
+     * @param detailId
+     * @return
+     */
+    public Single<BookListDetailBean> getBookListDetail(String detailId){
+        return mBookApi.getBookListDetailPackage(detailId)
+                .map(bean -> bean.getBookList());
     }
 }

@@ -20,7 +20,12 @@
     <!--list-->
     <color name="nb.divider.common">#727272</color>
     <color name="nb.divider.dash">@color/light_white</color>
-
+    <!--通用分割线细-->
+    <color name="nb.divider.narrow">#E3E3E3</color>
+    <!--通用分割线粗-->
+    <color name="nb.divider.wide">@color/light_white</color>
+    
+    
     <!--text-->
 
     <color name="nb.text.default">@color/black</color>

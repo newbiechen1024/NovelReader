@@ -29,6 +29,13 @@
     <string name="nb.fragment.community.girl">女生区</string>
     <string name="nb.fragment.community.compose">原创区</string>
     
+    <!--fragment 主题书单-->
+    <string name="nb.fragment.book_list.hot">本周最热</string>
+    <string name="nb.fragment.book_list.newest">最新发布</string>
+    <string name="nb.fragment.book_list.collect">最多收藏</string>
+    
+    <string name="nb.fragment.book_list.message">共%1$d本书 |&#160; %2$d人收藏</string>
+    
     <!--评论相关-->
     <string name="nb.comment.floor">%1$d楼&#160;</string>
     <string name="nb.comment.like_count">❤%1$d次同感</string>
@@ -76,6 +83,14 @@
     <!--book:书籍的信息-->
     <string name="nb.book.type">[%1$s]</string>
     <string name="nb.book.recommend">%1$d 人推荐</string>
+    <string name="nb.book.message">%1$d人在追 |&#160; %2$s%%读者留存</string>
+    <string name="nb.book.word">|&#160;%1$d&#160;万字</string>
     <!--sort:每类的书-->
     <string name="nb.sort.book_count">%1$d 本</string>
+    
+    <!--tag: 标签-->
+    <string name="nb.tag.all">全部</string>
+    <string name="nb.tag.sex">性别</string>
+    <string name="nb.tag.boy">男生</string>
+    <string name="nb.tag.girl">女生</string>
 </resources>

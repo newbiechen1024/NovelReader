@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--通用:下拉滑动刷新列表-->
+<com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_refresh_rv_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+</com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView>

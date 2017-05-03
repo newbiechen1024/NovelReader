@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
-
 public class MainActivity extends BaseTabActivity{
     /*************Constant**********/
     private static final int WAIT_INTERVAL = 2000;
@@ -35,6 +33,11 @@ public class MainActivity extends BaseTabActivity{
     private final ArrayList<Fragment> mFragmentList = new ArrayList<>();
     /*****************Params*********************/
     private boolean isPrepareFinish = false;
+
+    @Override
+    protected int getContentId() {
+        return R.layout.activity_base_tab;
+    }
 
     /**************init method***********************/
     @Override

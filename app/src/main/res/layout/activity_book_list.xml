@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<include layout="@layout/toolbar"/>
+	
+	<android.support.design.widget.TabLayout
+		android:id="@+id/tab_tl_indicator"
+		android:layout_width="match_parent"
+		android:background="@color/colorPrimary"
+		android:layout_height="30dp"
+		app:tabTextColor="@color/translucent_text"
+		app:tabSelectedTextColor="@color/white"
+		app:tabIndicatorColor="@color/white">
+	</android.support.design.widget.TabLayout>
+	
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="40dp"
+		android:gravity="center_vertical"
+		android:orientation="horizontal"
+		android:background="@color/nb.theme.background">
+		
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="15dp"
+			android:text="@string/nb.tag.all"
+			android:textSize="@dimen/nb.text.small"
+			android:textColor="@color/nb.text.common_h2"/>
+		
+		<android.support.v7.widget.RecyclerView
+			android:id="@+id/book_list_rv_tag_horizon"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1">
+		</android.support.v7.widget.RecyclerView>
+		
+		<CheckBox
+			android:id="@+id/book_list_cb_filter"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="15dp"
+			android:layout_marginRight="10dp"
+			android:textColor="@color/light_coffee"
+			android:button="@null"
+			android:text="筛选"/>
+		
+	</LinearLayout>
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/nb.divider.line"
+		android:background="@color/nb.divider.common"/>
+	<FrameLayout
+		android:id="@+id/book_list_fl"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
+		
+		<android.support.v4.view.ViewPager
+			android:id="@+id/tab_vp"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+		</android.support.v4.view.ViewPager>
+		
+		<android.support.v7.widget.RecyclerView
+			android:id="@+id/book_list_rv_tag_filter"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:visibility="gone"
+			android:background="@color/common_gray"
+			android:paddingLeft="10dp"
+			android:paddingRight="10dp">
+		</android.support.v7.widget.RecyclerView>
+	</FrameLayout>
+</LinearLayout>

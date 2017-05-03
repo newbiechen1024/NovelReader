@@ -33,11 +33,6 @@ public abstract class BaseTabActivity extends BaseActivity {
 
     /*****************rewrite method***************************/
     @Override
-    protected int getContentId() {
-        return R.layout.activity_base_tab;
-    }
-
-    @Override
     protected void initWidget() {
         super.initWidget();
         setUpTabLayout();

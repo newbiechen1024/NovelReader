@@ -19,8 +19,8 @@ import butterknife.ButterKnife;
 
 public class SectionView extends RelativeLayout implements IAdapter<SectionBean>{
     private View contentView;
-    ImageView mIvIcon;
-    TextView mTvName;
+    private ImageView mIvIcon;
+    private TextView mTvName;
 
     public SectionView(Context context) {
         super(context);

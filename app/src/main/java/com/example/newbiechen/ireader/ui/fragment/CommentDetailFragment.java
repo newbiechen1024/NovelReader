@@ -43,9 +43,9 @@ public class CommentDetailFragment extends BaseRxFragment<CommentDetailContract.
         implements CommentDetailContract.View{
     private static final String TAG = "CommentDetailFragment";
     private static final String EXTRA_DETAIL_ID = "extra_detail_id";
-    @BindView(R.id.disc_detail_rl_refresh)
+    @BindView(R.id.refresh_layout)
     RefreshLayout mRefreshLayout;
-    @BindView(R.id.disc_detail_rv_content)
+    @BindView(R.id.refresh_rv_content)
     RecyclerView mRvContent;
     /***********************************/
     private CommentAdapter mCommentAdapter;
@@ -65,7 +65,7 @@ public class CommentDetailFragment extends BaseRxFragment<CommentDetailContract.
 
     @Override
     protected int getContentId() {
-        return R.layout.fragment_disc_detail;
+        return R.layout.fragment_refresh_list;
     }
 
     @Override
@@ -93,7 +93,7 @@ public class CommentDetailFragment extends BaseRxFragment<CommentDetailContract.
 
         mCommentAdapter = new CommentAdapter(getContext(),new WholeAdapter.Options());
         mDetailHeader = new DetailHeader();
-       mCommentAdapter.addHeaderView(mDetailHeader);
+        mCommentAdapter.addHeaderView(mDetailHeader);
 
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvContent.addItemDecoration(new DefaultItemDecoration(getContext()));
