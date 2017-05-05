@@ -88,10 +88,16 @@ public class BookSortListActivity extends BaseTabActivity {
     }
 
     @Override
+    protected void initClick() {
+        super.initClick();
+    }
+
+    @Override
     protected void initWidget() {
         super.initWidget();
         setUpAdapter();
     }
+
     private void setUpAdapter(){
         mTagAdapter = new HorizonTagAdapter();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);

@@ -100,4 +100,13 @@
     <string name="nb.tag.sex">性别</string>
     <string name="nb.tag.boy">男生</string>
     <string name="nb.tag.girl">女生</string>
+    
+    <!--book_detail : -->
+    <string name="nb.book_detail.hot_comment">热门书评</string>
+    <string name="nb.book_detail.community">%1$s的社区</string>
+    <string name="nb.book_detail.posts_count">共有%1$d个帖子</string>
+    <string name="nb.book_detail.recommend_book_list">推荐书单</string>
+    <string name="nb.book_detail.chase_update">追更</string>
+    <string name="nb.book_detail.give_up">放弃</string>
+    <string name="nb.book_detail.start_read">开始阅读</string>
 </resources>

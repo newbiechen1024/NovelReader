@@ -1,5 +1,6 @@
 package com.example.newbiechen.ireader.model.remote;
 
+import com.example.newbiechen.ireader.model.BookDetailBean;
 import com.example.newbiechen.ireader.model.bean.BillBookPackage;
 import com.example.newbiechen.ireader.model.bean.BillboardPackage;
 import com.example.newbiechen.ireader.model.bean.BookHelpsPackage;
@@ -8,16 +9,17 @@ import com.example.newbiechen.ireader.model.bean.BookListPackage;
 import com.example.newbiechen.ireader.model.bean.BookReviewPackage;
 import com.example.newbiechen.ireader.model.bean.BookCommentPackage;
 import com.example.newbiechen.ireader.model.bean.BookSortPackage;
-import com.example.newbiechen.ireader.model.bean.BookSubSortBean;
 import com.example.newbiechen.ireader.model.bean.BookSubSortPackage;
 import com.example.newbiechen.ireader.model.bean.BookTagPackage;
 import com.example.newbiechen.ireader.model.bean.CommentDetailPackage;
 import com.example.newbiechen.ireader.model.bean.CommentsPackage;
 import com.example.newbiechen.ireader.model.bean.HelpsDetailPackage;
+import com.example.newbiechen.ireader.model.bean.HotCommentPackage;
+import com.example.newbiechen.ireader.model.bean.RecommendBookListPackage;
 import com.example.newbiechen.ireader.model.bean.ReviewDetailPackage;
 import com.example.newbiechen.ireader.model.bean.SortBookPackage;
+import com.example.newbiechen.ireader.model.bean.TagSearchPackage;
 
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -230,4 +232,45 @@ public interface BookApi {
     @GET("/book-list/{bookListId}")
     Single<BookListDetailPackage> getBookListDetailPackage(@Path("bookListId") String bookListId);
 
+
+    /*************************书籍详情**********************************/
+
+    /**
+     * 书籍热门评论
+     *
+     * @param book
+     * @return
+     */
+    @GET("/post/review/best-by-book")
+    Single<HotCommentPackage> getHotCommnentPackage(@Query("book") String book);
+
+    /**
+     * 书籍推荐书单
+     * @param bookId
+     * @param limit
+     * @return
+     */
+    @GET("/book-list/{bookId}/recommend")
+    Single<RecommendBookListPackage> getRecommendBookListPackage(@Path("bookId") String bookId, @Query("limit") String limit);
+
+    /**
+     * 书籍详情
+     * @param bookId
+     * @return
+     */
+    @GET("/book/{bookId}")
+    Single<BookDetailBean> getBookDetail(@Path("bookId") String bookId);
+
+    /**
+     * 根据书籍的 Tag 进行检索
+     * @param tags
+     * @param start
+     * @param limit
+     * @return
+     */
+    @GET("/book/by-tags")
+    Single<TagSearchPackage> getTagSearchPackage(@Query("tags") String tags, @Query("start") String start, @Query("limit") String limit);
+
+
+    /*****************************************************************************************8*/
 }

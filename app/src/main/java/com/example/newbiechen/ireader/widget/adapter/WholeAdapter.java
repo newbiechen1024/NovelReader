@@ -32,8 +32,10 @@ public abstract class WholeAdapter<T> extends BaseListAdapter<T>{
     }
 
     public WholeAdapter(Context context,Options options){
-        mLoadDelegate = new LoadMoreDelegate(context,options);
-        mFooterList.add(mLoadDelegate);
+        if (options != null){
+            mLoadDelegate = new LoadMoreDelegate(context,options);
+            mFooterList.add(mLoadDelegate);
+        }
     }
 
     @Override

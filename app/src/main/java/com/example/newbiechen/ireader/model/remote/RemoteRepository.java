@@ -1,5 +1,6 @@
 package com.example.newbiechen.ireader.model.remote;
 
+import com.example.newbiechen.ireader.model.BookDetailBean;
 import com.example.newbiechen.ireader.model.bean.BillboardPackage;
 import com.example.newbiechen.ireader.model.bean.BillBookBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
@@ -13,6 +14,8 @@ import com.example.newbiechen.ireader.model.bean.BookTagBean;
 import com.example.newbiechen.ireader.model.bean.CommentBean;
 import com.example.newbiechen.ireader.model.bean.CommentDetailBean;
 import com.example.newbiechen.ireader.model.bean.HelpsDetailBean;
+import com.example.newbiechen.ireader.model.bean.HotCommentBean;
+import com.example.newbiechen.ireader.model.bean.RecommendBookListPackage;
 import com.example.newbiechen.ireader.model.bean.ReviewDetailBean;
 import com.example.newbiechen.ireader.model.bean.SortBookBean;
 
@@ -198,5 +201,20 @@ public class RemoteRepository {
     public Single<BookListDetailBean> getBookListDetail(String detailId){
         return mBookApi.getBookListDetailPackage(detailId)
                 .map(bean -> bean.getBookList());
+    }
+
+    /***************************************书籍详情**********************************************/
+    public Single<BookDetailBean> getBookDetail(String bookId){
+        return mBookApi.getBookDetail(bookId);
+    }
+
+    public Single<List<HotCommentBean>> getHotComments(String bookId){
+        return mBookApi.getHotCommnentPackage(bookId)
+                .map(bean -> bean.getReviews());
+    }
+
+    public Single<List<BookListBean>> getRecommendBookList(String bookId,int limit){
+        return mBookApi.getRecommendBookListPackage(bookId,limit+"")
+                .map(bean -> bean.getBooklists());
     }
 }

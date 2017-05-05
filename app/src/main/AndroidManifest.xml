@@ -34,5 +34,6 @@
         <activity android:name=".ui.activity.BookListDetailActivity"/>
         <activity android:name=".ui.activity.BillBookActivity"/>
         <activity android:name=".ui.activity.OtherBillBookActivity"/>
+        <activity android:name=".ui.activity.BookDetailActivity"/>
     </application>
 </manifest>

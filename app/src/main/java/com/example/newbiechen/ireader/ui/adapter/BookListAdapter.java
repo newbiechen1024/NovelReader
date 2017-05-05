@@ -13,10 +13,12 @@ import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
  */
 
 public class BookListAdapter extends WholeAdapter<BookListBean> {
+    public BookListAdapter() {
+    }
+
     public BookListAdapter(Context context, Options options) {
         super(context, options);
     }
-
     @Override
     protected View createView(Context context, int viewType) {
         return new BookListView(context);

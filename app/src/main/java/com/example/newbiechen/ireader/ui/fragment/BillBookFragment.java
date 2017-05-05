@@ -9,6 +9,7 @@ import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BillBookBean;
 import com.example.newbiechen.ireader.presenter.BillBookPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BillBookContract;
+import com.example.newbiechen.ireader.ui.activity.BookDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.BillBookAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
@@ -58,6 +59,17 @@ public class BillBookFragment extends BaseRxFragment<BillBookContract.Presenter>
     protected void initData(Bundle savedInstanceState) {
         super.initData(savedInstanceState);
         mBillId = getArguments().getString(EXTRA_BILL_ID);
+    }
+
+    @Override
+    protected void initClick() {
+        super.initClick();
+        mBillBookAdapter.setOnItemClickListener(
+                (view, pos) -> {
+                    String bookId = mBillBookAdapter.getItem(pos).get_id();
+                    BookDetailActivity.startActivity(getContext(),bookId);
+                }
+        );
     }
 
     @Override

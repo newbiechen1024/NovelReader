@@ -66,6 +66,8 @@ public class RefreshLayout extends FrameLayout {
     }
 
     private void initView(){
+
+        //添加在empty、error、loading 情况下的布局
         mEmptyView = inflateView(mEmptyViewId);
         mErrorView = inflateView(mErrorViewId);
         mLoadingView = inflateView(mLoadingViewId);
@@ -99,6 +101,7 @@ public class RefreshLayout extends FrameLayout {
         }
     }
 
+    //除了自带的数据，保证子类只能够添加一个子View
     @Override
     public void addView(View child) {
         if (getChildCount() > 4) {
@@ -158,6 +161,7 @@ public class RefreshLayout extends FrameLayout {
         }
     }
 
+    //视图根据状态切换
     private void toggleStatus(int status){
         switch (status){
             case STATUS_LOADING:
@@ -209,6 +213,7 @@ public class RefreshLayout extends FrameLayout {
                 .inflate(id,this,false);
     }
 
+    //数据存储
     @Override
     protected Parcelable onSaveInstanceState() {
         Parcelable superParcel = super.onSaveInstanceState();
@@ -255,6 +260,7 @@ public class RefreshLayout extends FrameLayout {
         };
     }
 
+    //添加错误重新加载的监听
     public interface OnReloadingListener{
         void onReload();
     }

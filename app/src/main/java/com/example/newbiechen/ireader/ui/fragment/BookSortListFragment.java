@@ -10,6 +10,7 @@ import com.example.newbiechen.ireader.model.bean.SortBookBean;
 import com.example.newbiechen.ireader.model.flag.BookSortListType;
 import com.example.newbiechen.ireader.presenter.BookSortListPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookSortListContract;
+import com.example.newbiechen.ireader.ui.activity.BookDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.BookSortListAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
@@ -78,6 +79,17 @@ public class BookSortListFragment extends BaseRxFragment<BookSortListContract.Pr
             mMajor = getArguments().getString(EXTRA_MAJOR);
             mType = (BookSortListType) getArguments().getSerializable(EXTRA_TYPE);
         }
+    }
+
+    @Override
+    protected void initClick() {
+        super.initClick();
+        mBookSortListAdapter.setOnItemClickListener(
+                (view, pos) -> {
+                    String bookId = mBookSortListAdapter.getItem(pos).get_id();
+                    BookDetailActivity.startActivity(getContext(),bookId);
+                }
+        );
     }
 
     @Override
