@@ -1,14 +1,10 @@
 package com.example.newbiechen.ireader.presenter;
 
-import com.example.newbiechen.ireader.model.BookDetailBean;
-import com.example.newbiechen.ireader.model.bean.HotCommentBean;
+import com.example.newbiechen.ireader.model.bean.BookDetailBean;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.BookDetailContract;
 import com.example.newbiechen.ireader.ui.base.RxPresenter;
 
-import java.util.List;
-
-import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;

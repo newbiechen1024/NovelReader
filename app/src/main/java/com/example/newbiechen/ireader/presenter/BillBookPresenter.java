@@ -1,5 +1,7 @@
 package com.example.newbiechen.ireader.presenter;
 
+import android.util.Log;
+
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.BillBookContract;
 import com.example.newbiechen.ireader.ui.base.RxPresenter;
@@ -15,11 +17,11 @@ import io.reactivex.schedulers.Schedulers;
 
 public class BillBookPresenter extends RxPresenter<BillBookContract.View>
         implements BillBookContract.Presenter {
-
+    private static final String TAG = "BillBookPresenter";
     @Override
     public void refreshBookBrief(String billId) {
         Disposable remoteDisp = RemoteRepository.getInstance()
-                .getBillBookBriefs(billId)
+                .getBillBooks(billId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

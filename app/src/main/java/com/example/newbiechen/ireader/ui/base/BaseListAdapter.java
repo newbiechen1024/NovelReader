@@ -2,9 +2,9 @@ package com.example.newbiechen.ireader.ui.base;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,9 +18,9 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter {
 
     private static final String TAG = "BaseListAdapter";
     /*common statement*/
-    private final List<T> mList = new ArrayList<>();
-    private OnItemClickListener mListener;
-
+    protected final List<T> mList = new ArrayList<>();
+    protected OnItemClickListener mClickListener;
+    protected OnItemLongClickListener mLongClickListener;
 
     /************************abstract area************************/
     protected abstract View createView(Context context, int viewType);
@@ -43,11 +43,20 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter {
 
         //设置点击事件
         holder.itemView.setOnClickListener((v)->{
-            if (mListener != null){
-                mListener.onItemClick(v,position);
+            if (mClickListener != null){
+                mClickListener.onItemClick(v,position);
             }
         });
 
+        holder.itemView.setOnLongClickListener(
+                (v) -> {
+                    boolean isClicked = false;
+                    if (mLongClickListener != null){
+                        isClicked =  mLongClickListener.onItemLongClick(v,position);
+                    }
+                    return isClicked;
+                }
+        );
         view.onBind(mList.get(position),position);
     }
 
@@ -59,11 +68,20 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter {
     /******************************public area***********************************/
 
     public void setOnItemClickListener(OnItemClickListener mListener) {
-        this.mListener = mListener;
+        this.mClickListener = mListener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener mListener){
+        this.mLongClickListener = mListener;
     }
 
     public void addItem(T value){
         mList.add(value);
+        notifyDataSetChanged();
+    }
+
+    public void addItem(int index,T value){
+        mList.add(index, value);
         notifyDataSetChanged();
     }
 
@@ -94,5 +112,9 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter {
     /***************************inner class area***********************************/
     public interface OnItemClickListener{
         void onItemClick(View view, int pos);
+    }
+
+    public interface OnItemLongClickListener{
+        boolean onItemLongClick(View view, int pos);
     }
 }

@@ -1,7 +1,7 @@
 package com.example.newbiechen.ireader.presenter.contract;
 
-import com.example.newbiechen.ireader.model.bean.BookSortPackage;
-import com.example.newbiechen.ireader.model.bean.BookSubSortPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookSubSortPackage;
 import com.example.newbiechen.ireader.ui.base.BaseContract;
 
 /**

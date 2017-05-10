@@ -24,6 +24,11 @@ public class BookListPresenter extends RxPresenter<BookListContract.View> implem
 
     @Override
     public void refreshBookList(BookListType type, String tag, int start, int limited) {
+
+        if (tag.equals("全本")){
+            tag = "";
+        }
+
         Disposable refreshDispo = getBookListSingle(type, tag, start, limited)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

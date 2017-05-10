@@ -111,7 +111,7 @@ public class DiscHelpsFragment extends BaseRxFragment<DiscHelpsContract.Presente
     protected void processLogic() {
         super.processLogic();
 
-        mRvContent.autoRefresh();
+        mRvContent.startRefresh();
         mPresenter.firstLoading(mBookSort,mStart,mLimited,mDistillate);
     }
 

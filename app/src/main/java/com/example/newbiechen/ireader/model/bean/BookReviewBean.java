@@ -11,6 +11,7 @@ import com.example.newbiechen.ireader.model.gen.DaoSession;
 import com.example.newbiechen.ireader.model.gen.BookHelpfulBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookReviewBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookBeanDao;
+import com.example.newbiechen.ireader.model.gen.ReviewBookBeanDao;
 
 /**
  * Created by newbiechen on 17-4-21.
@@ -37,7 +38,7 @@ public class BookReviewBean {
 
     private String title;
     @ToOne(joinProperty = "bookId")
-    private BookBean book;
+    private ReviewBookBean book;
     @ToOne(joinProperty = "_id")
     private BookHelpfulBean helpful;
     private int likeCount;
@@ -186,16 +187,16 @@ public class BookReviewBean {
     }
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 449598324)
-    public BookBean getBook() {
+    @Generated(hash = 1574749097)
+    public ReviewBookBean getBook() {
         String __key = this.bookId;
         if (book__resolvedKey == null || book__resolvedKey != __key) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            BookBeanDao targetDao = daoSession.getBookBeanDao();
-            BookBean bookNew = targetDao.load(__key);
+            ReviewBookBeanDao targetDao = daoSession.getReviewBookBeanDao();
+            ReviewBookBean bookNew = targetDao.load(__key);
             synchronized (this) {
                 book = bookNew;
                 book__resolvedKey = __key;
@@ -205,7 +206,7 @@ public class BookReviewBean {
     }
 
     @Keep
-    public BookBean getBookBean(){
+    public ReviewBookBean getBookBean(){
         if (bookId == null){
             setBook(book);
         }
@@ -218,8 +219,8 @@ public class BookReviewBean {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 781581027)
-    public void setBook(BookBean book) {
+    @Generated(hash = 1617516334)
+    public void setBook(ReviewBookBean book) {
         synchronized (this) {
             this.book = book;
             bookId = book == null ? null : book.get_id();

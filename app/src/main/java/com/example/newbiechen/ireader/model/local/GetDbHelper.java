@@ -1,13 +1,13 @@
 package com.example.newbiechen.ireader.model.local;
 
 import com.example.newbiechen.ireader.model.bean.AuthorBean;
-import com.example.newbiechen.ireader.model.bean.BillboardPackage;
-import com.example.newbiechen.ireader.model.bean.BookBean;
+import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
+import com.example.newbiechen.ireader.model.bean.ReviewBookBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpfulBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
-import com.example.newbiechen.ireader.model.bean.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookSortPackage;
 
 import java.util.List;
 
@@ -25,6 +25,6 @@ public interface GetDbHelper {
     BillboardPackage getBillboardPackage();
 
     AuthorBean getAuthor(String id);
-    BookBean getBook(String id);
+    ReviewBookBean getBook(String id);
     BookHelpfulBean getBookHelpful(String id);
 }

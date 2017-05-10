@@ -85,7 +85,7 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
     protected void initClick() {
         super.initClick();
 
-        mRvContent.setOnRefreshListener(() -> startRefresh());
+        mRvContent.setOnRefreshListener(() -> refreshData());
         mDiscReviewAdapter.setOnLoadMoreListener(
                 () -> {
                     mPresenter.loadingBookReview(mBookSort,mBookType,mStart, mLimited,mDistillate);
@@ -107,7 +107,7 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
                             mBookSort = event.sort;
                             mBookType = event.type;
                             mDistillate = event.distillate;
-                            startRefresh();
+                            refreshData();
                         }
                 );
     }
@@ -117,12 +117,13 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
     protected void processLogic() {
         super.processLogic();
         //首次自动刷新
-        mRvContent.autoRefresh();
+        mRvContent.startRefresh();
         mPresenter.firstLoading(mBookSort,mBookType,mStart,mLimited,mDistillate);
     }
 
-    private void startRefresh(){
+    private void refreshData(){
         mStart = 0;
+        mRvContent.startRefresh();
         mPresenter.refreshBookReview(mBookSort,mBookType,mStart,mLimited,mDistillate);
     }
 

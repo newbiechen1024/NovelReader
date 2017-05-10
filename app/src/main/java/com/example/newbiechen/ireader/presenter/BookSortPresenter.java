@@ -1,17 +1,13 @@
 package com.example.newbiechen.ireader.presenter;
 
-import com.example.newbiechen.ireader.model.bean.BookSortPackage;
-import com.example.newbiechen.ireader.model.bean.BookSubSortPackage;
-import com.example.newbiechen.ireader.model.local.LocalRepository;
+import com.example.newbiechen.ireader.model.bean.packages.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookSubSortPackage;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.BookSortContract;
 import com.example.newbiechen.ireader.ui.base.RxPresenter;
 import com.example.newbiechen.ireader.utils.LogUtils;
 
-import org.reactivestreams.Subscription;
-
 import io.reactivex.Single;
-import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.BiFunction;

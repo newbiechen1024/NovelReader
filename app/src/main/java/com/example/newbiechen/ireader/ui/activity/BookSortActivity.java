@@ -5,18 +5,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.model.bean.BookSortBean;
-import com.example.newbiechen.ireader.model.bean.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookSortPackage;
 import com.example.newbiechen.ireader.model.bean.BookSubSortBean;
-import com.example.newbiechen.ireader.model.bean.BookSubSortPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookSubSortPackage;
 import com.example.newbiechen.ireader.presenter.BookSortPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookSortContract;
 import com.example.newbiechen.ireader.ui.adapter.BookSortAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
-
-import java.util.List;
 
 import butterknife.BindView;
 

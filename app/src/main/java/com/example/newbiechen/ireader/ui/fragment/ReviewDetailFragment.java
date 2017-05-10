@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.AuthorBean;
-import com.example.newbiechen.ireader.model.bean.BookBean;
+import com.example.newbiechen.ireader.model.bean.ReviewBookBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpfulBean;
 import com.example.newbiechen.ireader.model.bean.CommentBean;
 import com.example.newbiechen.ireader.model.bean.ReviewDetailBean;
@@ -224,7 +224,7 @@ public class ReviewDetailFragment extends BaseRxFragment<ReviewDetailContract.Pr
                         Log.d(TAG, "onBindView: "+bookName);
                     }
             );
-            BookBean bookBean = reviewDetailBean.getBook();
+            ReviewBookBean bookBean = reviewDetailBean.getBook();
             //书籍封面
             Glide.with(getContext())
                     .load(Constant.IMG_BASE_URL+ bookBean.getCover())

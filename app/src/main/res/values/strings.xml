@@ -17,12 +17,24 @@
         <item>@string/nb.fragment.community.compose</item>
     </string-array>
 
-    <!--榜单分裂-->
+    <!--榜单分类-->
     <string-array name="nb_fragment_bill_book">
         <item>周榜</item>
         <item>月榜</item>
         <item>总榜</item>
     </string-array>
+    
+    <!--CollBook的长按点击-->
+    <string-array name="nb_menu_coll_book">
+        <item>置顶</item>
+        <item>缓存</item>
+        <item>删除</item>
+        <item>批量管理</item>
+    </string-array>
+    
+    <!--网络相关-->
+    
+    <string name="nb.net.error_tip">似乎没有网络哦</string>
     
     <!--fragment_title:主页的名字-->
     <string name="nb.fragment.title.bookshelf">书架</string>

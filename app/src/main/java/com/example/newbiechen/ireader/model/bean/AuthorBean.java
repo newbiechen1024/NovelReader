@@ -6,6 +6,7 @@ import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * Created by newbiechen on 17-4-20.
+ * 作者
  */
 @Entity
 public class AuthorBean {

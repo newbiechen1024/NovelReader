@@ -12,8 +12,8 @@ import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
 
-import com.example.newbiechen.ireader.model.bean.BookBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpfulBean;
+import com.example.newbiechen.ireader.model.bean.ReviewBookBean;
 
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 
@@ -218,11 +218,11 @@ public class BookReviewBeanDao extends AbstractDao<BookReviewBean, String> {
             StringBuilder builder = new StringBuilder("SELECT ");
             SqlUtils.appendColumns(builder, "T", getAllColumns());
             builder.append(',');
-            SqlUtils.appendColumns(builder, "T0", daoSession.getBookBeanDao().getAllColumns());
+            SqlUtils.appendColumns(builder, "T0", daoSession.getReviewBookBeanDao().getAllColumns());
             builder.append(',');
             SqlUtils.appendColumns(builder, "T1", daoSession.getBookHelpfulBeanDao().getAllColumns());
             builder.append(" FROM BOOK_REVIEW_BEAN T");
-            builder.append(" LEFT JOIN BOOK_BEAN T0 ON T.\"BOOK_ID\"=T0.\"_ID\"");
+            builder.append(" LEFT JOIN REVIEW_BOOK_BEAN T0 ON T.\"BOOK_ID\"=T0.\"_ID\"");
             builder.append(" LEFT JOIN BOOK_HELPFUL_BEAN T1 ON T.\"_ID\"=T1.\"_ID\"");
             builder.append(' ');
             selectDeep = builder.toString();
@@ -234,9 +234,9 @@ public class BookReviewBeanDao extends AbstractDao<BookReviewBean, String> {
         BookReviewBean entity = loadCurrent(cursor, 0, lock);
         int offset = getAllColumns().length;
 
-        BookBean book = loadCurrentOther(daoSession.getBookBeanDao(), cursor, offset);
+        ReviewBookBean book = loadCurrentOther(daoSession.getReviewBookBeanDao(), cursor, offset);
         entity.setBook(book);
-        offset += daoSession.getBookBeanDao().getAllColumns().length;
+        offset += daoSession.getReviewBookBeanDao().getAllColumns().length;
 
         BookHelpfulBean helpful = loadCurrentOther(daoSession.getBookHelpfulBeanDao(), cursor, offset);
         entity.setHelpful(helpful);

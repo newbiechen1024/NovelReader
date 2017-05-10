@@ -31,6 +31,7 @@
         <item name="android:textColor">@color/nb.text.default</item>
         <!-- 字体大小-->
         <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center_vertical</item>
         <!-- 用于替换菜单的三个小白点，换成自已的图片-->
         <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow.Menu</item>
         <!--用于控制menu弹出的位置，位于toolbar的下面，而不是上面-->

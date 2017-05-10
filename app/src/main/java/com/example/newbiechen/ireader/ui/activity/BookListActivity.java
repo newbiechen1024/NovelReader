@@ -1,24 +1,22 @@
 package com.example.newbiechen.ireader.ui.activity;
 
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.CheckBox;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.RxBus;
+import com.example.newbiechen.ireader.event.BookSubSortEvent;
 import com.example.newbiechen.ireader.model.bean.BookTagBean;
 import com.example.newbiechen.ireader.model.flag.BookListType;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.ui.adapter.HorizonTagAdapter;
 import com.example.newbiechen.ireader.ui.adapter.TagGroupAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseActivity;
 import com.example.newbiechen.ireader.ui.base.BaseTabActivity;
 import com.example.newbiechen.ireader.ui.fragment.BookListFragment;
 import com.example.newbiechen.ireader.utils.LogUtils;
@@ -48,7 +46,6 @@ public class BookListActivity extends BaseTabActivity {
     /*************************************/
     private HorizonTagAdapter mHorizonTagAdapter;
     private TagGroupAdapter mTagGroupAdapter;
-
     private Animation mTopInAnim;
     private Animation mTopOutAnim;
     /************Params*******************/
@@ -77,6 +74,12 @@ public class BookListActivity extends BaseTabActivity {
     }
 
     @Override
+    protected void setUpToolbar(Toolbar toolbar) {
+        super.setUpToolbar(toolbar);
+        getSupportActionBar().setTitle("主题书单");
+    }
+
+    @Override
     protected void initWidget() {
         super.initWidget();
         initTag();
@@ -90,9 +93,7 @@ public class BookListActivity extends BaseTabActivity {
         mRvTag.setAdapter(mHorizonTagAdapter);
 
         //筛选框
-        mTagGroupAdapter = new TagGroupAdapter();
-        LinearLayoutManager groupManager = new LinearLayoutManager(this);
-        mRvFilter.setLayoutManager(groupManager);
+        mTagGroupAdapter = new TagGroupAdapter(mRvFilter,4);
         mRvFilter.setAdapter(mTagGroupAdapter);
     }
 
@@ -102,7 +103,8 @@ public class BookListActivity extends BaseTabActivity {
         //滑动的Tag
         mHorizonTagAdapter.setOnItemClickListener(
                 (view,pos) -> {
-                    mHorizonTagAdapter.setSelectedTag(pos);
+                    String bookSort = mHorizonTagAdapter.getItem(pos);
+                    RxBus.getInstance().post(new BookSubSortEvent(bookSort));
                 }
         );
 
@@ -122,6 +124,30 @@ public class BookListActivity extends BaseTabActivity {
                         mRvFilter.startAnimation(mTopOutAnim);
                         mRvFilter.setVisibility(View.GONE);
                     }
+                }
+        );
+
+        //筛选列表
+        mTagGroupAdapter.setOnChildItemListener(
+                (view, groupPos, childPos) -> {
+                    String bean = mTagGroupAdapter.getChildItem(groupPos, childPos);
+                    //是否已存在
+                    List<String> tags =  mHorizonTagAdapter.getItems();
+                    boolean isExist = false;
+                    for (int i=0; i<tags.size(); ++i){
+                        if (bean.equals(tags.get(i))){
+                            mHorizonTagAdapter.setCurrentSelected(i);
+                            mRvTag.getLayoutManager().scrollToPosition(i);
+                            isExist = true;
+                        }
+                    }
+                    if (!isExist){
+                        //添加到1的位置,保证全本的位置
+                        mHorizonTagAdapter.addItem(1,bean);
+                        mHorizonTagAdapter.setCurrentSelected(1);
+                        mRvTag.getLayoutManager().scrollToPosition(1);
+                    }
+                    mCbFilter.setChecked(false);
                 }
         );
     }
@@ -152,6 +178,7 @@ public class BookListActivity extends BaseTabActivity {
 
     private void refreshHorizonTag(List<BookTagBean> tagBeans){
         List<String> randomTag = new ArrayList<>(RANDOM_COUNT);
+        randomTag.add("全本");
         int caculator = 0;
         //随机获取4,5个。
         final int tagBeanCount = tagBeans.size();

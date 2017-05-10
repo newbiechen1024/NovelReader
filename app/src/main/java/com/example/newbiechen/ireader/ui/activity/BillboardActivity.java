@@ -1,14 +1,11 @@
 package com.example.newbiechen.ireader.ui.activity;
 
-import android.content.Intent;
-import android.database.DataSetObserver;
-import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BillboardBean;
-import com.example.newbiechen.ireader.model.bean.BillboardPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
 import com.example.newbiechen.ireader.presenter.BillboardPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BillboardContract;
 import com.example.newbiechen.ireader.ui.adapter.BillboardAdapter;

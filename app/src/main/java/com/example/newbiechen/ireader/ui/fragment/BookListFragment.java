@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.RxBus;
+import com.example.newbiechen.ireader.event.BookSubSortEvent;
 import com.example.newbiechen.ireader.model.bean.BookListBean;
 import com.example.newbiechen.ireader.model.flag.BookListType;
 import com.example.newbiechen.ireader.presenter.BookListPresenter;
@@ -20,6 +22,8 @@ import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoratio
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by newbiechen on 17-5-1.
@@ -93,11 +97,27 @@ public class BookListFragment extends BaseRxFragment<BookListContract.Presenter>
                     BookListDetailActivity.startActivity(getContext(),bean.get_id());
                 }
         );
+
+        Disposable disposable = RxBus.getInstance()
+                .toObservable(BookSubSortEvent.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        event -> {
+                            mTag = event.bookSubSort;
+                            showRefresh();
+                        }
+                );
+        addDisposable(disposable);
     }
 
     @Override
     protected void processLogic() {
         super.processLogic();
+        showRefresh();
+    }
+
+    private void showRefresh(){
+        mStart = 0;
         mRefreshLayout.showLoading();
         mPresenter.refreshBookList(mBookListType,mTag,mStart,mLimit);
     }

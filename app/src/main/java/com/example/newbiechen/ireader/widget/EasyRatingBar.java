@@ -115,6 +115,7 @@ public class EasyRatingBar extends View {
         setMeasuredDimension(widthSize,heightSize);
     }
 
+    //返回空间的高度
     private int getInitRoomHeight(){
         Drawable normal= getDrawable(mNormalWeak,mNormalRes);
         Drawable select= getDrawable(mSelectWeak,mSelectRes);
@@ -129,11 +130,20 @@ public class EasyRatingBar extends View {
         super.onDraw(canvas);
         Drawable normalDrawable = getDrawable(mNormalWeak,mNormalRes);
         Drawable selectDrawable = getDrawable(mSelectWeak,mSelectRes);
-        //测量半径
+        //绘制的半径
         int radius = Math.min(mRoomWidth, mRoomHeight)/2 - mInterval;
         //进行绘制
         for (int i=0; i<mRateCount; ++i){
-            int roomWidthCenter = mRoomWidth/2 + mRoomWidth*i;
+            int roomWidthCenter = 0;
+            if (i == 0){
+                roomWidthCenter = mRoomWidth/2-mInterval;
+            }
+            else if (i==mRateCount-1){
+                roomWidthCenter = mRoomWidth/2 + mRoomWidth*i + mInterval;
+            }
+            else {
+                roomWidthCenter = mRoomWidth/2 + mRoomWidth*i;
+            }
             int roomHeightCenter = mRoomHeight /2;
             canvas.save();
             canvas.translate(roomWidthCenter,roomHeightCenter);

@@ -1,16 +1,13 @@
 package com.example.newbiechen.ireader.model.local;
 
-import android.widget.TextView;
-
 import com.example.newbiechen.ireader.model.bean.AuthorBean;
-import com.example.newbiechen.ireader.model.bean.BillboardPackage;
-import com.example.newbiechen.ireader.model.bean.BookBean;
+import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
+import com.example.newbiechen.ireader.model.bean.ReviewBookBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpfulBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
-import com.example.newbiechen.ireader.model.bean.BookSortPackage;
-import com.example.newbiechen.ireader.model.flag.BookDistillate;
+import com.example.newbiechen.ireader.model.bean.packages.BookSortPackage;
 import com.example.newbiechen.ireader.model.flag.BookSort;
 import com.example.newbiechen.ireader.model.gen.AuthorBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookBeanDao;
@@ -22,7 +19,6 @@ import com.example.newbiechen.ireader.model.gen.DaoSession;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.SharedPreUtils;
-import com.example.newbiechen.ireader.utils.StringUtils;
 import com.google.gson.Gson;
 
 import org.greenrobot.greendao.Property;
@@ -104,7 +100,7 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 .runInTx(
                         ()->{
                             //数据转换
-                            List<BookBean> bookBeans = new ArrayList<>(beans.size());
+                            List<ReviewBookBean> bookBeans = new ArrayList<>(beans.size());
                             List<BookHelpfulBean> helpfulBeans = new ArrayList<>(beans.size());
                             for (BookReviewBean reviewBean : beans){
                                 bookBeans.add(reviewBean.getBookBean());
@@ -119,8 +115,8 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 );
     }
 
-    public void saveBooks(List<BookBean> beans){
-        mSession.getBookBeanDao()
+    public void saveBooks(List<ReviewBookBean> beans){
+        mSession.getReviewBookBeanDao()
                 .insertOrReplaceInTx(beans);
     }
 
@@ -199,7 +195,7 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 .limit(limited)
                 .offset(start);
         //多表关联
-        Join bookJoin = queryBuilder.join(BookReviewBeanDao.Properties.BookId,BookBean.class)
+        Join bookJoin = queryBuilder.join(BookReviewBeanDao.Properties.BookId,ReviewBookBean.class)
                 .where(BookBeanDao.Properties.Type.eq(bookType));
 
         queryBuilder.join(bookJoin,BookReviewBeanDao.Properties._id,
@@ -247,8 +243,8 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 .unique();
     }
 
-    public BookBean getBook(String id){
-        return mSession.getBookBeanDao()
+    public ReviewBookBean getBook(String id){
+        return mSession.getReviewBookBeanDao()
                 .queryBuilder()
                 .where(BookBeanDao.Properties._id.eq(id))
                 .unique();
@@ -363,7 +359,7 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 .limit(count)
                 .offset(100)
                 .list();
-        List<BookBean> bookBeans = new ArrayList<>(reviewBeans.size());
+        List<ReviewBookBean> bookBeans = new ArrayList<>(reviewBeans.size());
         List<BookHelpfulBean> helpfulBeans = new ArrayList<>(reviewBeans.size());
         for (BookReviewBean reviewBean : reviewBeans){
             bookBeans.add(reviewBean.getBookBean());
@@ -400,8 +396,8 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
     }
 
     @Override
-    public void deleteBooks(List<BookBean> beans) {
-        mSession.getBookBeanDao()
+    public void deleteBooks(List<ReviewBookBean> beans) {
+        mSession.getReviewBookBeanDao()
                 .deleteInTx(beans);
     }
 

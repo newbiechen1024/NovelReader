@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.RxBus;
+import com.example.newbiechen.ireader.event.BookSubSortEvent;
 import com.example.newbiechen.ireader.model.bean.BookSubSortBean;
 import com.example.newbiechen.ireader.model.flag.BookSortListType;
 import com.example.newbiechen.ireader.ui.adapter.HorizonTagAdapter;
@@ -90,6 +92,12 @@ public class BookSortListActivity extends BaseTabActivity {
     @Override
     protected void initClick() {
         super.initClick();
+        mTagAdapter.setOnItemClickListener(
+                (view,pos) -> {
+                    String subType = mTagAdapter.getItem(pos);
+                    RxBus.getInstance().post(new BookSubSortEvent(subType));
+                }
+        );
     }
 
     @Override

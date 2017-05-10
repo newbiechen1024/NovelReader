@@ -29,7 +29,7 @@ public class ReviewDetailBean {
     private String content;
     private String title;
     private String type;
-    private BookBean book;
+    private ReviewBookBean book;
     private AuthorBean author;
     private BookHelpfulBean helpful;
     private String state;
@@ -77,11 +77,11 @@ public class ReviewDetailBean {
         this.type = type;
     }
 
-    public BookBean getBook() {
+    public ReviewBookBean getBook() {
         return book;
     }
 
-    public void setBook(BookBean book) {
+    public void setBook(ReviewBookBean book) {
         this.book = book;
     }
 

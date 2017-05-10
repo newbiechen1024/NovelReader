@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +77,12 @@ public class BookListDetailActivity extends BaseRxActivity<BookListDetailContrac
         }else {
             mDetailId = getIntent().getStringExtra(EXTRA_DETAIL_ID);
         }
+    }
+
+    @Override
+    protected void setUpToolbar(Toolbar toolbar) {
+        super.setUpToolbar(toolbar);
+        getSupportActionBar().setTitle("书单详情");
     }
 
     @Override

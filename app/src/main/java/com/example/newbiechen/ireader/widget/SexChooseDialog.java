@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.RxBus;
+import com.example.newbiechen.ireader.event.RecommendBookEvent;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.SharedPreUtils;
 
@@ -57,11 +59,13 @@ public class SexChooseDialog extends Dialog {
                 //保存到SharePreference中
                 SharedPreUtils.getInstance()
                         .putString(Constant.SHARED_SEX,Constant.SEX_BOY);
+                RxBus.getInstance().post(new RecommendBookEvent("male"));
                 break;
             case R.id.choose_btn_girl:
                 //保存到SharePreference中
                 SharedPreUtils.getInstance()
                         .putString(Constant.SHARED_SEX,Constant.SEX_GIRL);
+                RxBus.getInstance().post(new RecommendBookEvent("female"));
                 break;
             default:
                 break;

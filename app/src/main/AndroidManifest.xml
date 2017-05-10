@@ -14,16 +14,16 @@
             android:theme="@style/SplashTheme">
         </activity>
         <activity android:name=".ui.activity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
         <activity android:name=".ui.activity.BookDiscussionActivity"/>
         <activity android:name=".ui.activity.DiscDetailActivity"/>
         <activity android:name=".ui.activity.BillboardActivity">
         </activity>
         <activity android:name=".ui.activity.BookSortActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
         <activity android:name=".ui.activity.BookSortListActivity">
         </activity>
@@ -35,5 +35,9 @@
         <activity android:name=".ui.activity.BillBookActivity"/>
         <activity android:name=".ui.activity.OtherBillBookActivity"/>
         <activity android:name=".ui.activity.BookDetailActivity"/>
+        
+        
+        <activity android:name=".ui.test.TestActivity">
+        </activity>
     </application>
 </manifest>

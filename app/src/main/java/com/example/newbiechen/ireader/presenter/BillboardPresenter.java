@@ -1,6 +1,6 @@
 package com.example.newbiechen.ireader.presenter;
 
-import com.example.newbiechen.ireader.model.bean.BillboardPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
 import com.example.newbiechen.ireader.model.local.LocalRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.BillboardContract;

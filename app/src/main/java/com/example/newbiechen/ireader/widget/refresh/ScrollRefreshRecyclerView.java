@@ -37,7 +37,7 @@ public class ScrollRefreshRecyclerView extends ScrollRefreshLayout {
     /**
      * 刚进入的时候不点击界面，自动刷新
      * */
-    public void autoRefresh(){
+    public void startRefresh(){
         mRecyclerView.post(()-> setRefreshing(true));
     }
 

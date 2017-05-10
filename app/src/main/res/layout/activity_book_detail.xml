@@ -100,28 +100,31 @@
 					android:layout_below="@id/book_detail_iv_cover"
 					android:layout_marginTop="10dp">
 					
-					<TextView
-						android:id="@+id/book_list_tv_chase"
+					<CheckBox
+						android:id="@+id/book_list_cb_chase"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
 						android:layout_marginRight="10dp"
 						android:gravity="center"
 						android:layout_weight="1"
+						android:button="@null"
 						android:background="@drawable/selector_btn_book_list"
 						android:clickable="true"
-						android:drawableLeft="@drawable/ic_book_list_search"
+						android:drawableLeft="@drawable/ic_book_list_add"
 						android:drawablePadding="5dp"
 						android:padding="10dp"
 						android:text="@string/nb.book_detail.chase_update"
 						android:textColor="@color/white" />
 					
-					<TextView
-						android:id="@+id/book_detail_tv_read"
+					<CheckBox
+						android:id="@+id/book_detail_cb_read"
 						android:layout_width="0dp"
 						android:layout_height="wrap_content"
 						android:layout_weight="1"
 						android:background="@drawable/selector_btn_book_list"
 						android:clickable="true"
+						android:gravity="center"
+						android:button="@null"
 						android:drawableLeft="@drawable/ic_book_list_search"
 						android:drawablePadding="5dp"
 						android:padding="10dp"

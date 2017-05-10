@@ -18,6 +18,11 @@ public class BookSortListPresenter extends RxPresenter<BookSortListContract.View
         implements BookSortListContract.Presenter{
     @Override
     public void refreshSortBook(String gender, BookSortListType type, String major, String minor, int start, int limit) {
+
+        if (minor.equals("全部")){
+            minor = "";
+        }
+
         Disposable refreshDispo = RemoteRepository.getInstance()
                 .getSortBooks(gender,type.getNetName(),major,minor,start,limit)
                 .subscribeOn(Schedulers.io())

@@ -2,6 +2,7 @@ package com.example.newbiechen.ireader.model.bean;
 
 /**
  * Created by newbiechen on 17-5-3.
+ * 排行榜的书籍 (不被公用的直接作为内部类)
  */
 
 public class BillBookBean {

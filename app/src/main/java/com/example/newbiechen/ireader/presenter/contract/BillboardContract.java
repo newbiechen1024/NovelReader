@@ -1,6 +1,6 @@
 package com.example.newbiechen.ireader.presenter.contract;
 
-import com.example.newbiechen.ireader.model.bean.BillboardPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
 import com.example.newbiechen.ireader.ui.base.BaseContract;
 
 /**

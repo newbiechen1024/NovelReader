@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.RxBus;
+import com.example.newbiechen.ireader.event.BookSubSortEvent;
 import com.example.newbiechen.ireader.model.bean.SortBookBean;
 import com.example.newbiechen.ireader.model.flag.BookSortListType;
 import com.example.newbiechen.ireader.presenter.BookSortListPresenter;
@@ -20,6 +22,8 @@ import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoratio
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by newbiechen on 17-5-3.
@@ -90,6 +94,19 @@ public class BookSortListFragment extends BaseRxFragment<BookSortListContract.Pr
                     BookDetailActivity.startActivity(getContext(),bookId);
                 }
         );
+        //子类的切换
+        Disposable disposable = RxBus.getInstance()
+                .toObservable(BookSubSortEvent.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        (event) -> {
+                            mMinor = event.bookSubSort;
+                            mRefreshLayout.showLoading();
+                            mStart = 0;
+                            mPresenter.refreshSortBook(mGender,mType,mMajor,mMinor,mStart,mLimit);
+                        }
+                );
+        addDisposable(disposable);
     }
 
     @Override
@@ -115,6 +132,10 @@ public class BookSortListFragment extends BaseRxFragment<BookSortListContract.Pr
 
     @Override
     public void finishRefresh(List<SortBookBean> beans) {
+        if (beans.isEmpty()){
+            mRefreshLayout.showEmpty();
+            return;
+        }
         mBookSortListAdapter.refreshItems(beans);
         mStart = beans.size();
     }
@@ -123,6 +144,7 @@ public class BookSortListFragment extends BaseRxFragment<BookSortListContract.Pr
     public void finishLoad(List<SortBookBean> beans) {
         mBookSortListAdapter.addItems(beans);
         mStart += beans.size();
+
     }
 
     @Override

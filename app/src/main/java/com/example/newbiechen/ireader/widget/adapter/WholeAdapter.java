@@ -2,6 +2,7 @@ package com.example.newbiechen.ireader.widget.adapter;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -150,9 +151,9 @@ public abstract class WholeAdapter<T> extends BaseListAdapter<T>{
 
 
 
-    /*  设置当GridLayout的情况下
+    //设置当GridLayout的情况下
     class WholeGridSpanSizeLookUp extends GridLayoutManager.SpanSizeLookup{
-        int maxSize = 0;
+        int maxSize = 1;
 
         public WholeGridSpanSizeLookUp(int maxSize){
             this.maxSize = maxSize;
@@ -171,7 +172,7 @@ public abstract class WholeAdapter<T> extends BaseListAdapter<T>{
             }
         }
     }
-*/
+
     public static class Options{
         @LayoutRes public int loadMoreId = R.layout.view_load_more;
         @LayoutRes public int errorId = R.layout.view_error;

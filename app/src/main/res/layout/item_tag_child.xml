@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingLeft="@dimen/nb.padding.normal"
+	android:paddingRight="@dimen/nb.padding.normal"
+	android:paddingTop="@dimen/nb.padding.small"
+	android:paddingBottom="@dimen/nb.padding.small"
+	android:background="@drawable/shape_frame_tag"
+	android:gravity="center">
+
+	<TextView
+		android:id="@+id/tag_child_btn_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="@color/color_tag_child"
+		android:textSize="@dimen/nb.text.small"/>
+</RelativeLayout>

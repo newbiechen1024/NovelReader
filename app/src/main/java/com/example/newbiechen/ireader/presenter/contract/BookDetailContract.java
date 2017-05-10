@@ -1,6 +1,6 @@
 package com.example.newbiechen.ireader.presenter.contract;
 
-import com.example.newbiechen.ireader.model.BookDetailBean;
+import com.example.newbiechen.ireader.model.bean.BookDetailBean;
 import com.example.newbiechen.ireader.model.bean.BookListBean;
 import com.example.newbiechen.ireader.model.bean.HotCommentBean;
 import com.example.newbiechen.ireader.ui.base.BaseContract;

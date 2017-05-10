@@ -1,25 +1,27 @@
 package com.example.newbiechen.ireader.model.remote;
 
-import com.example.newbiechen.ireader.model.BookDetailBean;
-import com.example.newbiechen.ireader.model.bean.BillBookPackage;
-import com.example.newbiechen.ireader.model.bean.BillboardPackage;
-import com.example.newbiechen.ireader.model.bean.BookHelpsPackage;
-import com.example.newbiechen.ireader.model.bean.BookListDetailPackage;
-import com.example.newbiechen.ireader.model.bean.BookListPackage;
-import com.example.newbiechen.ireader.model.bean.BookReviewPackage;
-import com.example.newbiechen.ireader.model.bean.BookCommentPackage;
-import com.example.newbiechen.ireader.model.bean.BookSortPackage;
-import com.example.newbiechen.ireader.model.bean.BookSubSortPackage;
-import com.example.newbiechen.ireader.model.bean.BookTagPackage;
-import com.example.newbiechen.ireader.model.bean.CommentDetailPackage;
-import com.example.newbiechen.ireader.model.bean.CommentsPackage;
-import com.example.newbiechen.ireader.model.bean.HelpsDetailPackage;
-import com.example.newbiechen.ireader.model.bean.HotCommentPackage;
-import com.example.newbiechen.ireader.model.bean.RecommendBookListPackage;
-import com.example.newbiechen.ireader.model.bean.ReviewDetailPackage;
-import com.example.newbiechen.ireader.model.bean.SortBookPackage;
-import com.example.newbiechen.ireader.model.bean.TagSearchPackage;
+import com.example.newbiechen.ireader.model.bean.BookDetailBean;
+import com.example.newbiechen.ireader.model.bean.packages.BillBookPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookHelpsPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookListDetailPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookListPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookReviewPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookCommentPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookSortPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookSubSortPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookTagPackage;
+import com.example.newbiechen.ireader.model.bean.packages.CommentDetailPackage;
+import com.example.newbiechen.ireader.model.bean.packages.CommentsPackage;
+import com.example.newbiechen.ireader.model.bean.packages.HelpsDetailPackage;
+import com.example.newbiechen.ireader.model.bean.packages.HotCommentPackage;
+import com.example.newbiechen.ireader.model.bean.packages.RecommendBookListPackage;
+import com.example.newbiechen.ireader.model.bean.packages.RecommendBookPackage;
+import com.example.newbiechen.ireader.model.bean.packages.ReviewDetailPackage;
+import com.example.newbiechen.ireader.model.bean.packages.SortBookPackage;
+import com.example.newbiechen.ireader.model.bean.packages.TagSearchPackage;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -30,6 +32,16 @@ import retrofit2.http.Query;
  */
 
 public interface BookApi {
+
+
+    /**
+     * 推荐书籍
+     * @param gender
+     * @return
+     */
+    @GET("/book/recommend")
+    Single<RecommendBookPackage> getRecommendBookPackage(@Query("gender") String gender);
+
 
     /*******************************Community *******************************************************/
     /**

@@ -134,12 +134,13 @@ public class DiscCommentFragment extends BaseRxFragment<DiscCommentContact.Prese
     protected void processLogic() {
         super.processLogic();
         //首次加载数据
-        mRvContent.autoRefresh();
-        mPresenter.firstLoading(mBlock, mBookSort, mStart, mLimited, mDistillate);
+        mRvContent.startRefresh();
+        mPresenter.firstLoading(mBlock,mBookSort,mStart,mLimited,mDistillate);
     }
 
     private void refreshData(){
         mStart = 0;
+        mRvContent.startRefresh();
         mPresenter.refreshComment(mBlock, mBookSort, mStart, mLimited, mDistillate);
     }
     /********************************rewrite method****************************************/

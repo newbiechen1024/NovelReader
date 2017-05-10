@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/selector_common_bg"
+	android:orientation="vertical">
+	
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="1px"
+		android:background="@color/nb.divider.narrow"/>
+	
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:drawableLeft="@drawable/ic_book_list_add"
+		android:drawablePadding="15dp"
+		android:gravity="center_vertical"
+		android:padding="20dp"
+		android:text="添加你喜欢的小说"
+		android:textColor="@color/nb.text.default"/>
+</LinearLayout>
