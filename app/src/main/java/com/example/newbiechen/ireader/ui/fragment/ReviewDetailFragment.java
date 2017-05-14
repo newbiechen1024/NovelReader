@@ -107,7 +107,7 @@ public class ReviewDetailFragment extends BaseRxFragment<ReviewDetailContract.Pr
     protected void initClick() {
         super.initClick();
         mCommentAdapter.setOnLoadMoreListener(
-                () -> mPresenter.loadComment(mDetailId, start, limit)
+                () ->   mPresenter.loadComment(mDetailId, start, limit)
         );
     }
 
@@ -122,12 +122,10 @@ public class ReviewDetailFragment extends BaseRxFragment<ReviewDetailContract.Pr
     @Override
     public void finishRefresh(ReviewDetailBean reviewDetail,
                               List<CommentBean> bestComments, List<CommentBean> comments) {
-        start = 0;
-        //加载
+        start = comments.size();
         mDetailHeader.setCommentDetail(reviewDetail);
         mDetailHeader.setGodCommentList(bestComments);
         mCommentAdapter.refreshItems(comments);
-        start += comments.size();
     }
 
     @Override

@@ -16,6 +16,7 @@ import com.example.newbiechen.ireader.model.gen.BookHelpfulBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookHelpsBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookReviewBeanDao;
 import com.example.newbiechen.ireader.model.gen.DaoSession;
+import com.example.newbiechen.ireader.model.gen.ReviewBookBeanDao;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.SharedPreUtils;
@@ -196,7 +197,7 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 .offset(start);
         //多表关联
         Join bookJoin = queryBuilder.join(BookReviewBeanDao.Properties.BookId,ReviewBookBean.class)
-                .where(BookBeanDao.Properties.Type.eq(bookType));
+                .where(ReviewBookBeanDao.Properties.Type.eq(bookType));
 
         queryBuilder.join(bookJoin,BookReviewBeanDao.Properties._id,
                 BookHelpfulBean.class,BookHelpsBeanDao.Properties._id);

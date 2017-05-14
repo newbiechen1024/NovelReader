@@ -21,7 +21,12 @@
         android:title="@string/nb.menu.action.message"
         android:icon="@drawable/ic_menu_tip"
         app:showAsAction="never" />
-
+    <item
+        android:id="@+id/action_download"
+        android:title="@string/nb.menu.action.download"
+        android:icon="@drawable/ic_menu_download"
+        app:showAsAction="never" />
+    
     <item
         android:id="@+id/action_sync_bookshelf"
         android:title="@string/nb.menu.action.sync"

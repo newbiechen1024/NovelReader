@@ -2,6 +2,8 @@ package com.example.newbiechen.ireader.model.bean;
 
 import android.os.Build;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
@@ -12,6 +14,9 @@ import org.greenrobot.greendao.annotation.Generated;
  */
 @Entity
 public class CollBookBean {
+    public static final int STATUS_UNCACHE = 0; //未缓存
+    public static final int STATUS_CACHING = 1; //正在缓存
+    public static final int STATUS_CACHED = 2;  //已经缓存
     /**
      * _id : 53663ae356bdc93e49004474
      * title : 逍遥派
@@ -37,6 +42,7 @@ public class CollBookBean {
     private String updated;
     private int chaptersCount;
     private String lastChapter;
+    //下面的参数都是自定义的
     private boolean isUpdate = true;  //默认为true
 
     @Generated(hash = 108770723)

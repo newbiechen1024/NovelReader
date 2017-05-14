@@ -120,18 +120,17 @@ public class CommentDetailFragment extends BaseRxFragment<CommentDetailContract.
     public void finishRefresh(CommentDetailBean commentDetail,
                               List<CommentBean> bestComments,
                               List<CommentBean> comments) {
-        start = 0;
         //加载
+        start = comments.size();
         mDetailHeader.setCommentDetail(commentDetail);
         mDetailHeader.setGodCommentList(bestComments);
         mCommentAdapter.refreshItems(comments);
-        start += comments.size();
     }
 
     @Override
-    public void finishLoad(List<CommentBean> comments) {
-        mCommentAdapter.addItems(comments);
+    public void finishLoad(List<CommentBean> comments){
         start += comments.size();
+        mCommentAdapter.addItems(comments);
     }
 
     @Override

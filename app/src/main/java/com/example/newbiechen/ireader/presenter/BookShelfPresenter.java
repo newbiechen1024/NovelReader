@@ -2,36 +2,32 @@ package com.example.newbiechen.ireader.presenter;
 
 import android.util.Log;
 
-import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BookDetailBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
+import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
 import com.example.newbiechen.ireader.model.local.CollBookManager;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
-import com.example.newbiechen.ireader.presenter.contract.BookShlefContract;
-import com.example.newbiechen.ireader.ui.activity.OtherBillBookActivity;
+import com.example.newbiechen.ireader.presenter.contract.BookShelfContract;
 import com.example.newbiechen.ireader.ui.base.RxPresenter;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.RxUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
-import io.reactivex.Observer;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by newbiechen on 17-5-8.
  */
 
-public class BookShelfPresenter extends RxPresenter<BookShlefContract.View>
-        implements BookShlefContract.Presenter {
+public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
+        implements BookShelfContract.Presenter {
     private static final String TAG = "BookShelfPresenter";
 
     @Override
@@ -49,6 +45,39 @@ public class BookShelfPresenter extends RxPresenter<BookShlefContract.View>
     }
 
     @Override
+    public void createDownloadTask(String bookId, String bookName) {
+        Disposable disposable = RemoteRepository.getInstance()
+                .getBookChapters(bookId)
+                .subscribeOn(Schedulers.io())
+                .doOnSubscribe(
+                        (d) -> mView.waitDownloadTask() //等待加载
+                )
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        beans -> {
+
+                            //生成初始的DownloadTask (后面需要修正)
+                            DownloadTaskBean task = new DownloadTaskBean();
+                            task.setTaskName(bookName);
+                            task.setBookId(bookId);
+                            task.setBookChapters(beans);
+                            task.setLastChapter(beans.size());
+
+                            //回调
+                            mView.addDownloadTask(task);
+                        }
+                        ,
+                        e -> {
+                            mView.errorDownloadTask(e.toString());
+                            LogUtils.e(e);
+                        }
+                );
+        addDisposable(disposable);
+    }
+
+
+    @Override
     public void loadRecommendBooks(String gender) {
         Disposable disposable = RemoteRepository.getInstance()
                 .getRecommendBooks(gender)
@@ -61,6 +90,8 @@ public class BookShelfPresenter extends RxPresenter<BookShlefContract.View>
                         (e) -> {
                             //提示没有网络
                             LogUtils.e(e);
+                            mView.showErrorTip(e.toString());
+                            mView.complete();
                         }
                 );
         addDisposable(disposable);
@@ -113,7 +144,7 @@ public class BookShelfPresenter extends RxPresenter<BookShlefContract.View>
                     @Override
                     public void onError(Throwable e) {
                         //提示没有网络
-                        Log.d(TAG, "onError: "+e);
+                        mView.showErrorTip(e.toString());
                         mView.complete();
                         LogUtils.e(e);
                     }

@@ -65,6 +65,6 @@ public class BookListInfoView extends RelativeLayout implements IAdapter<BookLis
         mTvMsg.setText(getResources().getString(R.string.nb_book_message,
                 value.getLatelyFollower(),value.getRetentionRatio()));
         //书籍字数
-        mTvWord.setText(getResources().getString(R.string.nb_book_word,value.getWordCount()));
+        mTvWord.setText(getResources().getString(R.string.nb_book_word,value.getWordCount()/10000));
     }
 }

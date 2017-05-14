@@ -1,6 +1,8 @@
 package com.example.newbiechen.ireader.model.remote;
 
+import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.BookDetailBean;
+import com.example.newbiechen.ireader.model.bean.ChapterInfoBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
 import com.example.newbiechen.ireader.model.bean.BillBookBean;
@@ -18,6 +20,7 @@ import com.example.newbiechen.ireader.model.bean.HelpsDetailBean;
 import com.example.newbiechen.ireader.model.bean.HotCommentBean;
 import com.example.newbiechen.ireader.model.bean.ReviewDetailBean;
 import com.example.newbiechen.ireader.model.bean.SortBookBean;
+import com.example.newbiechen.ireader.model.bean.packages.ChapterInfoPackage;
 
 import java.util.List;
 
@@ -57,6 +60,22 @@ public class RemoteRepository {
         return mBookApi.getRecommendBookPackage(gender)
                 .map(bean -> bean.getBooks());
     }
+
+    public Single<List<BookChapterBean>> getBookChapters(String bookId){
+        return mBookApi.getBookChapterPackage(bookId, "chapter")
+                .map(bean -> bean.getMixToc().getChapters());
+    }
+
+    /**
+     * 注意这里用的是同步请求
+     * @param url
+     * @return
+     */
+    public Single<ChapterInfoBean> getChapterInfo(String url){
+        return mBookApi.getChapterInfoPackage(url)
+                .map(bean -> bean.getChapter());
+    }
+
     /***********************************************************************************/
 
 

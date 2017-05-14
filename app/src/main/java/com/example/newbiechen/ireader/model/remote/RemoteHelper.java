@@ -22,9 +22,9 @@ public class RemoteHelper {
     private static final String TAG = "RemoteHelper";
     private static RemoteHelper sInstance;
     private Retrofit mRetrofit;
-
+    private OkHttpClient mOkHttpClient;
     private RemoteHelper(){
-        OkHttpClient client = new OkHttpClient.Builder()
+        mOkHttpClient = new OkHttpClient.Builder()
                 .addNetworkInterceptor(
                         new Interceptor() {
                             @Override
@@ -40,7 +40,7 @@ public class RemoteHelper {
                 ).build();
 
         mRetrofit = new Retrofit.Builder()
-                .client(client)
+                .client(mOkHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(Constant.API_BASE_URL)
@@ -60,5 +60,9 @@ public class RemoteHelper {
 
     public Retrofit getRetrofit(){
         return mRetrofit;
+    }
+
+    public OkHttpClient getOkHttpClient(){
+        return mOkHttpClient;
     }
 }

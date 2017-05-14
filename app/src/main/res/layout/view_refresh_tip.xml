@@ -6,8 +6,9 @@
 	android:layout_height="wrap_content"
 	android:background="@color/nb.scroll_refresh.tip"
 	android:gravity="center"
-	android:padding="5dp"
+	android:padding="8dp"
 	android:text="似乎没有网络哦"
 	android:textColor="@color/white"
+	android:translationZ="100dp"
 	android:visibility="gone">
 </TextView>

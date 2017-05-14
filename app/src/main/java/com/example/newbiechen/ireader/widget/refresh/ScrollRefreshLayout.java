@@ -67,8 +67,12 @@ public abstract class ScrollRefreshLayout extends SwipeRefreshLayout {
         }
     }
 
+    public void setTip(String str){
+        mTvTip.setText(str);
+    }
+
     /*自动关闭*/
-    public void showNetTip(){
+    public void showTip(){
         //自动关闭
         toggleTip();
         Runnable runnable = ()-> {
@@ -123,6 +127,8 @@ public abstract class ScrollRefreshLayout extends SwipeRefreshLayout {
         addView(view);
         //init View
         mFlContent = ButterKnife.findById(view,R.id.scroll_refresh_fl_content);
+
+
         mTvTip = ButterKnife.findById(view,R.id.scroll_refresh_tv_tip);
 
         mEmptyView = inflateId(mFlContent,mEmptyId);

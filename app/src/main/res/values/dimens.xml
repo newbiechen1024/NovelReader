@@ -26,8 +26,10 @@
     <!--text-->
     <!--二级标题-->
     <dimen name="nb.text.large">18sp</dimen>
+    
+    <dimen name="nb.text.normal">16sp</dimen>
     <!--小标签-->
-    <dimen name="nb.text.small">13sp</dimen>
+    <dimen name="nb.text.small">12sp</dimen>
     
     
     <!--书籍的封面-->

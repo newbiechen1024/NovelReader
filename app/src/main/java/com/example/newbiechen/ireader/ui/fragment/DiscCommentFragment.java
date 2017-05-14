@@ -159,7 +159,7 @@ public class DiscCommentFragment extends BaseRxFragment<DiscCommentContact.Prese
 
     @Override
     public void showErrorTip() {
-        mRvContent.showNetTip();
+        mRvContent.showTip();
     }
 
     @Override

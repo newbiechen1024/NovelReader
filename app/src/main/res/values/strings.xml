@@ -88,6 +88,7 @@
     <string name="nb.menu.action.search">搜索</string>
     <string name="nb.menu.action.login">请登录</string>
     <string name="nb.menu.action.message">我的消息</string>
+    <string name="nb.menu.action.download">下载列表</string>
     <string name="nb.menu.action.sync">同步书架</string>
     <string name="nb.menu.action.scan">扫描本地书籍</string>
     <string name="nb.menu.action.transfer">WIFI传书</string>
@@ -121,4 +122,23 @@
     <string name="nb.book_detail.chase_update">追更</string>
     <string name="nb.book_detail.give_up">放弃</string>
     <string name="nb.book_detail.start_read">开始阅读</string>
+    
+    <!--DownloadTask:书籍下载-->
+    <string name="nb.download.add_succeed">成功添加到下载列表</string>
+    <string name="nb.download.exist">该任务已存在</string>
+    <string name="nb.download.load_all">已缓存全部章节</string>
+    <string name="nb.download.progress">%1$d/%2$d</string>
+    <string name="nb.download.chapter_scope">(%1$d-%2$d章)</string>
+    
+    <string name="nb.download.start">继续</string>
+    <string name="nb.download.pause">暂停</string>
+    <string name="nb.download.wait">等待</string>
+    <string name="nb.download.error">错误</string>
+    <string name="nb.download.finish">完成</string>
+    
+    <string name="nb.download.loading">下载中</string>
+    <string name="nb.download.waiting">等待中</string>
+    <string name="nb.download.pausing">暂停中</string>
+    <string name="nb.download.complete">已完成</string>
+    <string name="nb.download.source_error">资源或网络错误</string>
 </resources>

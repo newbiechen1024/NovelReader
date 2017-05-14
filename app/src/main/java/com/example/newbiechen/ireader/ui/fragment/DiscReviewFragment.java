@@ -142,7 +142,7 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
 
     @Override
     public void showErrorTip() {
-        mRvContent.showNetTip();
+        mRvContent.showTip();
     }
 
 

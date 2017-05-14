@@ -11,6 +11,8 @@ import org.greenrobot.greendao.internal.DaoConfig;
 import com.example.newbiechen.ireader.model.bean.BookHelpfulBean;
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
+import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
+import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.AuthorBean;
 import com.example.newbiechen.ireader.model.bean.ReviewBookBean;
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
@@ -19,6 +21,8 @@ import com.example.newbiechen.ireader.model.bean.BookCommentBean;
 import com.example.newbiechen.ireader.model.gen.BookHelpfulBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookReviewBeanDao;
 import com.example.newbiechen.ireader.model.gen.CollBookBeanDao;
+import com.example.newbiechen.ireader.model.gen.DownloadTaskBeanDao;
+import com.example.newbiechen.ireader.model.gen.BookChapterBeanDao;
 import com.example.newbiechen.ireader.model.gen.AuthorBeanDao;
 import com.example.newbiechen.ireader.model.gen.ReviewBookBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookHelpsBeanDao;
@@ -36,6 +40,8 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig bookHelpfulBeanDaoConfig;
     private final DaoConfig bookReviewBeanDaoConfig;
     private final DaoConfig collBookBeanDaoConfig;
+    private final DaoConfig downloadTaskBeanDaoConfig;
+    private final DaoConfig bookChapterBeanDaoConfig;
     private final DaoConfig authorBeanDaoConfig;
     private final DaoConfig reviewBookBeanDaoConfig;
     private final DaoConfig bookHelpsBeanDaoConfig;
@@ -44,6 +50,8 @@ public class DaoSession extends AbstractDaoSession {
     private final BookHelpfulBeanDao bookHelpfulBeanDao;
     private final BookReviewBeanDao bookReviewBeanDao;
     private final CollBookBeanDao collBookBeanDao;
+    private final DownloadTaskBeanDao downloadTaskBeanDao;
+    private final BookChapterBeanDao bookChapterBeanDao;
     private final AuthorBeanDao authorBeanDao;
     private final ReviewBookBeanDao reviewBookBeanDao;
     private final BookHelpsBeanDao bookHelpsBeanDao;
@@ -62,6 +70,12 @@ public class DaoSession extends AbstractDaoSession {
         collBookBeanDaoConfig = daoConfigMap.get(CollBookBeanDao.class).clone();
         collBookBeanDaoConfig.initIdentityScope(type);
 
+        downloadTaskBeanDaoConfig = daoConfigMap.get(DownloadTaskBeanDao.class).clone();
+        downloadTaskBeanDaoConfig.initIdentityScope(type);
+
+        bookChapterBeanDaoConfig = daoConfigMap.get(BookChapterBeanDao.class).clone();
+        bookChapterBeanDaoConfig.initIdentityScope(type);
+
         authorBeanDaoConfig = daoConfigMap.get(AuthorBeanDao.class).clone();
         authorBeanDaoConfig.initIdentityScope(type);
 
@@ -77,6 +91,8 @@ public class DaoSession extends AbstractDaoSession {
         bookHelpfulBeanDao = new BookHelpfulBeanDao(bookHelpfulBeanDaoConfig, this);
         bookReviewBeanDao = new BookReviewBeanDao(bookReviewBeanDaoConfig, this);
         collBookBeanDao = new CollBookBeanDao(collBookBeanDaoConfig, this);
+        downloadTaskBeanDao = new DownloadTaskBeanDao(downloadTaskBeanDaoConfig, this);
+        bookChapterBeanDao = new BookChapterBeanDao(bookChapterBeanDaoConfig, this);
         authorBeanDao = new AuthorBeanDao(authorBeanDaoConfig, this);
         reviewBookBeanDao = new ReviewBookBeanDao(reviewBookBeanDaoConfig, this);
         bookHelpsBeanDao = new BookHelpsBeanDao(bookHelpsBeanDaoConfig, this);
@@ -85,6 +101,8 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(BookHelpfulBean.class, bookHelpfulBeanDao);
         registerDao(BookReviewBean.class, bookReviewBeanDao);
         registerDao(CollBookBean.class, collBookBeanDao);
+        registerDao(DownloadTaskBean.class, downloadTaskBeanDao);
+        registerDao(BookChapterBean.class, bookChapterBeanDao);
         registerDao(AuthorBean.class, authorBeanDao);
         registerDao(ReviewBookBean.class, reviewBookBeanDao);
         registerDao(BookHelpsBean.class, bookHelpsBeanDao);
@@ -95,6 +113,8 @@ public class DaoSession extends AbstractDaoSession {
         bookHelpfulBeanDaoConfig.clearIdentityScope();
         bookReviewBeanDaoConfig.clearIdentityScope();
         collBookBeanDaoConfig.clearIdentityScope();
+        downloadTaskBeanDaoConfig.clearIdentityScope();
+        bookChapterBeanDaoConfig.clearIdentityScope();
         authorBeanDaoConfig.clearIdentityScope();
         reviewBookBeanDaoConfig.clearIdentityScope();
         bookHelpsBeanDaoConfig.clearIdentityScope();
@@ -111,6 +131,14 @@ public class DaoSession extends AbstractDaoSession {
 
     public CollBookBeanDao getCollBookBeanDao() {
         return collBookBeanDao;
+    }
+
+    public DownloadTaskBeanDao getDownloadTaskBeanDao() {
+        return downloadTaskBeanDao;
+    }
+
+    public BookChapterBeanDao getBookChapterBeanDao() {
+        return bookChapterBeanDao;
     }
 
     public AuthorBeanDao getAuthorBeanDao() {

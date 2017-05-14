@@ -1,6 +1,7 @@
 package com.example.newbiechen.ireader.ui.adapter.view;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,6 +38,8 @@ public class CollBookView extends RelativeLayout implements IAdapter<CollBookBea
     private ImageView mIvRedDot;
     private ImageView mIvTop;
 
+
+    private CollBookBean mCollBookBean;
     public CollBookView(Context context) {
         super(context);
         init(context);
@@ -83,18 +86,23 @@ public class CollBookView extends RelativeLayout implements IAdapter<CollBookBea
             mIvRedDot.setVisibility(GONE);
         }
 
-        mView.setOnTouchListener(
-                (v, event) -> {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN){
-                        if (mIvRedDot.getVisibility() == VISIBLE){
-                            mIvRedDot.setVisibility(GONE);
-                            //更新数据
-                            value.setIsUpdate(false);
-                            CollBookManager.getInstance()
-                                    .updateCollBook(value);
-                        }
+        mCollBookBean = value;
+    }
+
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        super.setOnClickListener(
+                (v) -> {
+                    //点击更新红点，并且更新数据
+                    if (mIvRedDot.getVisibility() == VISIBLE){
+                        mIvRedDot.setVisibility(GONE);
+                        //更新数据
+                        mCollBookBean.setIsUpdate(false);
+                        CollBookManager.getInstance()
+                                .updateCollBook(mCollBookBean);
                     }
-                    return false;
+
+                    l.onClick(v);
                 }
         );
     }

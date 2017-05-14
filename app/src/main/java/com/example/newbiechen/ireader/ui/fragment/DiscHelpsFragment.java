@@ -136,7 +136,7 @@ public class DiscHelpsFragment extends BaseRxFragment<DiscHelpsContract.Presente
 
     @Override
     public void showErrorTip() {
-        mRvContent.showNetTip();
+        mRvContent.showTip();
     }
 
     @Override

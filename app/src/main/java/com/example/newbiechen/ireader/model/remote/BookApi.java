@@ -1,8 +1,11 @@
 package com.example.newbiechen.ireader.model.remote;
 
+import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.BookDetailBean;
+import com.example.newbiechen.ireader.model.bean.ChapterInfoBean;
 import com.example.newbiechen.ireader.model.bean.packages.BillBookPackage;
 import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
+import com.example.newbiechen.ireader.model.bean.packages.BookChapterPackage;
 import com.example.newbiechen.ireader.model.bean.packages.BookHelpsPackage;
 import com.example.newbiechen.ireader.model.bean.packages.BookListDetailPackage;
 import com.example.newbiechen.ireader.model.bean.packages.BookListPackage;
@@ -11,6 +14,7 @@ import com.example.newbiechen.ireader.model.bean.packages.BookCommentPackage;
 import com.example.newbiechen.ireader.model.bean.packages.BookSortPackage;
 import com.example.newbiechen.ireader.model.bean.packages.BookSubSortPackage;
 import com.example.newbiechen.ireader.model.bean.packages.BookTagPackage;
+import com.example.newbiechen.ireader.model.bean.packages.ChapterInfoPackage;
 import com.example.newbiechen.ireader.model.bean.packages.CommentDetailPackage;
 import com.example.newbiechen.ireader.model.bean.packages.CommentsPackage;
 import com.example.newbiechen.ireader.model.bean.packages.HelpsDetailPackage;
@@ -23,6 +27,7 @@ import com.example.newbiechen.ireader.model.bean.packages.TagSearchPackage;
 
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -42,6 +47,24 @@ public interface BookApi {
     @GET("/book/recommend")
     Single<RecommendBookPackage> getRecommendBookPackage(@Query("gender") String gender);
 
+
+    /**
+     * 获取书籍的章节总列表
+     * @param bookId
+     * @param view 默认参数为:chapters
+     * @return
+     */
+    @GET("/mix-atoc/{bookId}")
+    Single<BookChapterPackage> getBookChapterPackage(@Path("bookId") String bookId, @Query("view") String view);
+
+    /**
+     * 章节的内容
+     * 这里采用的是同步请求。
+     * @param url
+     * @return
+     */
+    @GET("http://chapter2.zhuishushenqi.com/chapter/{url}")
+    Single<ChapterInfoPackage> getChapterInfoPackage(@Path("url") String url);
 
     /*******************************Community *******************************************************/
     /**

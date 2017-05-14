@@ -149,7 +149,6 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
 
         mCbChase.setOnCheckedChangeListener(
                 (btn,isChecked) ->{
-                    if (mCollBookBean == null) return;
                     //点击存储
                     if (isChecked){
                         mCollBookBean.setUpdate(isChecked);
@@ -224,7 +223,7 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
         mTvPostsCount.setText(getResources().getString(R.string.nb_book_detail_posts_count,bean.getPostCount()));
         mCollBookBean = CollBookManager.getInstance().getCollBook(bean.get_id());
         //判断是否收藏
-        if (mCollBookBean == null){
+        if (mCollBookBean != null){
             mCbChase.setChecked(true);
         }
         else {

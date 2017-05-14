@@ -1,6 +1,7 @@
 package com.example.newbiechen.ireader.ui.activity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -98,12 +99,16 @@ public class MainActivity extends BaseTabActivity{
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Class<?> activityCls = null;
         switch (id) {
             case R.id.action_search:
                 break;
             case R.id.action_login:
                 break;
             case R.id.action_my_message:
+                break;
+            case R.id.action_download:
+                activityCls = DownloadActivity.class;
                 break;
             case R.id.action_sync_bookshelf:
                 break;
@@ -119,6 +124,10 @@ public class MainActivity extends BaseTabActivity{
                 break;
             default:
                 break;
+        }
+        if (activityCls != null){
+            Intent intent = new Intent(this, activityCls);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -148,7 +157,8 @@ public class MainActivity extends BaseTabActivity{
             Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
         }
         else {
-            super.onBackPressed();
+            //隐藏，但不退出(应该是如果有下载任务的时候)
+            moveTaskToBack(true);
         }
     }
 }

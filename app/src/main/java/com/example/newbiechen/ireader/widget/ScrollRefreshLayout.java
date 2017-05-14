@@ -135,6 +135,9 @@ public class ScrollRefreshLayout extends SwipeRefreshLayout {
                 .inflate(id,parent,false);
     }
 
+    public void setTip(String str){
+        mTvTip.setText(str);
+    }
 
     //除了自带的View，保证当前Layout只能添加一个子View
     @Override

@@ -120,16 +120,16 @@ public class HelpsDetailFragment extends BaseRxFragment<HelpsDetailContract.Pres
                               List<CommentBean> bestComments,
                               List<CommentBean> comments) {
         //加载
+        start = comments.size();
         mDetailHeader.setCommentDetail(helpsDetail);
         mDetailHeader.setGodCommentList(bestComments);
         mCommentAdapter.refreshItems(comments);
-        start = comments.size();
     }
 
     @Override
     public void finishLoad(List<CommentBean> comments) {
-        mCommentAdapter.addItems(comments);
         start += comments.size();
+        mCommentAdapter.addItems(comments);
     }
 
     @Override

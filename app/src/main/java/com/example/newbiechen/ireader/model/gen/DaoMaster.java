@@ -24,6 +24,8 @@ public class DaoMaster extends AbstractDaoMaster {
         BookHelpfulBeanDao.createTable(db, ifNotExists);
         BookReviewBeanDao.createTable(db, ifNotExists);
         CollBookBeanDao.createTable(db, ifNotExists);
+        DownloadTaskBeanDao.createTable(db, ifNotExists);
+        BookChapterBeanDao.createTable(db, ifNotExists);
         AuthorBeanDao.createTable(db, ifNotExists);
         ReviewBookBeanDao.createTable(db, ifNotExists);
         BookHelpsBeanDao.createTable(db, ifNotExists);
@@ -35,6 +37,8 @@ public class DaoMaster extends AbstractDaoMaster {
         BookHelpfulBeanDao.dropTable(db, ifExists);
         BookReviewBeanDao.dropTable(db, ifExists);
         CollBookBeanDao.dropTable(db, ifExists);
+        DownloadTaskBeanDao.dropTable(db, ifExists);
+        BookChapterBeanDao.dropTable(db, ifExists);
         AuthorBeanDao.dropTable(db, ifExists);
         ReviewBookBeanDao.dropTable(db, ifExists);
         BookHelpsBeanDao.dropTable(db, ifExists);
@@ -60,6 +64,8 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(BookHelpfulBeanDao.class);
         registerDaoClass(BookReviewBeanDao.class);
         registerDaoClass(CollBookBeanDao.class);
+        registerDaoClass(DownloadTaskBeanDao.class);
+        registerDaoClass(BookChapterBeanDao.class);
         registerDaoClass(AuthorBeanDao.class);
         registerDaoClass(ReviewBookBeanDao.class);
         registerDaoClass(BookHelpsBeanDao.class);

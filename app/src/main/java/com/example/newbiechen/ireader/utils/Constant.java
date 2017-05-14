@@ -2,6 +2,7 @@ package com.example.newbiechen.ireader.utils;
 
 import android.support.annotation.StringDef;
 
+import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -23,7 +24,6 @@ public class Constant {
     /*URL_BASE*/
     public static final String API_BASE_URL = "http://api.zhuishushenqi.com";
     public static final String IMG_BASE_URL = "http://statics.zhuishushenqi.com";
-
     //book type
     public static final String BOOK_TYPE_COMMENT = "normal";
     public static final String BOOK_TYPE_VOTE = "vote";
@@ -34,49 +34,9 @@ public class Constant {
     public static final String FORMAT_BOOK_DATE = "yyyy-MM-dd'T'HH:mm:ss";
     //RxBus
     public static final int MSG_SELECTOR = 1;
-
-
-    //book--block
-    @StringDef({
-            Block.COMMENT,
-            Block.ORIGIN,
-            Block.GIRL
-    }
-    )
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Block{
-        String COMMENT = "ramble";
-        String ORIGIN = "original";
-        String GIRL = "girl";
-    }
-
-    @StringDef({
-            Distillate.ALL,
-            Distillate.DISTILLATE
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Distillate {
-        String ALL = "";
-
-        String DISTILLATE = "true";
-    }
-
-    @StringDef({
-            SortType.DEFAULT,
-            SortType.COMMENT_COUNT,
-            SortType.CREATED,
-            SortType.HELPFUL
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface SortType {
-        String DEFAULT = "updated";
-
-        String CREATED = "created";
-
-        String HELPFUL = "helpful";
-
-        String COMMENT_COUNT = "comment-count";
-    }
+    //BookCachePath (因为getCachePath引用了Context，所以必须是静态变量，不能够是静态常量)
+    public static String BOOK_CACHE_PATH = FileUtils.getCachePath()+ File.separator
+            + "book_cache"+ File.separator ;
 
     //BookType
     @StringDef({
@@ -107,44 +67,14 @@ public class Constant {
         String LSJS = "lsjs";
 
         String YXJJ = "yxjj";
-
         String KHLY = "khly";
-
         String CYJK = "cyjk";
-
         String HMZC = "hmzc";
-
         String XDYQ = "xdyq";
-
         String GDYQ = "gdyq";
-
         String HXYQ = "hxyq";
-
         String DMTR = "dmtr";
     }
-
-    public static List<String> sortTypeList = new ArrayList<String>() {{
-        add(SortType.DEFAULT);
-        add(SortType.CREATED);
-        add(SortType.COMMENT_COUNT);
-        add(SortType.HELPFUL);
-    }};
-
-    public static List<String> bookTypeList = new ArrayList<String>() {{
-        add(BookType.ALL);
-        add(BookType.XHQH);
-        add(BookType.WXXX);
-        add(BookType.DSYN);
-        add(BookType.LSJS);
-        add(BookType.YXJJ);
-        add(BookType.KHLY);
-        add(BookType.CYJK);
-        add(BookType.HMZC);
-        add(BookType.XDYQ);
-        add(BookType.GDYQ);
-        add(BookType.HXYQ);
-        add(BookType.DMTR);
-    }};
 
     public static Map<String, String> bookType = new HashMap<String, String>() {{
         put("qt", "其他");

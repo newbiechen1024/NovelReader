@@ -53,7 +53,7 @@ public class HelpsDetailPresenter extends RxPresenter<HelpsDetailContract.View>
     @Override
     public void loadComment(String detailId, int start, int limit) {
         Disposable loadDispo = RemoteRepository.getInstance()
-                .getDetailComments(detailId, start, limit)
+                .getDetailBookComments(detailId, start, limit)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
