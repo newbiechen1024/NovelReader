@@ -7,6 +7,10 @@ import android.graphics.Color;
 import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+
+import com.example.newbiechen.ireader.R;
 
 /**
  * Created by newbiechen on 17-4-15.
@@ -18,19 +22,25 @@ public class StatusBarCompat
     private static final int COLOR_DEFAULT = Color.parseColor("#20000000");
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static View compat(Activity activity, int statusColor)
+    public static void compat(Activity activity, int statusColor)
     {
         //在SDK21以上，设置StatusBar的Color
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
         {
             if (statusColor != INVALID_VAL)
             {
-                activity.getWindow().setStatusBarColor(statusColor);
+                Window window = activity.getWindow();
+                //取消设置透明状态栏,使 ContentView 内容不再覆盖状态栏
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                //需要设置这个 flag 才能调用 setStatusBarColor 来设置状态栏颜色
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                //设置状态栏颜色
+                window.setStatusBarColor(statusColor);
             }
-            return null;
         }
         //在SDK19~SDK21之间设置
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+                && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
         {
             int color = COLOR_DEFAULT;
             ViewGroup contentView = (ViewGroup) activity.findViewById(android.R.id.content);
@@ -38,15 +48,16 @@ public class StatusBarCompat
             {
                 color = statusColor;
             }
-            View statusBarView = new View(activity);
-            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    getStatusBarHeight(activity));
+            View statusBarView = activity.findViewById(R.id.status_bar);
+            if (statusBarView == null){
+                statusBarView = new View(activity);
+                statusBarView.setId(R.id.status_bar);
+                ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        getStatusBarHeight(activity));
+                contentView.addView(statusBarView, lp);
+            }
             statusBarView.setBackgroundColor(color);
-            contentView.addView(statusBarView, lp);
-            return statusBarView;
         }
-        return null;
-
     }
 
     public static void compat(Activity activity)

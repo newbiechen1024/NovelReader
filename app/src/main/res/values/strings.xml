@@ -141,4 +141,15 @@
     <string name="nb.download.pausing">暂停中</string>
     <string name="nb.download.complete">已完成</string>
     <string name="nb.download.source_error">资源或网络错误</string>
+    
+    <!--mode-->
+    <string name="nb.mode.night">夜间</string>
+    <string name="nb.mode.morning">日间</string>
+    
+    <!--read-->
+    <string name="nb.read.community">社区</string>
+    <string name="nb.read.brief">简介</string>
+    <string name="nb.read.setting">设置</string>
+    <string name="nb.read.download">缓存</string>
+    <string name="nb.read.category">目录</string>
 </resources>

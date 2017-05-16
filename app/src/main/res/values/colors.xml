@@ -63,4 +63,14 @@
     <color name="nb.download.wait">#afafad</color>
     <color name="nb.download.error">#e33a35</color>
     <color name="nb.download.finish">#8bd715</color>
+    
+    <!--read-->
+    <color name="nb.read.theme.white">#ffffff</color>
+    <color name="nb.read.theme.green">#bed0cf</color>
+    <color name="nb.read.theme.yellow">#e6dbbf</color>
+    <color name="nb.read.theme.gray">#AAAAAA</color>
+    <color name="nb.read.theme.night">#000000</color>
+    <color name="nb.read.menu.bg">#191919</color>
+    <color name="nb.read.menu.text">#CBCBCB</color>
+    <color name="nb.read.bar.translucent">#88000000</color>
 </resources>

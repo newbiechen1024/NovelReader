@@ -35,4 +35,8 @@
     <!--书籍的封面-->
     <dimen name="nb.book.cover.width">45dp</dimen>
     <dimen name="nb.book.cover.height">60dp</dimen>
+    
+    <!--read-->
+    <dimen name="nb.read.text.top">16sp</dimen>
+    <dimen name="nb.read.text.bottom">12dp</dimen>
 </resources>

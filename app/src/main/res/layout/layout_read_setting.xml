@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2016 JustWayward Team
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/read_setting_ll_menu"
+    android:layout_width="match_parent"
+    android:layout_height="190dp"
+    android:clickable="true"
+    android:layout_alignParentBottom="true"
+    android:background="@color/nb.read.menu.bg"
+    android:orientation="vertical"
+    android:visibility="gone">
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+        
+        <TextView
+            android:id="@+id/read_setting_tv_font_minus"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:text="Aa-"
+            android:textSize="14dp"
+            android:background="@drawable/shape_btn_read_setting_normal"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
+        
+        <TextView
+            android:id="@+id/read_setting_tv_font"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="15"
+            android:textSize="14dp"
+            android:textColor="@color/white"/>
+        
+        <TextView
+            android:id="@+id/read_setting_tv_font_plus"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Aa+"
+            android:textSize="18dp"
+            android:background="@drawable/shape_btn_read_setting_normal"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu" />
+    
+        <View
+            android:layout_width="55dp"
+            android:layout_height="40dp"/>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+
+        <ImageView
+            android:id="@+id/read_setting_iv_brightness_minus"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_brightness_minus" />
+
+        <SeekBar
+            android:id="@+id/read_setting_sb_brightness"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:maxHeight="3dp"
+            android:minHeight="3dp"
+            android:progressDrawable="@drawable/seekbar_bg"
+            android:thumb="@drawable/seekbar_thumb"
+            android:thumbOffset="10dp" />
+
+        <ImageView
+            android:id="@+id/read_setting_iv_brightness_plus"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_brightness_plus" />
+        
+        <TextView
+            android:id="@+id/read_setting_tv_brightness_auto"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="系统"
+            android:background="@drawable/shape_btn_read_setting_normal"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/read_setting_gv_theme"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:listSelector="@android:color/transparent"
+        android:numColumns="6"
+        android:scrollbars="none" />
+</LinearLayout>

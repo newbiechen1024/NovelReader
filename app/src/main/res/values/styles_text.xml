@@ -21,4 +21,29 @@
 		<item name="android:textColor">@color/nb.text.default</item>
 		<item name="android:textSize">16sp</item>
 	</style>
+	
+	<!--ReadActivity-->
+	<style name="NB.Theme.TextAppearance.Read"></style>
+	<style name="NB.Theme.TextAppearance.Read.TopMenu">
+		<item name="android:layout_width">50dp</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:gravity">center</item>
+		<item name="android:textColor">@color/nb.read.menu.text</item>
+		<item name="android:textSize">@dimen/nb.read.text.top</item>
+	</style>
+	
+	<style name="NB.Theme.TextAppearance.Read.BottomMenu">
+		<item name="android:textColor">@color/nb.read.menu.text</item>
+		<item name="android:textSize">@dimen/nb.read.text.bottom</item>
+	</style>
+	
+	
+	<style name="NB.Theme.TextAppearance.Read.BottomMenu.Button"
+		parent="NB.Theme.TextAppearance.Read.BottomMenu">
+		<item name="android:gravity">center_horizontal|bottom</item>
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:layout_weight">1</item>
+	</style>
+	
 </resources>

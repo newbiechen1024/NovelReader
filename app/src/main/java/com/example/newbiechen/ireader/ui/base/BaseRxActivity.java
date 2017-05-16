@@ -37,7 +37,6 @@ public abstract class BaseRxActivity<T extends BaseContract.BasePresenter> exten
     protected void onDestroy() {
         super.onDestroy();
         mPresenter.detachView();
-
         if (mDisposable != null){
             mDisposable.dispose();
         }

@@ -1,5 +1,6 @@
 package com.example.newbiechen.ireader.ui.base;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 
 import com.example.newbiechen.ireader.BuildConfig;
@@ -27,7 +29,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     //ButterKnife
     private Toolbar mToolbar;
-    private View statusBarView;
 
     private Unbinder unbinder;
     /****************************abstract area*************************************/
@@ -70,20 +71,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         initData(savedInstanceState);
 
         unbinder = ButterKnife.bind(this);
-        statusBarView = StatusBarCompat.compat(this, ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        setTranslucentBar();
         initToolbar();
         initWidget();
         initClick();
         processLogic();
 
-    }
-
-    private void setTranslucentBar(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            //透明状态栏
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
     }
 
     private void initToolbar(){
@@ -122,31 +114,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return actionBar;
     }
 
-/*    protected void showStatusBar(){
-        WindowManager.LayoutParams attrs = getWindow().getAttributes();
-        attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        getWindow().setAttributes(attrs);
-    }
-
-    //设置导航栏是否显示
-
-    protected void hideStatusBar(){
-        WindowManager.LayoutParams attrs = getWindow().getAttributes();
-        attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        getWindow().setAttributes(attrs);
-    }*/
-
     protected void setStatusBarColor(int statusColor){
-        //在SDK21以上，设置StatusBar的Color
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            if (statusColor != INVALID_VAL)
-            {
-                getWindow().setStatusBarColor(statusColor);
-            }
-        }
-        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT && statusBarView != null){
-            statusBarView.setBackgroundColor(statusColor);
-        }
+        StatusBarCompat.compat(this, ContextCompat.getColor(this, statusColor));
     }
 }

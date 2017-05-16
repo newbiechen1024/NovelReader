@@ -33,5 +33,5 @@
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:textColor="@color/black"
-        android:src="@drawable/ic_arrow"/>
+        android:src="@drawable/ic_arrow_enter"/>
 </RelativeLayout>
