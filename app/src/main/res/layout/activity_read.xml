@@ -174,11 +174,11 @@
             android:textSize="20sp"
             android:layout_marginBottom="8dp"/>
         
-        <RelativeLayout
-            android:id="@+id/read_rl_category"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/read_rv_category"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-        </RelativeLayout>
+        </android.support.v7.widget.RecyclerView>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

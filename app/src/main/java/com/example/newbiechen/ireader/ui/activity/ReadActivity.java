@@ -2,7 +2,11 @@ package com.example.newbiechen.ireader.ui.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -18,11 +22,16 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.model.bean.BookChapterBean;
+import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.presenter.ReadPresenter;
 import com.example.newbiechen.ireader.presenter.contract.ReadContract;
+import com.example.newbiechen.ireader.ui.adapter.CategoryAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
 import com.example.newbiechen.ireader.utils.StatusBarCompat;
 import com.example.newbiechen.ireader.utils.SystemBarUtils;
+
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -35,6 +44,9 @@ import static android.view.View.VISIBLE;
 
 public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
  implements ReadContract.View{
+    private static final String EXTRA_COLL_BOOK = "extra_coll_book";
+    private static final String EXTRA_BOOK_NAME = "extra_book_name";
+    private static final String EXTRA_BOOK_ID = "extra_book_id";
 
     @BindView(R.id.read_dl_slide)
     DrawerLayout mDlSlide;
@@ -90,16 +102,32 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     TextView mTvBrightnessAuto;
     @BindView(R.id.read_setting_gv_theme)
     GridView mGvTheme;
+    @BindView(R.id.read_rv_category)
+    RecyclerView mRvCategory;
 
     /*****************view******************/
     private Animation mTopInAnim;
     private Animation mTopOutAnim;
     private Animation mBottomInAnim;
     private Animation mBottomOutAnim;
+
+    private CollBookBean mCollBook;
+    private CategoryAdapter mCategoryAdapter;
     /***************params*****************/
+    private boolean isFromBookShelf = false;
+    private String mBookName;
+    private String mBookId;
 
-    public static void startActivity(Context context){
+    //书架页进入
+    public static void startActivity(Context context, CollBookBean bean){
+        context.startActivity(new Intent(context,ReadActivity.class)
+        .putExtra(EXTRA_COLL_BOOK,bean));
+    }
 
+    public static void startActivity(Context context,String bookId,String bookName){
+        context.startActivity(new Intent(context,ReadActivity.class)
+        .putExtra(EXTRA_BOOK_ID,bookId)
+        .putExtra(EXTRA_BOOK_NAME,bookName));
     }
 
     @Override
@@ -113,10 +141,34 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     }
 
     @Override
+    protected void initData(Bundle savedInstanceState) {
+        super.initData(savedInstanceState);
+        mCollBook = (CollBookBean) getIntent().getSerializableExtra(EXTRA_COLL_BOOK);
+
+        if (mCollBook != null){
+            isFromBookShelf = true;
+            mBookId = mCollBook.get_id();
+            mBookName = mCollBook.getTitle();
+        }
+        else {
+            isFromBookShelf = false;
+            mBookId = getIntent().getStringExtra(EXTRA_BOOK_ID);
+            mBookName = getIntent().getStringExtra(EXTRA_BOOK_NAME);
+        }
+    }
+
+    @Override
     protected void initWidget() {
         super.initWidget();
         //禁止滑动展示DrawerLayout
         mDlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        setUpAdapter();
+    }
+
+    private void setUpAdapter(){
+        mCategoryAdapter = new CategoryAdapter();
+        mRvCategory.setLayoutManager(new LinearLayoutManager(this));
+        mRvCategory.setAdapter(mCategoryAdapter);
     }
 
     @Override
@@ -245,6 +297,19 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     }
 
     @Override
+    protected void processLogic() {
+        super.processLogic();
+        //初始化目录
+        if (mCollBook != null){
+            mCategoryAdapter.refreshItems(mCollBook.getBookChapterList());
+        }
+        else{
+            //从网络中加载
+            mPresenter.loadCategory(mBookId);
+        }
+    }
+
+    @Override
     public void showError() {
 
     }
@@ -252,5 +317,11 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @Override
     public void complete() {
 
+    }
+
+    @Override
+    public void showCategory(List<BookChapterBean> bookChapterList) {
+        //显示
+        mCategoryAdapter.refreshItems(bookChapterList);
     }
 }

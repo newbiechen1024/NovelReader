@@ -38,6 +38,8 @@ public class CollBookBeanDao extends AbstractDao<CollBookBean, String> {
         public final static Property IsUpdate = new Property(11, boolean.class, "isUpdate", false, "IS_UPDATE");
     }
 
+    private DaoSession daoSession;
+
 
     public CollBookBeanDao(DaoConfig config) {
         super(config);
@@ -45,6 +47,7 @@ public class CollBookBeanDao extends AbstractDao<CollBookBean, String> {
     
     public CollBookBeanDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -159,6 +162,12 @@ public class CollBookBeanDao extends AbstractDao<CollBookBean, String> {
             stmt.bindString(11, lastChapter);
         }
         stmt.bindLong(12, entity.getIsUpdate() ? 1L: 0L);
+    }
+
+    @Override
+    protected final void attachEntity(CollBookBean entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     @Override

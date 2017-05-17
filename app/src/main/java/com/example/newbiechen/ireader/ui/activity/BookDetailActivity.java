@@ -1,21 +1,15 @@
 package com.example.newbiechen.ireader.ui.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.ColorFilter;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,6 +28,7 @@ import com.example.newbiechen.ireader.ui.adapter.HotCommentAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.StringUtils;
+import com.example.newbiechen.ireader.utils.ToastUtils;
 import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
 
 import java.util.List;
@@ -61,10 +56,10 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
     TextView mTvWordCount;
     @BindView(R.id.book_detail_tv_lately_update)
     TextView mTvLatelyUpdate;
-    @BindView(R.id.book_list_cb_chase)
-    CheckBox mCbChase;
-    @BindView(R.id.book_detail_cb_read)
-    CheckBox mCbRead;
+    @BindView(R.id.book_list_tv_chase)
+    TextView mTvChase;
+    @BindView(R.id.book_detail_tv_read)
+    TextView mTvRead;
     @BindView(R.id.book_detail_tv_follower_count)
     TextView mTvFollowerCount;
     @BindView(R.id.book_detail_tv_retention)
@@ -92,9 +87,11 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
     private HotCommentAdapter mHotCommentAdapter;
     private BookListAdapter mBookListAdapter;
     private CollBookBean mCollBookBean;
+    private ProgressDialog mProgressDialog;
     /*******************************************/
     private String mBookId;
     private boolean isBriefOpen = false;
+    private boolean isCollected = false;
 
     public static void startActivity(Context context,String bookId){
         Intent intent = new Intent(context, BookDetailActivity.class);
@@ -147,37 +144,37 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
                 }
         );
 
-        mCbChase.setOnCheckedChangeListener(
-                (btn,isChecked) ->{
+        mTvChase.setOnClickListener(
+                (V) ->{
                     //点击存储
-                    if (isChecked){
-                        mCollBookBean.setUpdate(isChecked);
-                        CollBookManager.getInstance()
-                                .saveCollBook(mCollBookBean);
-
-                        mCbChase.setText(getResources().getString(R.string.nb_book_detail_give_up));
-
-                        //修改背景
-                        Drawable drawable = getResources().getDrawable(R.drawable.shape_common_gray_corner);
-                        mCbChase.setBackground(drawable);
-                        //设置图片
-                        mCbChase.setCompoundDrawables(ContextCompat.getDrawable(this,R.drawable.ic_book_list_delete),null,
-                                null,null);
-                    }
-                    else {
+                    if (isCollected){
                         //放弃点击
-                        mCollBookBean.setUpdate(isChecked);
                         CollBookManager.getInstance()
                                 .deleteCollBook(mCollBookBean);
 
-                        mCbChase.setText(getResources().getString(R.string.nb_book_detail_chase_update));
+                        mTvChase.setText(getResources().getString(R.string.nb_book_detail_chase_update));
 
                         //修改背景
                         Drawable drawable = getResources().getDrawable(R.drawable.selector_btn_book_list);
-                        mCbChase.setBackground(drawable);
+                        mTvChase.setBackground(drawable);
                         //设置图片
-                        mCbChase.setCompoundDrawables(ContextCompat.getDrawable(this,R.drawable.ic_book_list_add),null,
+                        mTvChase.setCompoundDrawables(ContextCompat.getDrawable(this,R.drawable.ic_book_list_add),null,
                                 null,null);
+
+                        isCollected = false;
+                    }
+                    else {
+                        mPresenter.addToBookShelf(mCollBookBean);
+                        mTvChase.setText(getResources().getString(R.string.nb_book_detail_give_up));
+
+                        //修改背景
+                        Drawable drawable = getResources().getDrawable(R.drawable.shape_common_gray_corner);
+                        mTvChase.setBackground(drawable);
+                        //设置图片
+                        mTvChase.setCompoundDrawables(ContextCompat.getDrawable(this,R.drawable.ic_book_list_delete),null,
+                                null,null);
+
+                        isCollected = true;
                     }
                 }
         );
@@ -222,9 +219,18 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
         //帖子数
         mTvPostsCount.setText(getResources().getString(R.string.nb_book_detail_posts_count,bean.getPostCount()));
         mCollBookBean = CollBookManager.getInstance().getCollBook(bean.get_id());
+
         //判断是否收藏
         if (mCollBookBean != null){
-            mCbChase.setChecked(true);
+            isCollected = true;
+
+            mTvChase.setText(getResources().getString(R.string.nb_book_detail_give_up));
+            //修改背景
+            Drawable drawable = getResources().getDrawable(R.drawable.shape_common_gray_corner);
+            mTvChase.setBackground(drawable);
+            //设置图片
+            mTvChase.setCompoundDrawables(ContextCompat.getDrawable(this,R.drawable.ic_book_list_delete),null,
+                    null,null);
         }
         else {
             mCollBookBean = bean.getCollBookBean();
@@ -253,6 +259,31 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
         mRvRecommendBookList.addItemDecoration(new DefaultItemDecoration(this));
         mRvRecommendBookList.setAdapter(mBookListAdapter);
         mBookListAdapter.addItems(beans);
+    }
+
+    @Override
+    public void waitToBookShelf() {
+        if (mProgressDialog == null){
+            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.setTitle("正在添加到书架中");
+        }
+        mProgressDialog.show();
+    }
+
+    @Override
+    public void errorToBookShelf() {
+        if (mProgressDialog != null){
+            mProgressDialog.dismiss();
+        }
+        ToastUtils.show("加入书架失败，请检查网络");
+    }
+
+    @Override
+    public void succeedToBookShelf() {
+        if (mProgressDialog != null){
+            mProgressDialog.dismiss();
+        }
+        ToastUtils.show("加入书架成功");
     }
 
     @Override

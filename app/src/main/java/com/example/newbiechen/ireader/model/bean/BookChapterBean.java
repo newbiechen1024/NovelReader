@@ -12,10 +12,7 @@ import org.greenrobot.greendao.annotation.Generated;
 @Entity
 public class BookChapterBean {
     /**
-     * title : 第一章 他叫public class BookChapterBean {
-
-}
-白小纯
+     * title : 第一章 他叫白小纯
      * link : http://read.qidian.com/chapter/rJgN8tJ_cVdRGoWu-UQg7Q2/6jr-buLIUJSaGfXRMrUjdw2
      * unreadble : false
      */
@@ -25,16 +22,23 @@ public class BookChapterBean {
     private String link;
 
     private String title;
+
+    //所属的下载任务
     @Index
     private String taskName;
+    //所属的书籍
+    @Index
+    private String bookId;
 
     private boolean unreadble;
 
-    @Generated(hash = 850344662)
-    public BookChapterBean(String link, String title, String taskName, boolean unreadble) {
+    @Generated(hash = 1921381654)
+    public BookChapterBean(String link, String title, String taskName, String bookId,
+            boolean unreadble) {
         this.link = link;
         this.title = title;
         this.taskName = taskName;
+        this.bookId = bookId;
         this.unreadble = unreadble;
     }
 
@@ -76,5 +80,13 @@ public class BookChapterBean {
 
     public boolean getUnreadble() {
         return this.unreadble;
+    }
+
+    public String getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
     }
 }

@@ -42,7 +42,6 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
     ScrollRefreshRecyclerView mRvContent;
 
     /************************************/
-    private ProgressDialog mProgressDialog;
     private CollBookAdapter mCollBookAdapter;
     private FooterItemView mFooterItem;
 
@@ -85,10 +84,6 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         event -> {
-                            //创建任务失败请检查网络
-                            if (mProgressDialog != null){
-                                mProgressDialog.dismiss();
-                            }
                             //使用Toast提示
                             ToastUtils.show(event.message);
                         }
@@ -147,7 +142,7 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
     private void cacheClick(int itemPos){
         CollBookBean bean = mCollBookAdapter.getItem(itemPos);
         //创建任务
-        mPresenter.createDownloadTask(bean.get_id(),bean.getTitle());
+        mPresenter.createDownloadTask(bean);
     }
 
     /*******************************************************************8*/
@@ -172,9 +167,7 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
     @Override
     public void finishRefresh(List<CollBookBean> collBookBeans){
         mCollBookAdapter.refreshItems(collBookBeans);
-        //存储到数据库中
-        CollBookManager.getInstance()
-                .saveCollBooks(collBookBeans);
+
     }
 
 
@@ -183,35 +176,6 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
         mRvContent.setTip(error);
         mRvContent.showTip();
     }
-
-    /************************************************************************/
-
-    @Override
-    public void waitDownloadTask() {
-        if (mProgressDialog == null){
-            mProgressDialog = new ProgressDialog(getContext());
-            mProgressDialog.setTitle("正在添加到缓存队列");
-        }
-        mProgressDialog.show();
-    }
-
-    @Override
-    public void addDownloadTask(DownloadTaskBean task) {
-        RxBus.getInstance().post(task);
-        Log.d(TAG, "addDownloadTask: ");
-    }
-
-    @Override
-    public void errorDownloadTask(String error) {
-        //创建任务失败请检查网络
-        if (mProgressDialog != null){
-            mProgressDialog.dismiss();
-        }
-        //使用Toast提示
-        ToastUtils.show("添加缓存队列失败:"+error);
-    }
-
-
     /*****************************************************************/
     class FooterItemView implements WholeAdapter.ItemView{
         @Override

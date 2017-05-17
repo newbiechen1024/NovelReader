@@ -52,12 +52,34 @@ public class CollBookManager {
     }
 
     public void saveCollBook(CollBookBean bean){
-        mCollBookDao.insertOrReplace(bean);
+        //启动异步存储
+        mSession.startAsyncSession()
+                .runInTx(
+                        () -> {
+                            //存储BookChapterBean
+                            mSession.getBookChapterBeanDao()
+                                    .insertOrReplaceInTx(bean.getBookChapters());
+                            //存储CollBook (确保先后顺序，否则出错)
+                            mCollBookDao.insertOrReplace(bean);
+                        }
+                );
     }
 
     public void saveCollBooks(List<CollBookBean> beans){
-        mCollBookDao.insertOrReplaceInTx(beans);
+        mSession.startAsyncSession()
+                .runInTx(
+                        () -> {
+                            for (CollBookBean bean : beans){
+                                //存储BookChapterBean
+                                mSession.getBookChapterBeanDao()
+                                        .insertOrReplaceInTx(bean.getBookChapters());
+                            }
+                            //存储CollBook (确保先后顺序，否则出错)
+                            mCollBookDao.insertOrReplaceInTx(beans);
+                        }
+                );
     }
+
 
     public void updateCollBook(CollBookBean bean){
         mCollBookDao.update(bean);

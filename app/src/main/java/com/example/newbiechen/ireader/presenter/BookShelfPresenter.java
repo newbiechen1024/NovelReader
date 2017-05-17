@@ -2,6 +2,9 @@ package com.example.newbiechen.ireader.presenter;
 
 import android.util.Log;
 
+import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.RxBus;
+import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.BookDetailBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
@@ -13,12 +16,15 @@ import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.RxUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
@@ -45,35 +51,14 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
     }
 
     @Override
-    public void createDownloadTask(String bookId, String bookName) {
-        Disposable disposable = RemoteRepository.getInstance()
-                .getBookChapters(bookId)
-                .subscribeOn(Schedulers.io())
-                .doOnSubscribe(
-                        (d) -> mView.waitDownloadTask() //等待加载
-                )
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        beans -> {
+    public void createDownloadTask(CollBookBean collBookBean) {
+        DownloadTaskBean task = new DownloadTaskBean();
+        task.setTaskName(collBookBean.getTitle());
+        task.setBookId(collBookBean.get_id());
+        task.setBookChapters(collBookBean.getBookChapters());
+        task.setLastChapter(collBookBean.getBookChapters().size());
 
-                            //生成初始的DownloadTask (后面需要修正)
-                            DownloadTaskBean task = new DownloadTaskBean();
-                            task.setTaskName(bookName);
-                            task.setBookId(bookId);
-                            task.setBookChapters(beans);
-                            task.setLastChapter(beans.size());
-
-                            //回调
-                            mView.addDownloadTask(task);
-                        }
-                        ,
-                        e -> {
-                            mView.errorDownloadTask(e.toString());
-                            LogUtils.e(e);
-                        }
-                );
-        addDisposable(disposable);
+        RxBus.getInstance().post(task);
     }
 
 
@@ -81,6 +66,16 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
     public void loadRecommendBooks(String gender) {
         Disposable disposable = RemoteRepository.getInstance()
                 .getRecommendBooks(gender)
+                .doOnSuccess(new Consumer<List<CollBookBean>>() {
+                    @Override
+                    public void accept(List<CollBookBean> collBookBeen) throws Exception {
+                        //更新目录
+                        updateCategory(collBookBeen);
+                        //存储到数据库中
+                        CollBookManager.getInstance()
+                                .saveCollBooks(collBookBeen);
+                    }
+                })
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(
                         beans -> {
@@ -127,7 +122,25 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
                 }
                 return newCollBooks;
             }
-        }).compose(RxUtils::toSimpleSingle)
+        }).doOnSuccess(new Consumer<List<CollBookBean>>() {
+                    @Override
+                    public void accept(List<CollBookBean> collBookBeen) throws Exception {
+                        List<CollBookBean> beans = new ArrayList<CollBookBean>();
+                        //获取更新的CollBook
+                        for (CollBookBean bean : collBookBeen){
+                            if (bean.isUpdate()){
+                                beans.add(bean);
+                            }
+                        }
+                        //更新目录
+                        updateCategory(beans);
+
+                        //存储到数据库中
+                        CollBookManager.getInstance()
+                                .saveCollBooks(collBookBeen);
+                    }
+                })
+                .compose(RxUtils::toSimpleSingle)
                 .subscribe(new SingleObserver<List<CollBookBean>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -149,5 +162,24 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
                         LogUtils.e(e);
                     }
                 });
+    }
+
+    //更新每个CollBook的目录
+    private void updateCategory(List<CollBookBean> collBookBeans){
+        List<Single<List<BookChapterBean>>> observables = new ArrayList<>(collBookBeans.size());
+        for (CollBookBean bean : collBookBeans){
+            observables.add(
+                    RemoteRepository.getInstance().getBookChapters(bean.get_id())
+            );
+        }
+        Iterator<CollBookBean> it = collBookBeans.iterator();
+        //执行在上一个方法中的子线程中
+        Single.concat(observables)
+                .subscribe(
+                        chapterList -> {
+                            CollBookBean bean = it.next();
+                            bean.setBookChapters(chapterList);
+                        }
+                );
     }
 }

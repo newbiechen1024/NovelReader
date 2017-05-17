@@ -43,6 +43,7 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter {
 
         //设置点击事件
         holder.itemView.setOnClickListener((v)->{
+            onItemClick(v,position);
             if (mClickListener != null){
                 mClickListener.onItemClick(v,position);
             }
@@ -63,6 +64,10 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return mList.size();
+    }
+
+    protected void onItemClick(View v,int pos){
+
     }
 
     /******************************public area***********************************/

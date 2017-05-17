@@ -1,6 +1,7 @@
 package com.example.newbiechen.ireader.ui.base;
 
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +23,7 @@ public abstract class BaseAdapter <E,VH extends ViewHolder> extends Adapter<VH> 
 
     @Override
     public void onBindViewHolder(VH holder, int position) {
-        setUpViewHolder(holder,position);
+        bindData(holder,getItem(position),position);
         setUpClickListener(holder.itemView,position);
     }
 
@@ -32,7 +33,9 @@ public abstract class BaseAdapter <E,VH extends ViewHolder> extends Adapter<VH> 
     private void setUpClickListener(final View view , final int position){
         view.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
+                //Adapter监听item的点击事件
+                onItemClick(v,position);
                 //设置点击回调
                 if (mItemClickListener != null){
                     mItemClickListener.itemClick(view,position);
@@ -51,7 +54,10 @@ public abstract class BaseAdapter <E,VH extends ViewHolder> extends Adapter<VH> 
      * @param holder
      * @param position
      */
-    public abstract void setUpViewHolder(VH holder, int position);
+    public abstract void bindData(VH holder, E data,int position);
+
+    protected void onItemClick(View v,int pos){
+    }
 
     /**
      * 设置ITEM点击事件的接口
@@ -59,6 +65,7 @@ public abstract class BaseAdapter <E,VH extends ViewHolder> extends Adapter<VH> 
     public interface OnItemClickListener{
         void itemClick(View view, int pos);
     }
+
 /******************************公共方法*****************************************/
     /**
      * 设置点击事件的监听器
