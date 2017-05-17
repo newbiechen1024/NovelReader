@@ -19,7 +19,6 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -13,6 +13,6 @@
 		android:id="@+id/tag_child_btn_name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:textColor="@color/color_tag_child"
+		android:textColor="@color/tag_child"
 		android:textSize="@dimen/nb.text.small"/>
 </RelativeLayout>

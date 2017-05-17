@@ -54,7 +54,7 @@
     <item
         android:id="@+id/action_night_mode"
         android:title="@string/nb.menu.action.night_mode"
-        android:icon="@drawable/ic_read_menu_morning"
+        android:icon="@drawable/ic_read_menu_night"
         app:showAsAction="never" />
 
     <item
@@ -62,5 +62,4 @@
         android:title="@string/nb.menu.action.setting"
         android:icon="@drawable/ic_menu_setting"
         app:showAsAction="never" />
-
 </menu>

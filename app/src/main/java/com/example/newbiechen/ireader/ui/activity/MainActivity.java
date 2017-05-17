@@ -157,8 +157,7 @@ public class MainActivity extends BaseTabActivity{
             Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
         }
         else {
-            //隐藏，但不退出(应该是如果有下载任务的时候)
-            moveTaskToBack(true);
+            super.onBackPressed();
         }
     }
 }

@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
+import com.example.newbiechen.ireader.ui.base.adapter.BaseListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public abstract class WholeAdapter<T> extends BaseListAdapter<T>{
         }
     }
 
-    private RecyclerView.ViewHolder createOtherViewHolder(ViewGroup parent, int viewType){
+    private RecyclerView.ViewHolder createOtherViewHolder(ViewGroup parent,int viewType){
         View view = null;
         for (int i=0; i<mHeaderList.size(); ++i){
             WholeAdapter.ItemView itemView = mHeaderList.get(i);

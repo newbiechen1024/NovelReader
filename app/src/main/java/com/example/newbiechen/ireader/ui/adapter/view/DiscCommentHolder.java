@@ -1,65 +1,52 @@
 package com.example.newbiechen.ireader.ui.adapter.view;
 
-import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.newbiechen.ireader.App;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
-import com.example.newbiechen.ireader.ui.base.IAdapter;
+import com.example.newbiechen.ireader.ui.base.adapter.ViewHolderImpl;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.widget.transform.CircleTransform;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by newbiechen on 17-4-20.
  */
 
-public class DiscCommentView extends RelativeLayout implements IAdapter<BookCommentBean>{
-    @BindView(R.id.disc_comment_iv_portrait)
+public class DiscCommentHolder extends ViewHolderImpl<BookCommentBean>{
+
     ImageView mIvPortrait;
-    @BindView(R.id.disc_comment_tv_name)
     TextView mTvName;
-    @BindView(R.id.disc_comment_tv_lv)
     TextView mTvLv;
-    @BindView(R.id.disc_comment_tv_time)
     TextView mTvTime;
-    @BindView(R.id.disc_comment_tv_brief)
     TextView mTvBrief;
-    @BindView(R.id.disc_comment_tv_label_distillate)
-    TextView mTvLableDistillate;
-    @BindView(R.id.disc_comment_tv_label_hot)
-    TextView mTvLableHot;
-    @BindView(R.id.disc_comment_tv_response_count)
+    TextView mTvLabelDistillate;
+    TextView mTvLabelHot;
     TextView mTvResponseCount;
-    @BindView(R.id.disc_comment_tv_like_count)
     TextView mTvLikeCount;
 
-    public DiscCommentView(Context context) {
-        super(context);
-        initView(context);
-    }
-
-    private void initView(Context context){
-        View view = LayoutInflater.from(context)
-                .inflate(R.layout.item_disc_comment,this,false);
-        addView(view);
-        ButterKnife.bind(this,view);
+    @Override
+    public void initView() {
+        mIvPortrait = findById(R.id.disc_comment_iv_portrait);
+        mTvName = findById(R.id.disc_comment_tv_name);
+        mTvLv = findById(R.id.disc_comment_tv_lv);
+        mTvTime = findById(R.id.disc_comment_tv_time);
+        mTvBrief = findById(R.id.disc_comment_tv_brief);
+        mTvLabelDistillate = findById(R.id.disc_comment_tv_label_distillate);
+        mTvLabelHot = findById(R.id.disc_comment_tv_label_hot);
+        mTvResponseCount = findById(R.id.disc_comment_tv_response_count);
+        mTvLikeCount = findById(R.id.disc_comment_tv_like_count);
     }
 
     @Override
     public void onBind(BookCommentBean value, int pos) {
         //头像
-        Glide.with(App.getContext())
+        Glide.with(getContext())
                 .load(Constant.IMG_BASE_URL+value.getAuthorBean().getAvatar())
                 .placeholder(R.drawable.ic_default_portrait)
                 .error(R.drawable.ic_load_error)
@@ -68,31 +55,31 @@ public class DiscCommentView extends RelativeLayout implements IAdapter<BookComm
         //名字
         mTvName.setText(value.getAuthorBean().getNickname());
         //等级
-        mTvLv.setText(getResources().getString(R.string.nb_user_lv,
+        mTvLv.setText(StringUtils.getString(R.string.nb_user_lv,
                 value.getAuthorBean().getLv()));
         //简介
         mTvBrief.setText(value.getTitle());
         //label
         if (value.getState().equals(Constant.BOOK_STATE_DISTILLATE)){
-            mTvLableDistillate.setVisibility(VISIBLE);
-            mTvTime.setVisibility(VISIBLE);
+            mTvLabelDistillate.setVisibility(View.VISIBLE);
+            mTvTime.setVisibility(View.VISIBLE);
         }
         else {
-            mTvLableDistillate.setVisibility(GONE);
-            mTvTime.setVisibility(GONE);
+            mTvLabelDistillate.setVisibility(View.GONE);
+            mTvTime.setVisibility(View.GONE);
         }
         //comment or vote
         String type = value.getType();
         Drawable drawable = null;
         switch (type){
             case Constant.BOOK_TYPE_COMMENT:
-                drawable = getResources().getDrawable(R.drawable.ic_notif_post);
+                drawable = getContext().getResources().getDrawable(R.drawable.ic_notif_post);
                 break;
             case Constant.BOOK_TYPE_VOTE:
-                drawable = getResources().getDrawable(R.drawable.ic_notif_vote);
+                drawable = getContext().getResources().getDrawable(R.drawable.ic_notif_vote);
                 break;
             default:
-                drawable = getResources().getDrawable(R.mipmap.ic_launcher);
+                drawable = getContext().getResources().getDrawable(R.mipmap.ic_launcher);
                 break;
         }
         drawable.setBounds(0,0,drawable.getIntrinsicWidth(),drawable.getIntrinsicHeight());
@@ -104,5 +91,10 @@ public class DiscCommentView extends RelativeLayout implements IAdapter<BookComm
         mTvResponseCount.setText(value.getCommentCount()+"");
         //like count
         mTvLikeCount.setText(value.getLikeCount()+"");
+    }
+
+    @Override
+    protected int getItemLayoutId() {
+        return R.layout.item_disc_comment;
     }
 }

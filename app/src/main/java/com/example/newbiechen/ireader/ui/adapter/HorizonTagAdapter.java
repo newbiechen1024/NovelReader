@@ -1,12 +1,12 @@
 package com.example.newbiechen.ireader.ui.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.example.newbiechen.ireader.ui.adapter.view.HorizonTagView;
-import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
-import com.example.newbiechen.ireader.ui.base.IAdapter;
+import com.example.newbiechen.ireader.ui.adapter.view.HorizonTagHolder;
+import com.example.newbiechen.ireader.ui.base.adapter.BaseListAdapter;
+import com.example.newbiechen.ireader.ui.base.adapter.IViewHolder;
+import com.example.newbiechen.ireader.ui.base.adapter.BaseViewHolder;
 
 /**
  * Created by newbiechen on 17-5-2.
@@ -14,38 +14,40 @@ import com.example.newbiechen.ireader.ui.base.IAdapter;
 
 public class HorizonTagAdapter extends BaseListAdapter<String>{
     private int currentSelected = 0;
+
     @Override
-    protected View createView(Context context, int viewType) {
-        return new HorizonTagView(context);
+    protected IViewHolder<String> createViewHolder(int viewType) {
+        return new HorizonTagHolder();
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (! (holder.itemView instanceof IAdapter))
-            throw new IllegalArgumentException("The adapter view must extend IAdapter");
-        HorizonTagView view = (HorizonTagView)holder.itemView;
-        //设置点击事件
-        holder.itemView.setOnClickListener((v)->{
-            selectTag(v,position);
-        });
+        super.onBindViewHolder(holder,position);
 
-        view.setSelectedTag(currentSelected);
-        view.onBind(mList.get(position),position);
+        //配置点击事件改变状态
+        IViewHolder iHolder = ((BaseViewHolder) holder).holder;
+        HorizonTagHolder horizonTagHolder = (HorizonTagHolder) iHolder;
+        if (position == currentSelected){
+            horizonTagHolder.setSelectedTag();
+        }
     }
 
     /***
-     * 设定当前的点击事件 (哦，是不是用ViewPager会更好一点)
+     * 设定当前的点击事件
      * @param pos
      */
     public void setCurrentSelected(int pos){
-        selectTag(null,pos);
+        selectTag(pos);
     }
 
-    private void selectTag(View v,int position){
+    @Override
+    protected void onItemClick(View v, int pos) {
+        super.onItemClick(v, pos);
+        selectTag(pos);
+    }
+
+    private void selectTag(int position){
         currentSelected = position;
-        if (mClickListener != null){
-            mClickListener.onItemClick(v,position);
-        }
         notifyDataSetChanged();
     }
 }

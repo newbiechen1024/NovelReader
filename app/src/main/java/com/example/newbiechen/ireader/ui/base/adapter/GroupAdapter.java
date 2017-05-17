@@ -1,11 +1,9 @@
-package com.example.newbiechen.ireader.widget;
+package com.example.newbiechen.ireader.ui.base.adapter;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.newbiechen.ireader.ui.base.IAdapter;
 
 /**
  * Created by newbiechen on 17-5-5.
@@ -27,8 +25,8 @@ public abstract class GroupAdapter<T,R> extends RecyclerView.Adapter{
     public abstract T getGroupItem(int groupPos);
     public abstract R getChildItem(int groupPos,int childPos);
 
-    protected abstract View createGroupView(ViewGroup parent);
-    protected abstract View createChildView(ViewGroup parent);
+    protected abstract IViewHolder<T> createGroupViewHolder();
+    protected abstract IViewHolder<R> createChildViewHolder();
 
     public GroupAdapter(RecyclerView recyclerView,int spanSize){
         GridLayoutManager manager = new GridLayoutManager(recyclerView.getContext(),spanSize);
@@ -45,36 +43,40 @@ public abstract class GroupAdapter<T,R> extends RecyclerView.Adapter{
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        IViewHolder iViewHolder = null;
         View view = null;
         if (viewType == TYPE_GROUP){
-            view = createGroupView(parent);
+            iViewHolder = createGroupViewHolder();
+            view = iViewHolder.createItemView(parent);
         }
         else if (viewType == TYPE_CHILD){
-            view = createChildView(parent);
+            iViewHolder = createChildViewHolder();
+            view = iViewHolder.createItemView(parent);
         }
-        RecyclerView.ViewHolder viewHolder = new RecyclerView.ViewHolder(view) {};
+        RecyclerView.ViewHolder viewHolder = new BaseViewHolder(view, iViewHolder);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (! (holder.itemView instanceof IAdapter))
-            throw new IllegalArgumentException("The adapter view must extend IAdapter");
-        IAdapter view = (IAdapter)holder.itemView;
+        if (! (holder instanceof BaseViewHolder))
+            throw new IllegalArgumentException("The ViewHolder item must extend BaseViewHolder");
 
+        IViewHolder iHolder = ((BaseViewHolder) holder).holder;
         int type = getItemViewType(position);
         if (type == TYPE_GROUP){
             //计算当前的group
             int groupPos = calculateGroup(position);
             holder.itemView.setOnClickListener(
                     (v) -> {
+                        iHolder.onClick();
                         if (mGroupListener != null){
                             mGroupListener.onGroupClick(v,groupPos);
                         }
                     }
             );
-            view.onBind(getGroupItem(groupPos),groupPos);
+            iHolder.onBind(getGroupItem(groupPos),groupPos);
         }
         else if (type == TYPE_CHILD){
             int groupPos = calculateGroup(position);
@@ -82,13 +84,14 @@ public abstract class GroupAdapter<T,R> extends RecyclerView.Adapter{
 
             holder.itemView.setOnClickListener(
                     v -> {
+                        iHolder.onClick();
                         if (mChildClickListener != null) {
                             mChildClickListener.onChildClick(v,groupPos,childPos);
                         }
                     }
             );
             //这里有点小问题，返回的是childPos
-            view.onBind(getChildItem(groupPos,childPos),childPos);
+            iHolder.onBind(getChildItem(groupPos,childPos),childPos);
         }
     }
 

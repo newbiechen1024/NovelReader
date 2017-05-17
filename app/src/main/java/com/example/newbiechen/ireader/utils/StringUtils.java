@@ -1,6 +1,9 @@
 package com.example.newbiechen.ireader.utils;
 
+import android.support.annotation.StringRes;
 import android.util.Log;
+
+import com.example.newbiechen.ireader.App;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -73,5 +76,13 @@ public class StringUtils {
 
     public static String toFirstCapital(String str){
         return str.substring(0,1).toUpperCase()+str.substring(1);
+    }
+
+    public static String getString(@StringRes int id){
+        return App.getContext().getResources().getString(id);
+    }
+
+    public static String getString(@StringRes int id, Object... formatArgs){
+        return App.getContext().getResources().getString(id,formatArgs);
     }
 }

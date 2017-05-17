@@ -14,11 +14,13 @@ import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.RxBus;
 import com.example.newbiechen.ireader.event.DownloadMessage;
 import com.example.newbiechen.ireader.event.RecommendBookEvent;
+import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
 import com.example.newbiechen.ireader.model.local.CollBookManager;
 import com.example.newbiechen.ireader.presenter.BookShelfPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookShelfContract;
+import com.example.newbiechen.ireader.ui.activity.ReadActivity;
 import com.example.newbiechen.ireader.ui.adapter.CollBookAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
 import com.example.newbiechen.ireader.utils.ToastUtils;
@@ -93,6 +95,12 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
         mRvContent.setOnRefreshListener(
                 () ->   mPresenter.updateCollBooks(mCollBookAdapter.getItems())
         );
+
+        mCollBookAdapter.setOnItemClickListener(
+                (view, pos) -> ReadActivity.startActivity(getContext(),
+                        mCollBookAdapter.getItem(pos).get_id(),true)
+        );
+
         mCollBookAdapter.setOnItemLongClickListener(
                 (v,pos) -> {
                     //开启Dialog,最方便的Dialog,就是AlterDialog

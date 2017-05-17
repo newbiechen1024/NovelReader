@@ -24,16 +24,20 @@ import android.widget.TextView;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
+import com.example.newbiechen.ireader.model.local.CollBookManager;
 import com.example.newbiechen.ireader.presenter.ReadPresenter;
 import com.example.newbiechen.ireader.presenter.contract.ReadContract;
 import com.example.newbiechen.ireader.ui.adapter.CategoryAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
+import com.example.newbiechen.ireader.utils.LogUtils;
+import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.StatusBarCompat;
 import com.example.newbiechen.ireader.utils.SystemBarUtils;
 
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -44,10 +48,8 @@ import static android.view.View.VISIBLE;
 
 public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
  implements ReadContract.View{
-    private static final String EXTRA_COLL_BOOK = "extra_coll_book";
-    private static final String EXTRA_BOOK_NAME = "extra_book_name";
+    private static final String EXTRA_IS_FROM_SHELF = "extra_is_from_shelf";
     private static final String EXTRA_BOOK_ID = "extra_book_id";
-
     @BindView(R.id.read_dl_slide)
     DrawerLayout mDlSlide;
     /*************top_menu_view*******************/
@@ -91,7 +93,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @BindView(R.id.read_setting_tv_font)
     TextView mTvFont;
     @BindView(R.id.read_setting_tv_font_plus)
-    TextView mTvPlus;
+    TextView mTvFontPlus;
     @BindView(R.id.read_setting_iv_brightness_minus)
     ImageView mIvBrightnessMinus;
     @BindView(R.id.read_setting_sb_brightness)
@@ -110,24 +112,16 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     private Animation mTopOutAnim;
     private Animation mBottomInAnim;
     private Animation mBottomOutAnim;
-
-    private CollBookBean mCollBook;
     private CategoryAdapter mCategoryAdapter;
     /***************params*****************/
     private boolean isFromBookShelf = false;
-    private String mBookName;
     private String mBookId;
 
     //书架页进入
-    public static void startActivity(Context context, CollBookBean bean){
-        context.startActivity(new Intent(context,ReadActivity.class)
-        .putExtra(EXTRA_COLL_BOOK,bean));
-    }
-
-    public static void startActivity(Context context,String bookId,String bookName){
+    public static void startActivity(Context context, String bookId,boolean fromShelf){
         context.startActivity(new Intent(context,ReadActivity.class)
         .putExtra(EXTRA_BOOK_ID,bookId)
-        .putExtra(EXTRA_BOOK_NAME,bookName));
+        .putExtra(EXTRA_IS_FROM_SHELF,fromShelf));
     }
 
     @Override
@@ -143,26 +137,18 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @Override
     protected void initData(Bundle savedInstanceState) {
         super.initData(savedInstanceState);
-        mCollBook = (CollBookBean) getIntent().getSerializableExtra(EXTRA_COLL_BOOK);
-
-        if (mCollBook != null){
-            isFromBookShelf = true;
-            mBookId = mCollBook.get_id();
-            mBookName = mCollBook.getTitle();
-        }
-        else {
-            isFromBookShelf = false;
-            mBookId = getIntent().getStringExtra(EXTRA_BOOK_ID);
-            mBookName = getIntent().getStringExtra(EXTRA_BOOK_NAME);
-        }
+        mBookId = getIntent().getStringExtra(EXTRA_BOOK_ID);
+        isFromBookShelf = getIntent().getBooleanExtra(EXTRA_IS_FROM_SHELF,false);
     }
 
     @Override
     protected void initWidget() {
         super.initWidget();
+        mTvFont.setText(((int) mTvFont.getTextSize())+"");
         //禁止滑动展示DrawerLayout
         mDlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         setUpAdapter();
+
     }
 
     private void setUpAdapter(){
@@ -210,6 +196,40 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     return false;
                 }
         );
+
+        mTvFontMinus.setOnClickListener(
+                (v) ->  {
+                    int fontSize = Integer.valueOf(mTvFont.getText().toString())+1;
+                    mTvFont.setText(fontSize);
+                }
+        );
+
+        mTvFontPlus.setOnClickListener(
+                (v) -> {
+                    int fontSize = Integer.valueOf(mTvFont.getText().toString())-1;
+                    if (fontSize < 0) return;
+                    mTvFont.setText(fontSize+"");
+                }
+        );
+
+        mIvBrightnessMinus.setOnClickListener(
+                (v) -> {
+                    int progress = mSbBrightness.getProgress()-1;
+                    if (progress < 0) return;
+                    mSbBrightness.setProgress(progress);
+                }
+        );
+        mIvBrightnessPlus.setOnClickListener(
+                (v) -> {
+                    int progress = mSbBrightness.getProgress()+1;
+                    if (progress > mSbBrightness.getMax()) return;
+                    mSbBrightness.setProgress(progress);
+                }
+        );
+        mTvBrightnessAuto.setOnClickListener(
+                (v) -> {
+                }
+        );
     }
 
     /**
@@ -218,20 +238,6 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
      */
     private void toggleMenu(){
         initMenuAnim();
-        if(mRlTopMenu.getVisibility() == View.VISIBLE){
-            //关闭
-            mRlTopMenu.startAnimation(mTopOutAnim);
-            mLlBottomMenu.startAnimation(mBottomOutAnim);
-            mRlTopMenu.setVisibility(GONE);
-            mLlBottomMenu.setVisibility(GONE);
-        }
-        else {
-            mRlTopMenu.setVisibility(View.VISIBLE);
-            mLlBottomMenu.setVisibility(View.VISIBLE);
-
-            mRlTopMenu.startAnimation(mTopInAnim);
-            mLlBottomMenu.startAnimation(mBottomInAnim);
-        }
         //执行进入动画的同时
         mTopInAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -267,6 +273,21 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
             }
         });
+
+        if(mRlTopMenu.getVisibility() == View.VISIBLE){
+            //关闭
+            mRlTopMenu.startAnimation(mTopOutAnim);
+            mLlBottomMenu.startAnimation(mBottomOutAnim);
+            mRlTopMenu.setVisibility(GONE);
+            mLlBottomMenu.setVisibility(GONE);
+        }
+        else {
+            mRlTopMenu.setVisibility(View.VISIBLE);
+            mLlBottomMenu.setVisibility(View.VISIBLE);
+
+            mRlTopMenu.startAnimation(mTopInAnim);
+            mLlBottomMenu.startAnimation(mBottomInAnim);
+        }
     }
 
     //初始化菜单动画
@@ -292,6 +313,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         }
         else {
             mLlSetting.setVisibility(VISIBLE);
+            mBottomInAnim.setAnimationListener(null);
             mLlSetting.startAnimation(mBottomInAnim);
         }
     }
@@ -300,15 +322,24 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     protected void processLogic() {
         super.processLogic();
         //初始化目录
-        if (mCollBook != null){
-            mCategoryAdapter.refreshItems(mCollBook.getBookChapterList());
+        if (isFromBookShelf){
+            Disposable disposable =CollBookManager.getInstance()
+                    .getBookChapters(mBookId)
+                    .compose(RxUtils::toSimpleSingle)
+                    .subscribe(
+                            (bookChapterBeen, throwable) -> {
+                                mCategoryAdapter.refreshItems(bookChapterBeen);
+                                LogUtils.e(throwable);
+                            }
+                    );
+            addDisposable(disposable);
         }
         else{
             //从网络中加载
             mPresenter.loadCategory(mBookId);
         }
     }
-
+/***************************view************************************/
     @Override
     public void showError() {
 

@@ -1,25 +1,19 @@
 package com.example.newbiechen.ireader.ui.adapter.view;
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.SortBookBean;
-import com.example.newbiechen.ireader.ui.base.IAdapter;
+import com.example.newbiechen.ireader.ui.base.adapter.ViewHolderImpl;
 import com.example.newbiechen.ireader.utils.Constant;
-
-import butterknife.ButterKnife;
 
 /**
  * Created by newbiechen on 17-5-3.
  */
 
-public class BookSortListView extends RelativeLayout implements IAdapter<SortBookBean> {
+public class BookSortListHolder extends ViewHolderImpl<SortBookBean>{
 
     private ImageView mIvPortrait;
     private TextView mTvTitle;
@@ -27,22 +21,18 @@ public class BookSortListView extends RelativeLayout implements IAdapter<SortBoo
     private TextView mTvBrief;
     private TextView mTvMsg;
 
-
-    public BookSortListView(Context context) {
-        super(context);
-        initView(context);
+    @Override
+    protected int getItemLayoutId() {
+        return R.layout.item_book_brief;
     }
 
-    private void initView(Context context){
-        View view = LayoutInflater.from(context)
-                .inflate(R.layout.item_book_brief,this,false);
-
-        addView(view);
-        mIvPortrait = ButterKnife.findById(view,R.id.book_brief_iv_portrait);
-        mTvTitle = ButterKnife.findById(view, R.id.book_brief_tv_title);
-        mTvAuthor = ButterKnife.findById(view,R.id.book_brief_tv_author);
-        mTvBrief = ButterKnife.findById(view,R.id.book_brief_tv_brief);
-        mTvMsg = ButterKnife.findById(view,R.id.book_brief_tv_msg);
+    @Override
+    public void initView() {
+        mIvPortrait = findById(R.id.book_brief_iv_portrait);
+        mTvTitle = findById(R.id.book_brief_tv_title);
+        mTvAuthor = findById(R.id.book_brief_tv_author);
+        mTvBrief = findById(R.id.book_brief_tv_brief);
+        mTvMsg = findById(R.id.book_brief_tv_msg);
     }
 
     @Override
@@ -61,7 +51,7 @@ public class BookSortListView extends RelativeLayout implements IAdapter<SortBoo
         //简介
         mTvBrief.setText(value.getShortIntro());
         //信息
-        mTvMsg.setText(getResources().getString(R.string.nb_book_message,
+        mTvMsg.setText(getContext().getResources().getString(R.string.nb_book_message,
                 value.getLatelyFollower(),value.getRetentionRatio()));
     }
 }

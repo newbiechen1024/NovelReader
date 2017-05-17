@@ -4,8 +4,11 @@ import android.util.Log;
 
 import com.example.newbiechen.ireader.App;
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
+import com.example.newbiechen.ireader.model.gen.BookChapterBeanDao;
+import com.example.newbiechen.ireader.model.gen.BookCommentBeanDao;
 import com.example.newbiechen.ireader.model.gen.CollBookBeanDao;
 import com.example.newbiechen.ireader.model.gen.DaoSession;
 import com.example.newbiechen.ireader.model.gen.DownloadTaskBeanDao;
@@ -102,6 +105,20 @@ public class CollBookManager {
         });
     }
 
+    public Single<List<BookChapterBean>> getBookChapters(String bookId){
+        return Single.create(new SingleOnSubscribe<List<BookChapterBean>>() {
+            @Override
+            public void subscribe(SingleEmitter<List<BookChapterBean>> e) throws Exception {
+                List<BookChapterBean> beans = mSession
+                        .getBookChapterBeanDao()
+                        .queryBuilder()
+                        .where(BookChapterBeanDao.Properties.BookId.eq(bookId))
+                        .list();
+                e.onSuccess(beans);
+            }
+        });
+    }
+
 
     public void deleteCollBook(CollBookBean bean){
         mCollBookDao.delete(bean);
@@ -148,6 +165,8 @@ public class CollBookManager {
     /**
      * 根据文件名判断是否被缓存过 (因为可能数据库显示被缓存过，但是文件中却没有的情况，所以需要根据文件判断是否被缓存
      * 过)
+     * @param folderName : bookId
+     * @param fileName: chapterName
      * @return
      */
     public boolean isChapterCached(String folderName, String fileName){

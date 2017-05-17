@@ -11,7 +11,7 @@ import com.example.newbiechen.ireader.model.bean.SectionBean;
 import com.example.newbiechen.ireader.ui.activity.BookDiscussionActivity;
 import com.example.newbiechen.ireader.ui.adapter.SectionAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
-import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
+import com.example.newbiechen.ireader.ui.base.adapter.BaseListAdapter;
 import com.example.newbiechen.ireader.widget.itemdecoration.DashItemDecoration;
 
 import java.util.ArrayList;

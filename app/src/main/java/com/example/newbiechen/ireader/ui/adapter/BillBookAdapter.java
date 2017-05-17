@@ -1,11 +1,9 @@
 package com.example.newbiechen.ireader.ui.adapter;
 
-import android.content.Context;
-import android.view.View;
-
 import com.example.newbiechen.ireader.model.bean.BillBookBean;
-import com.example.newbiechen.ireader.ui.adapter.view.BillBookView;
-import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
+import com.example.newbiechen.ireader.ui.adapter.view.BillBookHolder;
+import com.example.newbiechen.ireader.ui.base.adapter.BaseListAdapter;
+import com.example.newbiechen.ireader.ui.base.adapter.IViewHolder;
 
 /**
  * Created by newbiechen on 17-5-3.
@@ -13,7 +11,7 @@ import com.example.newbiechen.ireader.ui.base.BaseListAdapter;
 
 public class BillBookAdapter extends BaseListAdapter<BillBookBean> {
     @Override
-    protected View createView(Context context, int viewType) {
-        return new BillBookView(context);
+    protected IViewHolder<BillBookBean> createViewHolder(int viewType) {
+        return new BillBookHolder();
     }
 }

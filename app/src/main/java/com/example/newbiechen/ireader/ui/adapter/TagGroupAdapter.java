@@ -1,14 +1,12 @@
 package com.example.newbiechen.ireader.ui.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.newbiechen.ireader.model.bean.BookTagBean;
-import com.example.newbiechen.ireader.ui.adapter.view.TagChildView;
-import com.example.newbiechen.ireader.ui.adapter.view.TagGroupView;
-import com.example.newbiechen.ireader.widget.GroupAdapter;
+import com.example.newbiechen.ireader.ui.adapter.view.TagChildHolder;
+import com.example.newbiechen.ireader.ui.adapter.view.TagGroupHolder;
+import com.example.newbiechen.ireader.ui.base.adapter.IViewHolder;
+import com.example.newbiechen.ireader.ui.base.adapter.GroupAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,15 +48,15 @@ public class TagGroupAdapter extends GroupAdapter<String,String> {
     }
 
     @Override
-    protected View createGroupView(ViewGroup parent) {
+    protected IViewHolder<String> createGroupViewHolder() {
         //是个TextView
-        return new TagGroupView(parent.getContext());
+        return new TagGroupHolder();
     }
 
     @Override
-    protected View createChildView(ViewGroup parent) {
+    protected IViewHolder<String> createChildViewHolder() {
         //是个TextView
-        return new TagChildView(parent.getContext());
+        return new TagChildHolder();
     }
 
     public List<String> getChildItems(int groupPos){

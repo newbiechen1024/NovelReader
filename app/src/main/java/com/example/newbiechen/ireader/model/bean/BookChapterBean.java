@@ -5,12 +5,14 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.Generated;
 
+import java.io.Serializable;
+
 /**
  * Created by newbiechen on 17-5-10.
  * 书的章节链接(作为下载的进度数据)
  */
 @Entity
-public class BookChapterBean {
+public class BookChapterBean{
     /**
      * title : 第一章 他叫白小纯
      * link : http://read.qidian.com/chapter/rJgN8tJ_cVdRGoWu-UQg7Q2/6jr-buLIUJSaGfXRMrUjdw2

@@ -1,10 +1,10 @@
 package com.example.newbiechen.ireader.ui.adapter;
 
 import android.content.Context;
-import android.view.View;
 
 import com.example.newbiechen.ireader.model.bean.SortBookBean;
-import com.example.newbiechen.ireader.ui.adapter.view.BookSortListView;
+import com.example.newbiechen.ireader.ui.adapter.view.BookSortListHolder;
+import com.example.newbiechen.ireader.ui.base.adapter.IViewHolder;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 
 /**
@@ -17,7 +17,7 @@ public class BookSortListAdapter extends WholeAdapter<SortBookBean>{
     }
 
     @Override
-    protected View createView(Context context, int viewType) {
-        return new BookSortListView(context);
+    protected IViewHolder<SortBookBean> createViewHolder(int viewType) {
+        return new BookSortListHolder();
     }
 }

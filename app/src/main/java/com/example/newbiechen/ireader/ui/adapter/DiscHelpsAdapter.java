@@ -1,10 +1,10 @@
 package com.example.newbiechen.ireader.ui.adapter;
 
 import android.content.Context;
-import android.view.View;
 
 import com.example.newbiechen.ireader.model.bean.BookHelpsBean;
-import com.example.newbiechen.ireader.ui.adapter.view.DiscHelpsView;
+import com.example.newbiechen.ireader.ui.adapter.view.DiscHelpsHolder;
+import com.example.newbiechen.ireader.ui.base.adapter.IViewHolder;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 
 /**
@@ -18,7 +18,7 @@ public class DiscHelpsAdapter extends WholeAdapter<BookHelpsBean>{
     }
 
     @Override
-    protected View createView(Context context, int viewType) {
-        return new DiscHelpsView(context);
+    protected IViewHolder<BookHelpsBean> createViewHolder(int viewType) {
+        return new DiscHelpsHolder();
     }
 }

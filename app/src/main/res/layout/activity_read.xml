@@ -132,7 +132,7 @@
                 <TextView
                     style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
                     android:id="@+id/read_tv_category"
-                    android:drawableTop="@drawable/ic_read_menu_category"
+                    android:drawableTop="@drawable/ic_menu_category"
                     android:text="@string/nb.read.category" />
                 
                 <TextView
@@ -163,7 +163,8 @@
         android:orientation="vertical"
         android:clickable="true"
         android:layout_gravity="start"
-        android:padding="@dimen/nb.padding.normal"
+        android:paddingTop="@dimen/nb.padding.large"
+        android:paddingBottom="@dimen/nb.padding.large"
         android:background="@drawable/theme_leather_bg">
     
         <TextView
@@ -172,13 +173,16 @@
             android:text="目录"
             android:textColor="@color/nb.text.default"
             android:textSize="20sp"
+            android:layout_marginLeft="15dp"
             android:layout_marginBottom="8dp"/>
         
         <android.support.v7.widget.RecyclerView
             android:id="@+id/read_rv_category"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:overScrollMode="never"
+            android:scrollbars="vertical">
         </android.support.v7.widget.RecyclerView>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

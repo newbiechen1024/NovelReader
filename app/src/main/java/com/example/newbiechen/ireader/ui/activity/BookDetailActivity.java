@@ -178,6 +178,10 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
                     }
                 }
         );
+
+        mTvRead.setOnClickListener(
+                (v) -> ReadActivity.startActivity(this, mCollBookBean.get_id(), false)
+        );
     }
 
     @Override

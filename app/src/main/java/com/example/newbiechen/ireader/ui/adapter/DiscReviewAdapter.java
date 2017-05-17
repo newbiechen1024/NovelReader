@@ -1,10 +1,10 @@
 package com.example.newbiechen.ireader.ui.adapter;
 
 import android.content.Context;
-import android.view.View;
 
 import com.example.newbiechen.ireader.model.bean.BookReviewBean;
-import com.example.newbiechen.ireader.ui.adapter.view.DiscReviewView;
+import com.example.newbiechen.ireader.ui.adapter.view.DiscReviewHolder;
+import com.example.newbiechen.ireader.ui.base.adapter.IViewHolder;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 
 /**
@@ -18,7 +18,7 @@ public class DiscReviewAdapter extends WholeAdapter<BookReviewBean> {
     }
 
     @Override
-    protected View createView(Context context, int viewType) {
-        return new DiscReviewView(context);
+    protected IViewHolder<BookReviewBean> createViewHolder(int viewType) {
+        return new DiscReviewHolder();
     }
 }

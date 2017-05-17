@@ -20,7 +20,6 @@ public abstract class BaseAdapter <E,VH extends ViewHolder> extends Adapter<VH> 
     protected final List<E> mItemList = new ArrayList<>();
     //点击事件的监听
     private OnItemClickListener mItemClickListener;
-
     @Override
     public void onBindViewHolder(VH holder, int position) {
         bindData(holder,getItem(position),position);

@@ -1,6 +1,5 @@
 package com.example.newbiechen.ireader.ui.adapter.view;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -9,14 +8,15 @@ import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
-import com.example.newbiechen.ireader.ui.base.AdapterImpl;
+import com.example.newbiechen.ireader.ui.base.adapter.ViewHolderImpl;
 import com.example.newbiechen.ireader.utils.FileUtils;
+import com.example.newbiechen.ireader.utils.StringUtils;
 
 /**
  * Created by newbiechen on 17-5-12.
  */
 
-public class DownloadView extends AdapterImpl<DownloadTaskBean> {
+public class DownloadHolder extends ViewHolderImpl<DownloadTaskBean> {
 
     private TextView mTvTitle;
     private TextView mTvMsg;
@@ -26,18 +26,8 @@ public class DownloadView extends AdapterImpl<DownloadTaskBean> {
     private ImageView mIvStatus;
     private TextView mTvStatus;
 
-    public DownloadView(Context context) {
-        super(context);
-    }
-
     @Override
-    protected int getContentId() {
-        return R.layout.item_download;
-    }
-
-    @Override
-    protected void initView() {
-        super.initView();
+    public void initView() {
         mTvTitle = findById(R.id.download_tv_title);
         mTvMsg = findById(R.id.download_tv_msg);
         mTvTip = findById(R.id.download_tv_tip);
@@ -46,7 +36,6 @@ public class DownloadView extends AdapterImpl<DownloadTaskBean> {
         mIvStatus = findById(R.id.download_iv_status);
         mTvStatus = findById(R.id.download_tv_status);
     }
-
 
     @Override
     public void onBind(DownloadTaskBean value, int pos) {
@@ -66,7 +55,7 @@ public class DownloadView extends AdapterImpl<DownloadTaskBean> {
 
                 setTip(R.string.nb_download_loading);
 
-                mTvMsg.setText(getResources().getString(R.string.nb_download_progress,
+                mTvMsg.setText(StringUtils.getString(R.string.nb_download_progress,
                         value.getCurrentChapter(),value.getBookChapters().size()));
                 break;
             case DownloadTaskBean.STATUS_PAUSE:
@@ -79,7 +68,7 @@ public class DownloadView extends AdapterImpl<DownloadTaskBean> {
                 setTip(R.string.nb_download_pausing);
 
                 mPbShow.setProgress(value.getCurrentChapter());
-                mTvMsg.setText(getResources().getString(R.string.nb_download_progress,
+                mTvMsg.setText(StringUtils.getString(R.string.nb_download_progress,
                         value.getCurrentChapter(),value.getBookChapters().size()));
                 break;
             case DownloadTaskBean.STATUS_WAIT:
@@ -92,7 +81,7 @@ public class DownloadView extends AdapterImpl<DownloadTaskBean> {
                 setTip(R.string.nb_download_waiting);
 
                 mPbShow.setProgress(value.getCurrentChapter());
-                mTvMsg.setText(getResources().getString(R.string.nb_download_progress,
+                mTvMsg.setText(StringUtils.getString(R.string.nb_download_progress,
                         value.getCurrentChapter(),value.getBookChapters().size()));
                 break;
             case DownloadTaskBean.STATUS_ERROR:
@@ -100,15 +89,15 @@ public class DownloadView extends AdapterImpl<DownloadTaskBean> {
                 changeBtnStyle(R.string.nb_download_error,
                         R.color.nb_download_error,R.drawable.ic_download_error);
                 setTip(R.string.nb_download_source_error);
-                mPbShow.setVisibility(INVISIBLE);
-                mTvMsg.setVisibility(GONE);
+                mPbShow.setVisibility(View.INVISIBLE);
+                mTvMsg.setVisibility(View.GONE);
                 break;
             case DownloadTaskBean.STATUS_FINISH:
                 //按钮状态
                 changeBtnStyle(R.string.nb_download_finish,
                         R.color.nb_download_finish,R.drawable.ic_download_complete);
                 setTip(R.string.nb_download_complete);
-                mPbShow.setVisibility(INVISIBLE);
+                mPbShow.setVisibility(View.INVISIBLE);
 
                 //设置文件大小
                 mTvMsg.setText(FileUtils.getFileSize(value.getSize()));
@@ -119,24 +108,29 @@ public class DownloadView extends AdapterImpl<DownloadTaskBean> {
     private void changeBtnStyle(int strRes,int colorRes,int drawableRes){
         //按钮状态
         if (!mTvStatus.getText().equals(
-                getResources().getString(strRes))){
-            mTvStatus.setText(getResources().getString(strRes));
-            mTvStatus.setTextColor(getResources().getColor(colorRes));
+                StringUtils.getString(strRes))){
+            mTvStatus.setText(StringUtils.getString(strRes));
+            mTvStatus.setTextColor(getContext().getResources().getColor(colorRes));
             mIvStatus.setImageResource(drawableRes);
         }
     }
 
     private void setProgressMax(DownloadTaskBean value){
         if (mPbShow.getMax() != value.getBookChapters().size()){
-            mPbShow.setVisibility(VISIBLE);
+            mPbShow.setVisibility(View.VISIBLE);
             mPbShow.setMax(value.getBookChapters().size());
         }
     }
 
     //提示
     private void setTip(int strRes){
-        if (!mTvTip.getText().equals(getResources().getString(strRes))){
-            mTvTip.setText(getResources().getString(strRes));
+        if (!mTvTip.getText().equals(StringUtils.getString(strRes))){
+            mTvTip.setText(StringUtils.getString(strRes));
         }
+    }
+
+    @Override
+    protected int getItemLayoutId() {
+        return R.layout.item_download;
     }
 }

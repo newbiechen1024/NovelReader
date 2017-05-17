@@ -47,6 +47,7 @@ public class LogUtils {
     }
 
     public static void w(String tag, Object msg, Throwable tr) {
+        if (msg == null) return;
         log(tag, msg.toString(), tr, 'w');
     }
 
@@ -62,6 +63,7 @@ public class LogUtils {
     }
 
     public static void e(String tag, Object msg, Throwable tr) {
+        if (msg == null) return;
         log(tag, msg.toString(), tr, 'e');
     }
 
@@ -77,6 +79,7 @@ public class LogUtils {
     }
 
     public static void d(String tag, Object msg, Throwable tr) {
+        if (msg == null) return;
         log(tag, msg.toString(), tr, 'd');
     }
 
@@ -92,6 +95,7 @@ public class LogUtils {
     }
 
     public static void i(String tag, Object msg, Throwable tr) {
+        if (msg == null) return;
         log(tag, msg.toString(), tr, 'i');
     }
 
@@ -107,6 +111,7 @@ public class LogUtils {
     }
 
     public static void v(String tag, Object msg, Throwable tr) {
+        if (msg == null) return;
         log(tag, msg.toString(), tr, 'v');
     }
 
@@ -118,6 +123,7 @@ public class LogUtils {
      * @param level
      */
     private static void log(String tag, String msg, Throwable tr, char level) {
+        if (tag == null || msg == null || tr == null) return;
         if (LOG_SWITCH) {
             if ('e' == level && ('e' == LOG_TYPE || 'v' == LOG_TYPE)) { // 输出错误信息
                 Log.e(tag, createMessage(msg), tr);
