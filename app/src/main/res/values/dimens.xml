@@ -39,4 +39,8 @@
     <!--read-->
     <dimen name="nb.read.text.top">16sp</dimen>
     <dimen name="nb.read.text.bottom">12dp</dimen>
+    
+    <!--read setting-->
+    <dimen name="nb.read_setting.divider">20dp</dimen>
+    <dimen name="nb.read_setting.btn_height">35dp</dimen>
 </resources>

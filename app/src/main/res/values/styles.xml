@@ -6,8 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowEnterAnimation">@anim/slide_right_in</item>
-        <item name="android:windowExitAnimation">@anim/slide_left_out</item>
+        <item name="android:windowAnimationStyle">@style/anim_slide_right_in_left_out</item>
         <item name="android:actionOverflowMenuStyle">@style/ActionButton.Overflow.Menu</item>
     </style>
     
@@ -18,14 +17,38 @@
         <item name="android:background">@color/transparent</item>
     </style>
     <!--Dialog-->
-    <style name="CommonDialog" parent="android:Theme.Dialog">
+    <style name="CommonDialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
-        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--必须要加上这句才能实现真正的半透明，-->
+        <item name="android:windowIsTranslucent">false</item>
+        <!--直接写windowEnter或者windowExit 是无效的-->Re
+        <item name="android:windowAnimationStyle">@style/anim_slide_left_in_right_out</item>
+    </style>
+    
+    <style name="ReadSettingDialog" parent="CommonDialog">
+        <item name="android:windowAnimationStyle">@style/anim_slide_bottom_in_out</item>
+    </style>
+    
+    <!--animation-->
+    <style name="anim_slide_bottom_in_out" parent="android:Animation">
+        <item name="@android:windowEnterAnimation">@anim/slide_bottom_in</item>
+        <item name="@android:windowExitAnimation">@anim/slide_bottom_out</item>
+    </style>
+    
+    <style name="anim_slide_left_in_right_out" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/slide_left_in</item>
         <item name="android:windowExitAnimation">@anim/slide_right_out</item>
     </style>
+    
+    <style name="anim_slide_right_in_left_out" parent="android:Animation">
+        <item name="android:windowExitAnimation">@anim/slide_right_out</item>
+        <item name="android:windowEnterAnimation">@anim/slide_left_in</item>
+    </style>
+    
     <!--Toolbar-->
     <style name="Theme.ToolBar.Menu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <!-- 设置-弹窗的背景-颜色-->

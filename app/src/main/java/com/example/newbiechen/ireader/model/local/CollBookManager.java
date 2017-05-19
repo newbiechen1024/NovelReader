@@ -45,7 +45,7 @@ public class CollBookManager {
 
     public static CollBookManager getInstance(){
         if (sInstance == null){
-            synchronized (LocalRepository.class){
+            synchronized (CollBookManager.class){
                 if (sInstance == null){
                     sInstance = new CollBookManager();
                 }

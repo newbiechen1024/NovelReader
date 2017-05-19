@@ -10,52 +10,55 @@
     android:layout_height="match_parent">
     
     <RelativeLayout
-        android:id="@+id/rlBookReadRoot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true"
         android:background="@drawable/theme_leather_bg">
-        <!--头部菜单栏-->
-        <RelativeLayout
-            android:id="@+id/read_rl_top_menu"
+    
+        <!--头部菜单栏:可用Toolbar代替-->
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/read_abl_top_menu"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_alignParentTop="true"
-            android:background="@color/nb.read.menu.bg"
-            android:padding="15dp"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
             android:visibility="gone"
             tools:visibility="visible">
             
-            <ImageView
-                android:id="@+id/read_iv_back"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:paddingLeft="10dp"
-                android:paddingRight="15dp"
-                android:src="@drawable/ic_arrow_back" />
-            
-            <TextView
-                android:id="@+id/read_tv_brief"
-                android:layout_alignParentRight="true"
-                android:text="@string/nb.read.brief"
-                style="@style/NB.Theme.TextAppearance.Read.TopMenu"/>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                android:fitsSystemWindows="true"
+                android:background="@color/nb.read.menu.bg"
+                android:theme="@style/Theme.ToolBar.Menu">
+                <RelativeLayout
+                    android:layout_width="120dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="right"
+                    android:background="@color/nb.read.menu.bg">
+                    <TextView
+                        android:id="@+id/read_tv_brief"
+                        android:layout_alignParentRight="true"
+                        android:text="@string/nb.read.brief"
+	                    android:layout_marginRight="15dp"
+                        style="@style/NB.Theme.TextAppearance.Read.TopMenu"/>
+        
+                    <TextView
+                        android:id="@+id/read_tv_community"
+                        android:layout_toLeftOf="@id/read_tv_brief"
+                        android:text="@string/nb.read.community"
+                        style="@style/NB.Theme.TextAppearance.Read.TopMenu"/>
+                </RelativeLayout>
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
     
-            <TextView
-                android:id="@+id/read_tv_community"
-                android:layout_toLeftOf="@id/read_tv_brief"
-                android:text="@string/nb.read.community"
-                style="@style/NB.Theme.TextAppearance.Read.TopMenu"/>
-        </RelativeLayout>
-        
-        
+    
         <!--阅读页面-->
-        <FrameLayout
-            android:id="@+id/read_fl_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="false"
-            android:focusable="false"
-            android:layerType="hardware" />
+		<com.example.newbiechen.ireader.widget.PageView
+			android:id="@+id/read_pv_page"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+            android:clickable="true"/>
         
         <!--缓存提示-->
         <TextView
@@ -71,9 +74,6 @@
             android:text="@string/nb.download.add_succeed"
             android:textColor="@color/white"
             android:visibility="gone" />
-        
-        <!--设置布局-->
-        <include layout="@layout/layout_read_setting" />
         
         <!--底部页面-->
         <LinearLayout

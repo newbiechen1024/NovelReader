@@ -2,12 +2,15 @@ package com.example.newbiechen.ireader.ui.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,14 +28,18 @@ import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.local.CollBookManager;
+import com.example.newbiechen.ireader.model.local.ReadSettingManager;
 import com.example.newbiechen.ireader.presenter.ReadPresenter;
 import com.example.newbiechen.ireader.presenter.contract.ReadContract;
 import com.example.newbiechen.ireader.ui.adapter.CategoryAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
+import com.example.newbiechen.ireader.ui.dialog.ReadSettingDialog;
 import com.example.newbiechen.ireader.utils.LogUtils;
+import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.StatusBarCompat;
 import com.example.newbiechen.ireader.utils.SystemBarUtils;
+import com.example.newbiechen.ireader.widget.PageView;
 
 import java.util.List;
 
@@ -48,22 +55,22 @@ import static android.view.View.VISIBLE;
 
 public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
  implements ReadContract.View{
+    private static final String TAG = "ReadActivity";
+
     private static final String EXTRA_IS_FROM_SHELF = "extra_is_from_shelf";
     private static final String EXTRA_BOOK_ID = "extra_book_id";
     @BindView(R.id.read_dl_slide)
     DrawerLayout mDlSlide;
     /*************top_menu_view*******************/
-    @BindView(R.id.read_rl_top_menu)
-    RelativeLayout mRlTopMenu;
-    @BindView(R.id.read_iv_back)
-    ImageView mIvBack;
+    @BindView(R.id.read_abl_top_menu)
+    AppBarLayout mAblTopMenu;
     @BindView(R.id.read_tv_community)
     TextView mTvCommunity;
     @BindView(R.id.read_tv_brief)
     TextView mTvBrief;
     /***************content_view******************/
-    @BindView(R.id.read_fl_content)
-    FrameLayout mFlContent;
+    @BindView(R.id.read_pv_page)
+    PageView mPvPage;
     /***************bottom_menu_view***************************/
     @BindView(R.id.read_tv_download_tip)
     TextView mTvDownloadTip;
@@ -85,29 +92,13 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @BindView(R.id.read_tv_setting)
     TextView mTvSetting;
 
-    /***************setting_view*******************************/
-    @BindView(R.id.read_setting_ll_menu)
-    LinearLayout mLlSetting;
-    @BindView(R.id.read_setting_tv_font_minus)
-    TextView mTvFontMinus;
-    @BindView(R.id.read_setting_tv_font)
-    TextView mTvFont;
-    @BindView(R.id.read_setting_tv_font_plus)
-    TextView mTvFontPlus;
-    @BindView(R.id.read_setting_iv_brightness_minus)
-    ImageView mIvBrightnessMinus;
-    @BindView(R.id.read_setting_sb_brightness)
-    SeekBar mSbBrightness;
-    @BindView(R.id.read_setting_iv_brightness_plus)
-    ImageView mIvBrightnessPlus;
-    @BindView(R.id.read_setting_tv_brightness_auto)
-    TextView mTvBrightnessAuto;
-    @BindView(R.id.read_setting_gv_theme)
-    GridView mGvTheme;
+    /***************left slide*******************************/
     @BindView(R.id.read_rv_category)
     RecyclerView mRvCategory;
 
     /*****************view******************/
+    private ReadSettingDialog mSettingDialog;
+    private PageFactory mPageFactory;
     private Animation mTopInAnim;
     private Animation mTopOutAnim;
     private Animation mBottomInAnim;
@@ -142,13 +133,22 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     }
 
     @Override
+    protected void setUpToolbar(Toolbar toolbar) {
+        super.setUpToolbar(toolbar);
+        //半透明化StatusBar
+        SystemBarUtils.transparentStatusBar(this);
+        getSupportActionBar().setTitle("");
+    }
+
+    @Override
     protected void initWidget() {
         super.initWidget();
-        mTvFont.setText(((int) mTvFont.getTextSize())+"");
         //禁止滑动展示DrawerLayout
         mDlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         setUpAdapter();
-
+        mPvPage.setBgColor(getResources().getColor(R.color.nb_read_bg_1));
+        mPageFactory = PageFactory.getInstance(mPvPage);
+        mSettingDialog = new ReadSettingDialog(this,mPageFactory);
     }
 
     private void setUpAdapter(){
@@ -158,164 +158,107 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus){
-            setStatusBarColor(R.color.black);
-            SystemBarUtils.toggleAllBar(this);
-        }
-    }
-
-    @Override
     protected void initClick() {
         super.initClick();
-        mFlContent.setOnClickListener(
-                (v) -> toggleMenu()
-        );
+
+        mPvPage.setTouchListener(new PageView.TouchListener() {
+            @Override
+            public void center() {
+                toggleMenu(true);
+            }
+
+            @Override
+            public Boolean prePage() {
+                return false;
+            }
+
+            @Override
+            public Boolean nextPage() {
+                if (mAblTopMenu.getVisibility() == VISIBLE){
+                    toggleMenu(true);
+                    return false;
+                }
+                else if (mSettingDialog.isShowing()){
+                    mSettingDialog.dismiss();
+                    return false;
+                }
+                return true;
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+        });
+
         mTvCategory.setOnClickListener(
                 (v) -> {
-                    toggleMenu();
+                    toggleMenu(true);
                     //打开侧滑动栏
                     mDlSlide.openDrawer(Gravity.START);
                 }
         );
         mTvSetting.setOnClickListener(
                 (v) -> {
-                    toggleMenu();
-                    toggleSettingMenu();
+                    toggleMenu(false);
+                    mSettingDialog.show();
                 }
         );
-        mFlContent.setOnTouchListener(
-                (v, event) -> {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN){
-                        if (mLlSetting.getVisibility() == VISIBLE){
-                            toggleSettingMenu();
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-        );
+    }
 
-        mTvFontMinus.setOnClickListener(
-                (v) ->  {
-                    int fontSize = Integer.valueOf(mTvFont.getText().toString())+1;
-                    mTvFont.setText(fontSize);
-                }
-        );
+    //切换StatusBar显示状态
+    private void toggleStatusBar(){
+        if (SystemBarUtils.isFlagUsed(this,View.SYSTEM_UI_FLAG_FULLSCREEN)){
+            //显示
+            SystemBarUtils.clearFlag(this,View.SYSTEM_UI_FLAG_FULLSCREEN);
+        }
+        else{
+            //隐藏
+            SystemBarUtils.setFlag(this,View.SYSTEM_UI_FLAG_FULLSCREEN);
+        }
+    }
 
-        mTvFontPlus.setOnClickListener(
-                (v) -> {
-                    int fontSize = Integer.valueOf(mTvFont.getText().toString())-1;
-                    if (fontSize < 0) return;
-                    mTvFont.setText(fontSize+"");
-                }
-        );
-
-        mIvBrightnessMinus.setOnClickListener(
-                (v) -> {
-                    int progress = mSbBrightness.getProgress()-1;
-                    if (progress < 0) return;
-                    mSbBrightness.setProgress(progress);
-                }
-        );
-        mIvBrightnessPlus.setOnClickListener(
-                (v) -> {
-                    int progress = mSbBrightness.getProgress()+1;
-                    if (progress > mSbBrightness.getMax()) return;
-                    mSbBrightness.setProgress(progress);
-                }
-        );
-        mTvBrightnessAuto.setOnClickListener(
-                (v) -> {
-                }
-        );
+    private void toggleNavBar(){
+        //有三种状态，设置中是否使用、是否有虚拟按键，该版本是否支持NavBar。
     }
 
     /**
      * 切换菜单栏的可视状态
      * 默认是隐藏的
      */
-    private void toggleMenu(){
+    private void toggleMenu(boolean hideStatusBar){
         initMenuAnim();
-        //执行进入动画的同时
-        mTopInAnim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                SystemBarUtils.toggleAllBar(ReadActivity.this);
-            }
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        mTopOutAnim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                setStatusBarColor(R.color.nb_read_bar_translucent);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                setStatusBarColor(R.color.black);
-                SystemBarUtils.toggleAllBar(ReadActivity.this);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        if(mRlTopMenu.getVisibility() == View.VISIBLE){
+        if(mAblTopMenu.getVisibility() == View.VISIBLE){
             //关闭
-            mRlTopMenu.startAnimation(mTopOutAnim);
+            mAblTopMenu.startAnimation(mTopOutAnim);
             mLlBottomMenu.startAnimation(mBottomOutAnim);
-            mRlTopMenu.setVisibility(GONE);
+            mAblTopMenu.setVisibility(GONE);
             mLlBottomMenu.setVisibility(GONE);
         }
         else {
-            mRlTopMenu.setVisibility(View.VISIBLE);
+            mAblTopMenu.setVisibility(View.VISIBLE);
             mLlBottomMenu.setVisibility(View.VISIBLE);
-
-            mRlTopMenu.startAnimation(mTopInAnim);
+            mAblTopMenu.startAnimation(mTopInAnim);
             mLlBottomMenu.startAnimation(mBottomInAnim);
+        }
+
+        if (hideStatusBar){
+            toggleStatusBar();
         }
     }
 
     //初始化菜单动画
     private void initMenuAnim(){
-        if (mTopInAnim == null){
-            mTopInAnim = AnimationUtils.loadAnimation(this, R.anim.slide_top_in);
-            mTopOutAnim = AnimationUtils.loadAnimation(this, R.anim.slide_top_out);
-            mBottomInAnim = AnimationUtils.loadAnimation(this, R.anim.slide_bottom_in);
-            mBottomOutAnim = AnimationUtils.loadAnimation(this, R.anim.slide_bottom_out);
-            //退出的速度要快
-            mTopOutAnim.setDuration(200);
-            mBottomOutAnim.setDuration(200);
-        }
-    }
+        if (mTopInAnim != null) return;
 
-    /**
-     * 设置栏的切换
-     */
-    private void toggleSettingMenu(){
-        if (mLlSetting.getVisibility() == View.VISIBLE){
-            mLlSetting.startAnimation(mBottomOutAnim);
-            mLlSetting.setVisibility(GONE);
-        }
-        else {
-            mLlSetting.setVisibility(VISIBLE);
-            mBottomInAnim.setAnimationListener(null);
-            mLlSetting.startAnimation(mBottomInAnim);
-        }
+        mTopInAnim = AnimationUtils.loadAnimation(this, R.anim.slide_top_in);
+        mTopOutAnim = AnimationUtils.loadAnimation(this, R.anim.slide_top_out);
+        mBottomInAnim = AnimationUtils.loadAnimation(this, R.anim.slide_bottom_in);
+        mBottomOutAnim = AnimationUtils.loadAnimation(this, R.anim.slide_bottom_out);
+        //退出的速度要快
+        mTopOutAnim.setDuration(200);
+        mBottomOutAnim.setDuration(200);
     }
 
     @Override
@@ -354,5 +297,14 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     public void showCategory(List<BookChapterBean> bookChapterList) {
         //显示
         mCategoryAdapter.refreshItems(bookChapterList);
+    }
+
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus){
+            toggleStatusBar();
+        }
     }
 }

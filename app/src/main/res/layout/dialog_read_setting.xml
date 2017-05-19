@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2016 JustWayward Team
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/read_setting_ll_menu"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:clickable="true"
+    android:layout_alignParentBottom="true"
+    android:background="@color/nb.read.menu.bg"
+    android:orientation="vertical"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/nb.read_setting.divider">
+
+        <ImageView
+            android:id="@+id/read_setting_iv_brightness_minus"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_brightness_minus" />
+
+        <SeekBar
+            android:id="@+id/read_setting_sb_brightness"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:maxHeight="3dp"
+            android:minHeight="3dp"
+            android:progressDrawable="@drawable/seekbar_bg"
+            android:thumb="@drawable/seekbar_thumb"
+            android:thumbOffset="10dp" />
+
+        <ImageView
+            android:id="@+id/read_setting_iv_brightness_plus"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="20dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_brightness_plus" />
+        
+        <CheckBox
+            android:id="@+id/read_setting_cb_brightness_auto"
+            android:layout_width="40dp"
+            android:layout_height="35dp"
+            android:gravity="center"
+            android:text="系统"
+            android:button="@null"
+            android:textColor="@color/selector_btn_read_setting"
+            android:background="@drawable/selector_btn_read_setting"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/nb.read_setting.divider">
+        
+        <TextView
+            android:id="@+id/read_setting_tv_font_minus"
+            android:layout_width="100dp"
+            android:layout_height="@dimen/nb.read_setting.btn_height"
+            android:gravity="center"
+            android:text="Aa-"
+            android:textSize="14dp"
+            android:background="@drawable/shape_btn_read_setting_normal"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
+        
+        <TextView
+            android:id="@+id/read_setting_tv_font"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="15"
+            android:textSize="14dp"
+            android:textColor="@color/white"/>
+        
+        <TextView
+            android:id="@+id/read_setting_tv_font_plus"
+            android:layout_width="100dp"
+            android:layout_height="@dimen/nb.read_setting.btn_height"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:padding="5dp"
+            android:text="Aa+"
+            android:textSize="18dp"
+            android:background="@drawable/shape_btn_read_setting_normal"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu" />
+    
+        <CheckBox
+            android:id="@+id/read_setting_cb_font_default"
+            android:layout_width="40dp"
+            android:layout_height="@dimen/nb.read_setting.btn_height"
+            android:gravity="center"
+            android:text="默认"
+            android:button="@null"
+            android:textColor="@color/selector_btn_read_setting"
+            android:background="@drawable/selector_btn_read_setting"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu" />
+    </LinearLayout>
+    
+    <RadioGroup
+        android:id="@+id/read_setting_rg_page_mode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/nb.read_setting.divider">
+        
+        <RadioButton
+            android:id="@+id/read_setting_rb_simulation"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/nb.read_setting.btn_height"
+            android:layout_weight="1"
+            android:text="仿真"
+            android:textSize="14dp"
+            android:layout_marginRight="18dp"
+            android:gravity="center"
+            android:button="@null"
+            android:textColor="@color/selector_btn_read_setting"
+            android:background="@drawable/selector_btn_read_setting"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
+        
+        <RadioButton
+            android:id="@+id/read_setting_rb_cover"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/nb.read_setting.btn_height"
+            android:layout_weight="1"
+            android:text="覆盖"
+            android:textSize="14dp"
+            android:gravity="center"
+            android:layout_marginRight="18dp"
+            android:button="@null"
+            android:background="@drawable/selector_btn_read_setting"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
+        
+        <RadioButton
+            android:id="@+id/read_setting_rb_slide"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/nb.read_setting.btn_height"
+            android:layout_weight="1"
+            android:text="滑动"
+            android:textSize="14dp"
+            android:gravity="center"
+            android:layout_marginRight="18dp"
+            android:button="@null"
+            android:background="@drawable/selector_btn_read_setting"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
+    
+        <RadioButton
+            android:id="@+id/read_setting_rb_none"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/nb.read_setting.btn_height"
+            android:layout_weight="1"
+            android:text="无"
+            android:textSize="14dp"
+            android:gravity="center"
+            android:button="@null"
+            android:background="@drawable/selector_btn_read_setting"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
+    </RadioGroup>
+    
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/read_setting_rv_bg"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="@dimen/nb.read_setting.divider"
+        android:scrollbars="none" />
+</LinearLayout>

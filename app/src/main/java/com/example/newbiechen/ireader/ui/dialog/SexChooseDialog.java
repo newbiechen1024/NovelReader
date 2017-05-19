@@ -1,4 +1,4 @@
-package com.example.newbiechen.ireader.widget;
+package com.example.newbiechen.ireader.ui.dialog;
 
 import android.app.Dialog;
 import android.content.Context;

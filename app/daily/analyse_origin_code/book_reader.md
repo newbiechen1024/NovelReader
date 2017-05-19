@@ -67,3 +67,65 @@ ThemeManager:设置阅读的背景的。
 2. 在半透明状态下，如何将布局不伸到StatusBar上
 3. 如何设置隐藏StatusBar和NavigationBar，并且点击不会恢复，只有显示菜单的时候才恢复
 4. 重新设置界面的StatusBar的问题。(1. 不设置StatusBar 2. 设置StatusBar 3. )
+
+### 阶段二
+
+具体实现:
+1. 查看别人是如何构建阅读器，需要哪些类，每个类的作用是什么？
+2. 自己如何组织如何实现。
+
+根据treader作者代码的总结:
+
+主要类分析:
+
+PageWidget:原理是接收Bitmap作为展示，内部处理点击事件，最后通过AnimatorProvider处理翻页动画的类。对Bitmap进行处理
+显示并绘制。在PageWidget中通过Scroller不断调用AnimatorProvider绘制翻页动画
+
+AnimatorProvider:处理翻页动画接口类。真正的实现类是SimuationAnimator(仿真)、SlideAnimator(滑动)等。其真正的原理
+是根据PageWidget传过来的具体点，然后对Bitmap进行转换而成。
+
+PageFactory:制作Page的Factory。即创建显示在PageWidget中的Bitmap。
+
+下面分析主要类的开发接口，以及做的具体的功能:
+
+PageWidget:
+
+开放的方法:
+
+setCurrentPage(): 设置当前页面显示的Bitmap
+
+setNextPage():设置下一个页面显示的bitmap
+
+setBgColor():设置背景颜色 (不是被Bitmap覆盖了么，有什么用- -)
+
+setPageMode():设置页面的切换模式
+
+onTouchListener: 比如说是否存在下一页和上一页的判断接口。是否点击到中间的接口
+
+整个的核心原理是TouchEvent事件的逻辑处理(详见PageWidget的onTouchEvent()事件)
+
+这里的PageWidget还有AnimatorProvider都是照搬原作者的，我只开发PageFactory逻辑。
+
+## 进度执行
+
+1. 可以将head变成Toolbar，减小视图  (完成)
+2. 可以将Setting移出来，定义为一个Dialog，减少ReadActivity的视图逻辑。(完成)
+3. 重新修改SystemBar的弹出方式。(完成)
+4. 实现屏幕的变化 (基本完成)
+5. 实现PageFactory
+
+PageFactory需要实现的东西:
+
+1. 实现章节的显示(如何确保获取章节，然后根据视图获取每个page显示的行数量)
+2. 实现电池的现实
+3. 实现百分比的显示
+
+## 如何实现PageFactory
+
+1. 首先定义下载。首先从CollBook中查看当前进度，然后获取具体章节，再判断当前章节及其后五章是否已经下载，如果存在没有加载
+就从网络中加载。之后将章节内容传递给PageFactory,PageFactory获取具体进度，并将数据进行分割，显示。每进行翻页的时候，
+判断是否存在next如果不存在，则向ReadActivity告急，ReadActivity再从文本中导入数据给PageFactory,PageFactory再
+进行切割。
+
+顺序就是 ReadActivity传值给PageFactory->PageFactory切割并显示，当next章显示完了，再向ReadActivity进行请求。
+ReadActivity在从数据库中加载文本(文本过程中下一章显示正在加载状态)。如果文本存在

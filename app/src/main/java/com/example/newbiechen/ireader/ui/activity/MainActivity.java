@@ -2,9 +2,7 @@ package com.example.newbiechen.ireader.ui.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -20,7 +18,7 @@ import com.example.newbiechen.ireader.ui.fragment.CommunityFragment;
 import com.example.newbiechen.ireader.ui.fragment.FindFragment;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.SharedPreUtils;
-import com.example.newbiechen.ireader.widget.SexChooseDialog;
+import com.example.newbiechen.ireader.ui.dialog.SexChooseDialog;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
