@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
-import com.example.newbiechen.ireader.model.local.CollBookManager;
+import com.example.newbiechen.ireader.utils.BookManager;
 import com.example.newbiechen.ireader.ui.base.adapter.ViewHolderImpl;
 
 /**
@@ -27,7 +27,7 @@ public class CategoryHolder extends ViewHolderImpl<BookChapterBean> {
         //首先判断是否该章已下载
         Drawable drawable = null;
         if (value.getBookId() != null
-                && CollBookManager.getInstance()
+                && BookManager
                 .isChapterCached(value.getBookId(),value.getTitle())){
             drawable = ContextCompat.getDrawable(getContext(),R.drawable.ic_item_category_download);
         }

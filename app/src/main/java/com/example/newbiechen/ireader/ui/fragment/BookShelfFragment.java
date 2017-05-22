@@ -1,10 +1,8 @@
 package com.example.newbiechen.ireader.ui.fragment;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +12,7 @@ import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.RxBus;
 import com.example.newbiechen.ireader.event.DownloadMessage;
 import com.example.newbiechen.ireader.event.RecommendBookEvent;
-import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
-import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
-import com.example.newbiechen.ireader.model.local.CollBookManager;
 import com.example.newbiechen.ireader.presenter.BookShelfPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookShelfContract;
 import com.example.newbiechen.ireader.ui.activity.ReadActivity;

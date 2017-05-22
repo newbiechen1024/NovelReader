@@ -20,7 +20,7 @@ import com.example.newbiechen.ireader.model.bean.BookDetailBean;
 import com.example.newbiechen.ireader.model.bean.BookListBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.bean.HotCommentBean;
-import com.example.newbiechen.ireader.model.local.CollBookManager;
+import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.presenter.BookDetailPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookDetailContract;
 import com.example.newbiechen.ireader.ui.adapter.BookListAdapter;
@@ -149,7 +149,7 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
                     //点击存储
                     if (isCollected){
                         //放弃点击
-                        CollBookManager.getInstance()
+                        BookRepository.getInstance()
                                 .deleteCollBook(mCollBookBean);
 
                         mTvChase.setText(getResources().getString(R.string.nb_book_detail_chase_update));
@@ -222,7 +222,7 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
         mTvCommunity.setText(getResources().getString(R.string.nb_book_detail_community, bean.getTitle()));
         //帖子数
         mTvPostsCount.setText(getResources().getString(R.string.nb_book_detail_posts_count,bean.getPostCount()));
-        mCollBookBean = CollBookManager.getInstance().getCollBook(bean.get_id());
+        mCollBookBean = BookRepository.getInstance().getCollBook(bean.get_id());
 
         //判断是否收藏
         if (mCollBookBean != null){

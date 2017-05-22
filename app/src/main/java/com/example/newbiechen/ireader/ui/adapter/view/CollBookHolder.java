@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
-import com.example.newbiechen.ireader.model.local.CollBookManager;
+import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.base.adapter.ViewHolderImpl;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.StringUtils;
@@ -79,7 +79,7 @@ public class CollBookHolder extends ViewHolderImpl<CollBookBean>{
             mIvRedDot.setVisibility(View.GONE);
             //更新数据
             mCollBookBean.setIsUpdate(false);
-            CollBookManager.getInstance()
+            BookRepository.getInstance()
                     .updateCollBook(mCollBookBean);
         }
     }

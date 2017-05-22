@@ -6,14 +6,15 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.RxBus;
 import com.example.newbiechen.ireader.event.DownloadMessage;
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
-import com.example.newbiechen.ireader.model.local.CollBookManager;
+import com.example.newbiechen.ireader.utils.BookManager;
+import com.example.newbiechen.ireader.model.local.BookRepository;
+import com.example.newbiechen.ireader.model.local.LocalRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.ui.base.BaseRxService;
 import com.example.newbiechen.ireader.utils.LogUtils;
@@ -62,12 +63,10 @@ public class DownloadService extends BaseRxService{
         super.onCreate();
         mHandler = new Handler(getMainLooper());
         //从数据库中获取所有的任务
-        mDownloadTaskList = CollBookManager
+        mDownloadTaskList = LocalRepository
                 .getInstance()
                 .getDownloadTaskList();
     }
-
-
 
     @Nullable
     @Override
@@ -185,7 +184,7 @@ public class DownloadService extends BaseRxService{
 
                 BookChapterBean bookChapterBean = bookChapterBeans.get(i);
                 //首先判断该章节是否曾经被加载过 (从文件中判断)
-                if (CollBookManager.getInstance()
+                if (BookManager
                         .isChapterCached(taskEvent.getBookId(),bookChapterBean.getTitle())){
 
                     //设置任务进度
@@ -205,8 +204,6 @@ public class DownloadService extends BaseRxService{
                     break;
                 }
 
-                //判断是否取消加载
-                Log.d(TAG, "executeTask: "+taskEvent.getStatus());
                 if (isCancel){
                     result = LOAD_PAUSE;
                     isCancel = false;
@@ -215,11 +212,9 @@ public class DownloadService extends BaseRxService{
 
                 //加载数据
                 result = loadChapter(taskEvent.getBookId(),bookChapterBean);
-
                 //章节加载完成
                 if (result == LOAD_NORMAL){
                     taskEvent.setCurrentChapter(i);
-
                     postDownloadChange(taskEvent, DownloadTaskBean.STATUS_LOADING, i + "");
                 }
                 //章节加载失败
@@ -234,7 +229,7 @@ public class DownloadService extends BaseRxService{
                 //存储DownloadTask的状态
                 taskEvent.setStatus(DownloadTaskBean.STATUS_FINISH);//Task的状态
                 taskEvent.setCurrentChapter(taskEvent.getBookChapters().size());//当前下载的章节数量
-                taskEvent.setSize(CollBookManager.getInstance().getBookSize(taskEvent.getBookId()));//Task的大小
+                taskEvent.setSize(BookManager.getBookSize(taskEvent.getBookId()));//Task的大小
                 //删除章节断点
 
                 //发送完成状态
@@ -250,7 +245,7 @@ public class DownloadService extends BaseRxService{
                 postDownloadChange(taskEvent, DownloadTaskBean.STATUS_PAUSE, "暂停加载");
             }
             //存储状态
-            CollBookManager.getInstance().saveDownloadTask(taskEvent);
+            LocalRepository.getInstance().saveDownloadTask(taskEvent);
 
             //轮询下一个事件，用RxBus用来保证事件是在主线程
 
@@ -274,9 +269,11 @@ public class DownloadService extends BaseRxService{
                 //表示在当前环境下执行
                 .subscribe(
                         chapterInfo -> {
-                            //存储到文件夹中
-                            CollBookManager.getInstance()
-                                    .saveChapterInfo(folderName, chapterInfo.getTitle(),chapterInfo.getBody());
+                            //TODO:这里文件的名字用的是BookChapter的title,而不是chapter的title。
+                            //原因是Chapter的title可能重复，但是BookChapter的title不会重复
+                            //BookChapter的title = 卷名 + 章节名 chapter 的 title 就是章节名。。
+                            BookRepository.getInstance()
+                                    .saveChapterInfo(folderName, bean.getTitle(),chapterInfo.getBody());
                         },
                         e -> {
                             //当前进度加载错误（这里需要判断是什么问题，根据相应的问题做出相应的回答）
@@ -376,7 +373,6 @@ public class DownloadService extends BaseRxService{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
     }
 
 

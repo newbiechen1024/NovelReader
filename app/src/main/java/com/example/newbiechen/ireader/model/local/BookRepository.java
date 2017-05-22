@@ -1,25 +1,26 @@
 package com.example.newbiechen.ireader.model.local;
 
-import android.util.Log;
-
-import com.example.newbiechen.ireader.App;
-import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
+import com.example.newbiechen.ireader.model.bean.BookRecordBean;
+import com.example.newbiechen.ireader.model.bean.ChapterInfoBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
-import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
 import com.example.newbiechen.ireader.model.gen.BookChapterBeanDao;
-import com.example.newbiechen.ireader.model.gen.BookCommentBeanDao;
+import com.example.newbiechen.ireader.model.gen.BookRecordBeanDao;
 import com.example.newbiechen.ireader.model.gen.CollBookBeanDao;
 import com.example.newbiechen.ireader.model.gen.DaoSession;
-import com.example.newbiechen.ireader.model.gen.DownloadTaskBeanDao;
+import com.example.newbiechen.ireader.utils.BookManager;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.FileUtils;
 import com.example.newbiechen.ireader.utils.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
 
@@ -29,31 +30,32 @@ import io.reactivex.SingleOnSubscribe;
 
 /**
  * Created by newbiechen on 17-5-8.
+ * 存储关于书籍内容的信息(CollBook(收藏书籍),BookChapter(书籍列表),ChapterInfo(书籍章节),BookRecord(记录))
  */
 
-public class CollBookManager {
+public class BookRepository {
     private static final String TAG = "CollBookManager";
-    private static volatile CollBookManager sInstance;
+    private static volatile BookRepository sInstance;
     private DaoSession mSession;
     private CollBookBeanDao mCollBookDao;
-    private CollBookManager(){
+    private BookRepository(){
         mSession = DaoDbHelper.getInstance()
                 .getSession();
-
         mCollBookDao = mSession.getCollBookBeanDao();
     }
 
-    public static CollBookManager getInstance(){
+    public static BookRepository getInstance(){
         if (sInstance == null){
-            synchronized (CollBookManager.class){
+            synchronized (BookRepository.class){
                 if (sInstance == null){
-                    sInstance = new CollBookManager();
+                    sInstance = new BookRepository();
                 }
             }
         }
         return sInstance;
     }
 
+    //存储已收藏书籍
     public void saveCollBook(CollBookBean bean){
         //启动异步存储
         mSession.startAsyncSession()
@@ -83,11 +85,32 @@ public class CollBookManager {
                 );
     }
 
-
-    public void updateCollBook(CollBookBean bean){
-        mCollBookDao.update(bean);
+    /**
+     * 存储章节
+     * @param folderName
+     * @param fileName
+     * @param content
+     */
+    public void saveChapterInfo(String folderName,String fileName,String content){
+        File file = BookManager.getBookFile(folderName, fileName);
+        //获取流并存储
+        Writer writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(file));
+            writer.write(content);
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            IOUtils.close(writer);
+        }
     }
 
+    public void saveBookRecord(BookRecordBean bean){
+        mSession.getBookRecordBeanDao()
+                .insertOrReplace(bean);
+    }
+
+    /*****************************get************************************************/
     public CollBookBean getCollBook(String bookId){
         CollBookBean bean = mCollBookDao.queryBuilder()
                 .where(CollBookBeanDao.Properties._id.eq(bookId))
@@ -105,6 +128,7 @@ public class CollBookManager {
         });
     }
 
+    //获取书籍列表
     public Single<List<BookChapterBean>> getBookChapters(String bookId){
         return Single.create(new SingleOnSubscribe<List<BookChapterBean>>() {
             @Override
@@ -119,88 +143,53 @@ public class CollBookManager {
         });
     }
 
+    //获取阅读记录
+    public BookRecordBean getBookRecord(String bookId){
+        return mSession.getBookRecordBeanDao()
+                .queryBuilder()
+                .where(BookRecordBeanDao.Properties.BookId.eq(bookId))
+                .unique();
+    }
 
+    //TODO:需要进行获取编码并转换的问题
+    public ChapterInfoBean getChapterInfoBean(String folderName,String fileName){
+        File file = new File(Constant.BOOK_CACHE_PATH + folderName
+                + File.separator + fileName + FileUtils.SUFFIX_TXT);
+        if (!file.exists()) return null;
+        Reader reader = null;
+        String str = null;
+        StringBuilder sb = new StringBuilder();
+        try {
+            reader = new FileReader(file);
+            BufferedReader br = new BufferedReader(reader);
+            while ((str = br.readLine()) != null){
+                sb.append(str);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            IOUtils.close(reader);
+        }
+
+        ChapterInfoBean bean = new ChapterInfoBean();
+        bean.setTitle(fileName);
+        bean.setBody(sb.toString());
+        return bean;
+    }
+
+    /************************************************************/
+    public void updateCollBook(CollBookBean bean){
+        mCollBookDao.update(bean);
+    }
+
+    /************************************************************/
     public void deleteCollBook(CollBookBean bean){
         mCollBookDao.delete(bean);
     }
 
-    /********************************收藏文章的存储功能***************************************************/
-
-    /**
-     * 存储章节
-     * @param folderName
-     * @param fileName
-     * @param content
-     */
-    public void saveChapterInfo(String folderName,String fileName,String content){
-        File file = getBookFile(folderName, fileName);
-        //获取流并存储
-        Writer writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(file));
-            writer.write(content);
-            writer.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-            IOUtils.close(writer);
-        }
-    }
-
-    /**
-     * 创建存储文件
-     * @param folderName
-     * @param fileName
-     * @return
-     */
-    private File getBookFile(String folderName, String fileName){
-        return FileUtils.getFile(Constant.BOOK_CACHE_PATH + folderName
-                + File.separator + fileName + FileUtils.SUFFIX_TXT);
-    }
-
-    public long getBookSize(String folderName){
-        return FileUtils.getDirSize(FileUtils
-                .getFolder(Constant.BOOK_CACHE_PATH + folderName));
-    }
-
-    /**
-     * 根据文件名判断是否被缓存过 (因为可能数据库显示被缓存过，但是文件中却没有的情况，所以需要根据文件判断是否被缓存
-     * 过)
-     * @param folderName : bookId
-     * @param fileName: chapterName
-     * @return
-     */
-    public boolean isChapterCached(String folderName, String fileName){
-        File file = new File(Constant.BOOK_CACHE_PATH + folderName
-                + File.separator + fileName + FileUtils.SUFFIX_TXT);
-        return file.exists();
-    }
-
-    //异步存储，提高效率
-    public void saveDownloadTask(DownloadTaskBean bean){
-        mSession.startAsyncSession()
-                .runInTx(
-                        () -> {
-                            //存储BookChapterBean
-                            mSession.getBookChapterBeanDao()
-                                    .insertOrReplaceInTx(bean.getBookChapters());
-
-                            //存储DownloadTask
-                            mSession.getDownloadTaskBeanDao()
-                                    .insertOrReplace(bean);
-                        }
-                );
-    }
-
     public void deleteBookChapterList(String taskName){
 
-    }
-
-    /**
-     * 获取所有下载的任务
-     * @return
-     */
-    public List<DownloadTaskBean> getDownloadTaskList(){
-        return mSession.getDownloadTaskBeanDao()
-                .loadAll();
     }
 }

@@ -1,14 +1,11 @@
 package com.example.newbiechen.ireader.presenter;
 
-import android.util.Log;
-
-import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.RxBus;
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.BookDetailBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
-import com.example.newbiechen.ireader.model.local.CollBookManager;
+import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.BookShelfContract;
 import com.example.newbiechen.ireader.ui.base.RxPresenter;
@@ -16,17 +13,14 @@ import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.RxUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by newbiechen on 17-5-8.
@@ -39,7 +33,7 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
     @Override
     public void refreshCollBooks() {
         //首先从数据库加载数据，然后根据id从网络中获取详情，之后根据最新时间进行修改
-        CollBookManager.getInstance()
+        BookRepository.getInstance()
                 .getCollBooks()
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(
@@ -72,7 +66,7 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
                         //更新目录
                         updateCategory(collBookBeen);
                         //存储到数据库中
-                        CollBookManager.getInstance()
+                        BookRepository.getInstance()
                                 .saveCollBooks(collBookBeen);
                     }
                 })
@@ -136,7 +130,7 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
                         updateCategory(beans);
 
                         //存储到数据库中
-                        CollBookManager.getInstance()
+                        BookRepository.getInstance()
                                 .saveCollBooks(collBookBeen);
                     }
                 })

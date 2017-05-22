@@ -25,7 +25,17 @@ public class ScreenUtils {
 
     public static int pxToDp(int px){
         DisplayMetrics metrics = getDisplayMetrics();
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX,px,metrics);
+        return (int) (px / metrics.density);
+    }
+
+    public static int spToPx(int sp){
+        DisplayMetrics metrics = getDisplayMetrics();
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,sp,metrics);
+    }
+
+    public static int pxToSp(int px){
+        DisplayMetrics metrics = getDisplayMetrics();
+        return (int) (px / metrics.scaledDensity);
     }
 
     /**
@@ -103,7 +113,7 @@ public class ScreenUtils {
         return hasNavigationBar;
     }
 
-    private static DisplayMetrics getDisplayMetrics(){
+    public static DisplayMetrics getDisplayMetrics(){
         DisplayMetrics metrics = App
                 .getContext()
                 .getResources()

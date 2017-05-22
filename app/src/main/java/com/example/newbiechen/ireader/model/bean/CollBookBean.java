@@ -51,7 +51,10 @@ public class CollBookBean{
     private int chaptersCount;
     private String lastChapter;
     //下面的参数都是自定义的
-    private boolean isUpdate = true;  //默认为true
+    private boolean isUpdate = true;  //是否更新
+
+    private int readChapter;  //上一次阅读的位置
+
     @ToMany(referencedJoinProperty = "bookId")
     private List<BookChapterBean> bookChapterList;
     /** Used to resolve relations */
@@ -61,10 +64,10 @@ public class CollBookBean{
     @Generated(hash = 1552163441)
     private transient CollBookBeanDao myDao;
 
-    @Generated(hash = 108770723)
+    @Generated(hash = 632363692)
     public CollBookBean(String _id, String title, String author, String shortIntro, String cover,
             boolean hasCp, int latelyFollower, double retentionRatio, String updated, int chaptersCount,
-            String lastChapter, boolean isUpdate) {
+            String lastChapter, boolean isUpdate, int readChapter) {
         this._id = _id;
         this.title = title;
         this.author = author;
@@ -77,6 +80,7 @@ public class CollBookBean{
         this.chaptersCount = chaptersCount;
         this.lastChapter = lastChapter;
         this.isUpdate = isUpdate;
+        this.readChapter = readChapter;
     }
 
 
@@ -189,6 +193,14 @@ public class CollBookBean{
 
     public void setIsUpdate(boolean isUpdate) {
         this.isUpdate = isUpdate;
+    }
+
+    public int getReadChapter() {
+        return readChapter;
+    }
+
+    public void setReadChapter(int readChapter) {
+        this.readChapter = readChapter;
     }
 
     public void setBookChapters(List<BookChapterBean> beans){

@@ -16,8 +16,10 @@
 		
 		<TextView
 			android:id="@+id/download_tv_title"
-			android:layout_width="wrap_content"
+			android:layout_width="220dp"
 			android:layout_height="wrap_content"
+			android:singleLine="true"
+			android:maxLines="1"
 			android:textColor="@color/nb.text.default"
 			android:textSize="@dimen/nb.text.normal"
 			tools:text="飞龙在天"/>

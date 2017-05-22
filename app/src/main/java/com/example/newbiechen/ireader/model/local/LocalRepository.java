@@ -1,6 +1,7 @@
 package com.example.newbiechen.ireader.model.local;
 
 import com.example.newbiechen.ireader.model.bean.AuthorBean;
+import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
 import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
 import com.example.newbiechen.ireader.model.bean.ReviewBookBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
@@ -145,6 +146,12 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 .putString(Constant.SHARED_SAVE_BILLBOARD,json);
     }
 
+    @Override
+    public void saveDownloadTask(DownloadTaskBean bean) {
+        mSession.getDownloadTaskBeanDao()
+                .insertOrReplace(bean);
+    }
+
     /***************************************read data****************************************************/
 
     /**
@@ -244,7 +251,7 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 .unique();
     }
 
-    public ReviewBookBean getBook(String id){
+    public ReviewBookBean getReviewBook(String id){
         return mSession.getReviewBookBeanDao()
                 .queryBuilder()
                 .where(BookBeanDao.Properties._id.eq(id))
@@ -256,6 +263,12 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
                 .queryBuilder()
                 .where(BookHelpfulBeanDao.Properties._id.eq(id))
                 .unique();
+    }
+
+    @Override
+    public List<DownloadTaskBean> getDownloadTaskList() {
+        return mSession.getDownloadTaskBeanDao()
+                .loadAll();
     }
 
     private <T> void queryOrderBy(QueryBuilder queryBuilder, Class<T> daoCls,String orderBy){

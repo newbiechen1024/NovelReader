@@ -1,6 +1,7 @@
 package com.example.newbiechen.ireader.model.local;
 
 import com.example.newbiechen.ireader.model.bean.AuthorBean;
+import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
 import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
 import com.example.newbiechen.ireader.model.bean.ReviewBookBean;
 import com.example.newbiechen.ireader.model.bean.BookCommentBean;
@@ -25,4 +26,6 @@ public interface SaveDbHelper {
 
     void saveBookSortPackage(BookSortPackage bean);
     void saveBillboardPackage(BillboardPackage bean);
+    /*************DownloadTask*********************/
+    void saveDownloadTask(DownloadTaskBean bean);
 }

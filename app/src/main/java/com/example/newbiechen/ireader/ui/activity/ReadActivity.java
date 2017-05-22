@@ -1,8 +1,6 @@
 package com.example.newbiechen.ireader.ui.activity;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -10,25 +8,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
-import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
-import com.example.newbiechen.ireader.model.bean.CollBookBean;
-import com.example.newbiechen.ireader.model.local.CollBookManager;
-import com.example.newbiechen.ireader.model.local.ReadSettingManager;
+import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.presenter.ReadPresenter;
 import com.example.newbiechen.ireader.presenter.contract.ReadContract;
 import com.example.newbiechen.ireader.ui.adapter.CategoryAdapter;
@@ -37,8 +27,8 @@ import com.example.newbiechen.ireader.ui.dialog.ReadSettingDialog;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.RxUtils;
-import com.example.newbiechen.ireader.utils.StatusBarCompat;
 import com.example.newbiechen.ireader.utils.SystemBarUtils;
+import com.example.newbiechen.ireader.utils.ToastUtils;
 import com.example.newbiechen.ireader.widget.PageView;
 
 import java.util.List;
@@ -145,10 +135,13 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         super.initWidget();
         //禁止滑动展示DrawerLayout
         mDlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        setUpAdapter();
-        mPvPage.setBgColor(getResources().getColor(R.color.nb_read_bg_1));
-        mPageFactory = PageFactory.getInstance(mPvPage);
+
+        //创建页面工厂
+        mPageFactory = PageFactory.getInstance();
+        mPageFactory.setPageWidget(mPvPage);
         mSettingDialog = new ReadSettingDialog(this,mPageFactory);
+
+        setUpAdapter();
     }
 
     private void setUpAdapter(){
@@ -160,6 +153,19 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @Override
     protected void initClick() {
         super.initClick();
+        mPageFactory.setOnPageChangeListener(new PageFactory.OnPageChangeListener() {
+            @Override
+            public void onChapterChange(int pos) {
+
+                //加载后面5章
+                List<BookChapterBean> bookChapters = mCategoryAdapter.getItems();
+                int last = pos + 5;
+                if (last > bookChapters.size()){
+                    last = bookChapters.size();
+                }
+                mPresenter.loadChapter(mBookId,bookChapters.subList(pos,last));
+            }
+        });
 
         mPvPage.setTouchListener(new PageView.TouchListener() {
             @Override
@@ -168,8 +174,12 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             }
 
             @Override
-            public Boolean prePage() {
-                return false;
+            public Boolean prePage(){
+                if (!mPageFactory.prev()){
+                    ToastUtils.show("已经没有上一章了");
+                    return false;
+                }
+                return true;
             }
 
             @Override
@@ -182,12 +192,17 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     mSettingDialog.dismiss();
                     return false;
                 }
+
+                if (!mPageFactory.next()){
+                    ToastUtils.show("已经没有下一章了");
+                    return false;
+                }
                 return true;
             }
 
             @Override
             public void cancel() {
-
+                mPageFactory.cancel();
             }
         });
 
@@ -266,12 +281,13 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         super.processLogic();
         //初始化目录
         if (isFromBookShelf){
-            Disposable disposable =CollBookManager.getInstance()
+            Disposable disposable = BookRepository.getInstance()
                     .getBookChapters(mBookId)
                     .compose(RxUtils::toSimpleSingle)
                     .subscribe(
                             (bookChapterBeen, throwable) -> {
                                 mCategoryAdapter.refreshItems(bookChapterBeen);
+                                mPageFactory.openBook(mBookId,bookChapterBeen);
                                 LogUtils.e(throwable);
                             }
                     );
@@ -297,6 +313,19 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     public void showCategory(List<BookChapterBean> bookChapterList) {
         //显示
         mCategoryAdapter.refreshItems(bookChapterList);
+        mPageFactory.openBook(mBookId,bookChapterList);
+    }
+
+    @Override
+    public void finishChapter() {
+        if (mPageFactory.getPageStatus() == PageFactory.STATUS_LOADING){
+            mPageFactory.startRead();
+        }
+    }
+
+    @Override
+    public void errorChapter() {
+
     }
 
 

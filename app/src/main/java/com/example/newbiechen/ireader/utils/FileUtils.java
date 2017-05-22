@@ -4,8 +4,12 @@ import android.os.Environment;
 
 import com.example.newbiechen.ireader.App;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.text.DecimalFormat;
 
 /**
@@ -84,6 +88,26 @@ public class FileUtils {
         //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
         //
         return new DecimalFormat("#,##0.##").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    public static String getFileContent(File file){
+        Reader reader = null;
+        String str = null;
+        StringBuilder sb = new StringBuilder();
+        try {
+            reader = new FileReader(file);
+            BufferedReader br = new BufferedReader(reader);
+            while ((str = br.readLine()) != null){
+                sb.append(str);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            IOUtils.close(reader);
+        }
+        return sb.toString();
     }
 
     //判断是否挂载了SD卡

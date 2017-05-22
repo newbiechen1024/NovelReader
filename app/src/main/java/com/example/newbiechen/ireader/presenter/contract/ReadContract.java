@@ -12,9 +12,12 @@ import java.util.List;
 public interface ReadContract extends BaseContract{
     interface View extends BaseContract.BaseView {
         void showCategory(List<BookChapterBean> bookChapterList);
+        void finishChapter();
+        void errorChapter();
     }
 
     interface Presenter extends BaseContract.BasePresenter<View>{
         void loadCategory(String bookId);
+        void loadChapter(String bookId,List<BookChapterBean> bookChapterList);
     }
 }

@@ -32,7 +32,6 @@ public class DownloadTaskBean{
     //所属的bookId(外健)
     private String bookId;
 
-    //顺序存储，当下载完成的时候全部删除
     @ToMany(referencedJoinProperty = "taskName")
     private List<BookChapterBean> bookChapterList;
     //章节的下载进度,默认为初始状态

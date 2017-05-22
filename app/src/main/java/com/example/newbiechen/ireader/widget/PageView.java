@@ -161,7 +161,6 @@ public class PageView extends View {
             moveY = 0;
             //是否移动
             isMove = false;
-//            cancelPage = false;
             //是否存在下一章
             noNext = false;
             //是下一章还是前一章

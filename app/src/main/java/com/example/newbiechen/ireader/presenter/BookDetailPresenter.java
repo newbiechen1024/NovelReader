@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.example.newbiechen.ireader.model.bean.BookDetailBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
-import com.example.newbiechen.ireader.model.local.CollBookManager;
+import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.BookDetailContract;
 import com.example.newbiechen.ireader.ui.base.RxPresenter;
@@ -48,7 +48,7 @@ public class BookDetailPresenter extends RxPresenter<BookDetailContract.View>
                             //设置目录
                             collBookBean.setBookChapters(beans);
                             //存储收藏
-                            CollBookManager.getInstance()
+                            BookRepository.getInstance()
                                     .saveCollBook(collBookBean);
 
                             mView.succeedToBookShelf();
