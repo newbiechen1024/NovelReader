@@ -51,7 +51,6 @@ public class ReadPresenter extends RxPresenter<ReadContract.View>
 
     @Override
     public void loadChapter(String bookId,List<BookChapterBean> bookChapterList) {
-        Log.d(TAG, "loadChapter: "+bookChapterList.size());
         List<Single<int[]>> chapterInfoList = new ArrayList<>(bookChapterList.size());
         for (BookChapterBean bookChapter : bookChapterList){
             Single<int[]> chapterSingle = Single.create(new SingleOnSubscribe<int[]>() {
@@ -66,11 +65,11 @@ public class ReadPresenter extends RxPresenter<ReadContract.View>
                         e.onSuccess(new int[]{-1});
                     }
                 }
-            })
-                    .doOnSuccess(new Consumer<int[]>() {
+            }).doOnSuccess(new Consumer<int[]>() {
                 @Override
                 public void accept(int[] isLoad) throws Exception {
                     if (isLoad[0] == 1) return;
+                    //网络中获取数据
                     RemoteRepository.getInstance()
                             .getChapterInfo(bookChapter.getLink())
                             .subscribe(

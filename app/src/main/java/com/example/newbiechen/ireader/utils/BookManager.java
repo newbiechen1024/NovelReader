@@ -46,6 +46,8 @@ public class BookManager{
         if (!cacheMap.containsKey(chapterName)){
             Cache cache = new Cache();
             File file = getBookFile(bookId, chapterName);
+
+            //TODO:数据加载默认utf-8(以后会增加判断),FileUtils采用Reader获取数据的，可能用byte会更好一点
             char[] array = FileUtils.getFileContent(file).toCharArray();
             WeakReference<char[]> charReference = new WeakReference<char[]>(array);
             cache.size = array.length;
@@ -67,42 +69,72 @@ public class BookManager{
         return position;
     }
 
-
-    //这种方式，会造成逻辑混乱。而且这里还有一个bug。第一个字节和最后一个字节
-    public int getPrev(boolean back){
-        //判断是否越界
+    //获取上一段
+    public String getPrevPara(){
+        //首先判断是否Position已经达到起始位置，已经越界
         if (position < 0){
-            position = 0;
-            return -1;
+            return null;
         }
-        int pos = (int)position;
-        char result = getContent()[pos];
 
-        if (!back) {
-            position -= 1;
+        //初始化从后向前获取的起始点,终止点,文本
+        int end = (int)position;
+        int begin = end;
+        char[] array = getContent();
+
+        while (begin >= 0) { //判断指针是否达到章节的起始位置
+            char character = array[begin]; //获取当前指针下的字符
+
+            //判断当前字符是否为换行，如果为换行，就代表获取到了一个段落，并退出。
+            //有可能发生初始指针指的就是换行符的情况。
+            if ((character+"").equals("\n") && begin != end) {
+                position = begin;
+                //当当前指针指向换行符的时候向后退一步
+                begin++;
+                break;
+            }
+            //向前进一步
+            begin--;
         }
-        return result;
+        //最后end获取到段落的起始点，begin是段落的终止点。
+
+        //当越界的时候，保证begin在章节内
+        if (begin < 0){
+            begin = 0;//在章节内
+            position = -1; //越界
+        }
+        int size = end+1 - begin;
+        return new String(array,begin,size);
     }
 
-    //下一个字节
-    public int getNext(boolean back){
-        //判断是否越界
-
+    //获取下一段
+    public String getNextPara(){
+        //首先判断是否Position已经达到终点位置
         if (position >= chapterLen){
-            position = chapterLen;
-            return -1;
+            return null;
         }
 
-        int pos = (int)position;
-        char result = getContent()[pos];
+        //初始化起始点，终止点。
+        int begin = (int)position;
+        int end = begin;
+        char[] array = getContent();
 
-        if (!back) {
-            position += 1;
+        while (end < chapterLen) { //判断指针是否在章节的末尾位置
+            char character = array[end]; //获取当前指针下的字符
+            //判断当前字符是否为换行，如果为换行，就代表获取到了一个段落，并退出。
+            //有可能发生初始指针指的就是换行符的情况。
+            //这里当遇到\n的时候，不需要回退
+            if ((character+"").equals("\n") && begin != end){
+                ++end;//指向下一字段
+                position = end;
+                break;
+            }
+            //指向下一字段
+            end++;
         }
-        return result;
+        //所要获取的字段的长度
+        int size = end - begin;
+        return new String(array,begin,size);
     }
-
-
 
     //获取章节的内容
     public char[] getContent() {
@@ -128,7 +160,7 @@ public class BookManager{
     }
 
     /**
-     * 创建存储文件
+     * 创建或获取存储文件
      * @param folderName
      * @param fileName
      * @return

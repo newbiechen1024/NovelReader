@@ -156,10 +156,9 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         mPageFactory.setOnPageChangeListener(new PageFactory.OnPageChangeListener() {
             @Override
             public void onChapterChange(int pos) {
-
-                //加载后面5章
+                //加载后面3章
                 List<BookChapterBean> bookChapters = mCategoryAdapter.getItems();
-                int last = pos + 5;
+                int last = pos + 3;
                 if (last > bookChapters.size()){
                     last = bookChapters.size();
                 }

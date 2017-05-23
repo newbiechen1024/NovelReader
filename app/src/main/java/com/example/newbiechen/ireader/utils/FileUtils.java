@@ -98,7 +98,11 @@ public class FileUtils {
             reader = new FileReader(file);
             BufferedReader br = new BufferedReader(reader);
             while ((str = br.readLine()) != null){
-                sb.append(str);
+                //过滤空语句
+                if (!str.equals("")){
+                    //由于sb会自动过滤\n,所以需要加上去
+                    sb.append(str+"\n");
+                }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
