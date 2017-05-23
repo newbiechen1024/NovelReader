@@ -1,5 +1,7 @@
 package com.example.newbiechen.ireader.utils;
 
+import android.util.Log;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -30,15 +32,23 @@ public class BookManager{
         return sInstance;
     }
 
-    public void openChapter(String bookId,String chapterName){
-        openChapter(bookId,chapterName,0);
+    public boolean openChapter(String bookId,String chapterName){
+        return openChapter(bookId,chapterName,0);
     }
 
-    public void openChapter(String bookId,String chapterName,int position){
+    public boolean openChapter(String bookId,String chapterName,long position){
+        //如果文件不存在，则打开失败
+        File file = new File(Constant.BOOK_CACHE_PATH + bookId
+                + File.separator + chapterName + FileUtils.SUFFIX_TXT);
+        if (!file.exists()){
+            return false;
+        }
+        Log.d(TAG, "openChapter: "+position);
         this.bookId = bookId;
         this.chapterName = chapterName;
         this.position = position;
         createCache();
+        return true;
     }
 
     private void createCache(){
@@ -46,7 +56,6 @@ public class BookManager{
         if (!cacheMap.containsKey(chapterName)){
             Cache cache = new Cache();
             File file = getBookFile(bookId, chapterName);
-
             //TODO:数据加载默认utf-8(以后会增加判断),FileUtils采用Reader获取数据的，可能用byte会更好一点
             char[] array = FileUtils.getFileContent(file).toCharArray();
             WeakReference<char[]> charReference = new WeakReference<char[]>(array);
@@ -157,6 +166,8 @@ public class BookManager{
 
     public void clear(){
         cacheMap.clear();
+        position = 0;
+        chapterLen = 0;
     }
 
     /**

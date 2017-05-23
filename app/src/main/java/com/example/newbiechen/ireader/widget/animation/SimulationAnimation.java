@@ -419,8 +419,6 @@ public class SimulationAnimation extends AnimationProvider {
                     (int) (mBezierControl2.x - mMaxLength), leftx,
                     (int) (mBezierControl2.x), rightx);
 
-        // Log.i("hmg", "mBezierControl2.x   " + mBezierControl2.x
-        // + "  mBezierControl2.y  " + mBezierControl2.y);
         mCurrentPageShadow.draw(canvas);
         canvas.restore();
     }
@@ -494,7 +492,6 @@ public class SimulationAnimation extends AnimationProvider {
      * @param y
      */
     public void calcCornerXY(float x, float y) {
-        //  Log.i("hck", "PageWidget x:" + x + "      y" + y);
         if (x <= mScreenWidth / 2) {
             mCornerX = 0;
         }else {
@@ -522,26 +519,16 @@ public class SimulationAnimation extends AnimationProvider {
                 * (mCornerY - mMiddleY) / (mCornerX - mMiddleX);
         mBezierControl1.y = mCornerY;
         mBezierControl2.x = mCornerX;
-        //   mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX)
-        //   * (mCornerX - mMiddleX) / (mCornerY - mMiddleY);
 
         float f4 = mCornerY-mMiddleY;
         if (f4 == 0) {
             mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX)
                     * (mCornerX - mMiddleX) / 0.1f;
-            //    Log.d("PageWidget",""+f4);
+
         }else {
             mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX)
                     * (mCornerX - mMiddleX) / (mCornerY - mMiddleY);
-            //    Log.d("PageWidget","没有进入if判断"+ mBezierControl2.y + "");
         }
-
-        // Log.i("hmg", "mTouchX  " + mTouch.x + "  mTouchY  " + mTouch.y);
-        // Log.i("hmg", "mBezierControl1.x  " + mBezierControl1.x
-        // + "  mBezierControl1.y  " + mBezierControl1.y);
-        // Log.i("hmg", "mBezierControl2.x  " + mBezierControl2.x
-        // + "  mBezierControl2.y  " + mBezierControl2.y);
-
         mBezierStart1.x = mBezierControl1.x - (mCornerX - mBezierControl1.x)
                 / 2;
         mBezierStart1.y = mCornerY;
@@ -569,8 +556,6 @@ public class SimulationAnimation extends AnimationProvider {
                 mBezierControl1.y = mCornerY;
 
                 mBezierControl2.x = mCornerX;
-                //    mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX)
-                //  * (mCornerX - mMiddleX) / (mCornerY - mMiddleY);
 
                 float f5 = mCornerY-mMiddleY;
                 if (f5 == 0) {
@@ -579,17 +564,8 @@ public class SimulationAnimation extends AnimationProvider {
                 }else {
                     mBezierControl2.y = mMiddleY - (mCornerX - mMiddleX)
                             * (mCornerX - mMiddleX) / (mCornerY - mMiddleY);
-                    //    Log.d("PageWidget", mBezierControl2.y + "");
                 }
 
-
-
-                // Log.i("hmg", "mTouchX --> " + mTouch.x + "  mTouchY-->  "
-                // + mTouch.y);
-                // Log.i("hmg", "mBezierControl1.x--  " + mBezierControl1.x
-                // + "  mBezierControl1.y -- " + mBezierControl1.y);
-                // Log.i("hmg", "mBezierControl2.x -- " + mBezierControl2.x
-                // + "  mBezierControl2.y -- " + mBezierControl2.y);
                 mBezierStart1.x = mBezierControl1.x
                         - (mCornerX - mBezierControl1.x) / 2;
             }
@@ -606,16 +582,6 @@ public class SimulationAnimation extends AnimationProvider {
         mBezierEnd2 = getCross(mTouch, mBezierControl2, mBezierStart1,
                 mBezierStart2);
 
-        // Log.i("hmg", "mBezierEnd1.x  " + mBezierEnd1.x + "  mBezierEnd1.y  "
-        // + mBezierEnd1.y);
-        // Log.i("hmg", "mBezierEnd2.x  " + mBezierEnd2.x + "  mBezierEnd2.y  "
-        // + mBezierEnd2.y);
-
-		/*
-		 * mBeziervertex1.x 推导
-		 * ((mBezierStart1.x+mBezierEnd1.x)/2+mBezierControl1.x)/2 化简等价于
-		 * (mBezierStart1.x+ 2*mBezierControl1.x+mBezierEnd1.x) / 4
-		 */
         mBeziervertex1.x = (mBezierStart1.x + 2 * mBezierControl1.x + mBezierEnd1.x) / 4;
         mBeziervertex1.y = (2 * mBezierControl1.y + mBezierStart1.y + mBezierEnd1.y) / 4;
         mBeziervertex2.x = (mBezierStart2.x + 2 * mBezierControl2.x + mBezierEnd2.x) / 4;

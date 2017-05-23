@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.RxBus;
+import com.example.newbiechen.ireader.event.BookCollectedEvent;
 import com.example.newbiechen.ireader.model.bean.BookDetailBean;
 import com.example.newbiechen.ireader.model.bean.BookListBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
@@ -180,8 +182,24 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
         );
 
         mTvRead.setOnClickListener(
-                (v) -> ReadActivity.startActivity(this, mCollBookBean.get_id(), false)
+                (v) -> ReadActivity.startActivity(this, mCollBookBean, isCollected)
         );
+
+        RxBus.getInstance()
+                .toObservable(BookCollectedEvent.class)
+                .subscribe(
+                        bean -> {
+                            isCollected = true;
+                            mTvChase.setText(getResources().getString(R.string.nb_book_detail_give_up));
+
+                            //修改背景
+                            Drawable drawable = getResources().getDrawable(R.drawable.shape_common_gray_corner);
+                            mTvChase.setBackground(drawable);
+                            //设置图片
+                            mTvChase.setCompoundDrawables(ContextCompat.getDrawable(this,R.drawable.ic_book_list_delete),null,
+                                    null,null);
+                        }
+                );
     }
 
     @Override

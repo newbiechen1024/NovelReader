@@ -28,6 +28,7 @@ import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.ScreenUtils;
 import com.example.newbiechen.ireader.widget.PageView;
 
+import java.io.Reader;
 import java.util.Arrays;
 
 import butterknife.BindView;
@@ -192,6 +193,8 @@ public class ReadSettingDialog extends Dialog{
                     if (progress > mSbBrightness.getMax()) return;
                     mSbBrightness.setProgress(progress);
                     BrightnessUtils.setBrightness(mActivity,progress);
+                    //设置进度
+                    ReadSettingManager.getInstance().setBrightness(progress);
                 }
         );
         mCbBrightnessAuto.setOnCheckedChangeListener(
@@ -202,8 +205,10 @@ public class ReadSettingDialog extends Dialog{
                     else {
                         BrightnessUtils.stopAutoBrightness(mActivity);
                     }
+                    ReadSettingManager.getInstance().setAutoBrightness(isChecked);
                 }
         );
+
         //字体大小调节
         mTvFontMinus.setOnClickListener(
                 (v) -> {
@@ -241,30 +246,28 @@ public class ReadSettingDialog extends Dialog{
         //Page Mode 切换
         mRgPageMode.setOnCheckedChangeListener(
                 (group, checkedId) -> {
+                    int pageMode = 0;
                     switch (checkedId){
                         case R.id.read_setting_rb_simulation:
-                            mPageFactory.setPageMode(PageView.PAGE_MODE_SIMULATION);
+                            pageMode = PageView.PAGE_MODE_SIMULATION;
                             break;
                         case R.id.read_setting_rb_cover:
-                            mPageFactory.setPageMode(PageView.PAGE_MODE_COVER);
+                            pageMode = PageView.PAGE_MODE_COVER;
                             break;
                         case R.id.read_setting_rb_slide:
-                            mPageFactory.setPageMode(PageView.PAGE_MODE_SLIDE);
+                            pageMode = PageView.PAGE_MODE_SLIDE;
                             break;
                         case R.id.read_setting_rb_none:
-                            mPageFactory.setPageMode(PageView.PAGE_MODE_NONE);
+                            pageMode = PageView.PAGE_MODE_NONE;
                             break;
                     }
+                    mPageFactory.setPageMode(pageMode);
                 }
         );
+
         //背景的点击事件
         mReadBgAdapter.setOnItemClickListener(
-                (view, pos) -> {
-                    mPageFactory.setBgColor(pos);
-                }
+                (view, pos) -> mPageFactory.setBgColor(pos)
         );
-    }
-
-    public interface OnSettingClickListener{
     }
 }

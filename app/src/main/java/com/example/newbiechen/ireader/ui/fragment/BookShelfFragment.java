@@ -93,7 +93,7 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
 
         mCollBookAdapter.setOnItemClickListener(
                 (view, pos) -> ReadActivity.startActivity(getContext(),
-                        mCollBookAdapter.getItem(pos).get_id(),true)
+                        mCollBookAdapter.getItem(pos),true)
         );
 
         mCollBookAdapter.setOnItemLongClickListener(

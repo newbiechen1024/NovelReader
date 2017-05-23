@@ -10,7 +10,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_centerVertical="true"
-		android:drawableLeft="@drawable/selector_chapter_drawable"
+		android:drawableLeft="@drawable/selector_category_unload"
 		android:drawablePadding="10dp"
 		android:padding="15dp"
 		android:text="1.第一章 八十大寿"

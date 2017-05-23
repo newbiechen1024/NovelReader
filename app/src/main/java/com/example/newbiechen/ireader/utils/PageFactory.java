@@ -16,7 +16,6 @@ import com.example.newbiechen.ireader.widget.PageView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,6 +24,7 @@ import java.util.List;
 
 public class PageFactory {
     private static final String TAG = "PageFactory";
+
     private static final int DEFAULT_LINE_DIVIDER = 12;
     private static final int DEFAULT_PAGE_MARGIN_TOP_BOTTOM = 12;
     private static final int DEFAULT_PAGE_MARGIN_LEFT_RIGHT = 20;
@@ -34,24 +34,32 @@ public class PageFactory {
     public static final int STATUS_ERROR = 3;
 
     private static PageFactory sInstance;
-
+    //页面显示类
     private PageView mPageView;
+    //章节数据管理类
     private BookManager mBookManager;
     //绘制文字的画笔
     private Paint mTextPaint;
     private ReadSettingManager mSettingManager;
     private OnPageChangeListener mPageChangeListener;
+    //被遮盖的页，或者认为被取消显示的页
     private TPage mCancelPage;
+    //当前页
     private TPage mCurPage;
     private DecimalFormat mPerFormat = new DecimalFormat("#00.00");
 
     /*****************params**************************/
+    //当前的状态
     private int mStatus = STATUS_LOADING;
+    //应用的宽高
     private int mAppWidth;
     private int mAppHeight;
+    //书籍绘制区域的宽高
     private int mVisibleWidth;
     private int mVisibleHeight;
+    //字体的颜色
     private int mTextColor;
+    //字体的大小
     private int mTextSize;
     private int mPageMode;
     private int mPageBg;
@@ -62,6 +70,7 @@ public class PageFactory {
     private BookRecordBean mBookRecord;
 
     private int mCurChapter = 0;
+    private boolean isBookOpen = false;
 
     public static PageFactory getInstance(){
         if (sInstance == null){
@@ -170,23 +179,26 @@ public class PageFactory {
         }
         mCurChapter = mBookRecord.getChapter();
 
-        //提示章节改变
-        if (mPageChangeListener != null){
-            mPageChangeListener.onChapterChange(mCurChapter);
-        }
+        //提示加载下面的章节
+        loadCurrentChapter();
     }
 
     public void startRead(){
         mStatus = STATUS_FINISH;
+        if (!isBookOpen){
+            //打开具体章节，并且跳转到指定位置
+            mBookManager.openChapter(mBookId,
+                    mCategoryList.get(mBookRecord.getChapter()).getTitle(),
+                    mBookRecord.getStart());
 
-        //打开具体章节，提供章节读取功能。
-        mBookManager.openChapter(mBookId,
-                mCategoryList.get(mBookRecord.getChapter()).getTitle(),
-                mBookRecord.getStart());
-
+            isBookOpen = true;
+        }
+        else {
+            //打开之前未加载完成的章节
+            mBookManager.openChapter(mBookId, mCategoryList.get(mCurChapter).getTitle());
+        }
         //创建currentPage对象
         mCurPage = getCurPage(mBookRecord.getStart());
-
         onDraw(mPageView.getNextPage(),mCurPage.lines);
         //重绘
         mPageView.invalidate();
@@ -379,10 +391,15 @@ public class PageFactory {
 
     //翻阅上一页
     public boolean prev(){
+        if (mStatus != STATUS_FINISH){
+            ToastUtils.show("正在加载中，请稍等");
+            return false;
+        }
+
         //判断是否达到章节的起始点
         if (mCurPage.begin == 0){
             //载入上一章。
-            if (!preChapter()){
+            if (!prevChapter()){
                 return false;
             }
             else {
@@ -402,23 +419,36 @@ public class PageFactory {
     }
 
     //装载上一章节的内容
-    private boolean preChapter(){
+    private boolean prevChapter(){
         if (mCurChapter - 1 < 0){
+            ToastUtils.show("已经没有上一章了");
             return false;
         }
         else {
-            mCurChapter -= 1;
-            mBookManager.openChapter(mBookId,mCategoryList.get(mCurChapter).getTitle());
+            int prevChapter = mCurChapter - 1;
+            boolean installSucceed = mBookManager.
+                    openChapter(mBookId,mCategoryList.get(prevChapter).getTitle());
 
-            if (mPageChangeListener != null){
-                mPageChangeListener.onChapterChange(mCurChapter);
+            if (installSucceed){
+                mCurChapter = prevChapter;
+                //提示章节改变，缓冲接下来的章节
+                loadPrevChapter();
+                return true;
             }
-            return true;
+            else {
+                ToastUtils.show("正在加载中，请稍等");
+                return false;
+            }
         }
     }
 
     //翻阅下一页
     public boolean next(){
+        if (mStatus != STATUS_FINISH){
+            ToastUtils.show("正在加载中，请稍等");
+            return false;
+        }
+
         //判断是否达到章节的终止点
         if (mBookManager.getChapterLen() == mCurPage.end){
             if (!nextChapter()){
@@ -444,23 +474,32 @@ public class PageFactory {
     //装载下一章节的内容
     private boolean nextChapter(){
         if (mCurChapter + 1 >= mCategoryList.size()){
+            ToastUtils.show("已经没有下一章了");
             return false;
         }
         else {
-            mCurChapter += 1;
-            //装载
-            mBookManager.openChapter(mBookId,mCategoryList.get(mCurChapter).getTitle());
-            if (mPageChangeListener != null){
-                mPageChangeListener.onChapterChange(mCurChapter);
+            int nextChapter = mCurChapter + 1;
+            //装载下一章
+            boolean installSucceed = mBookManager
+                    .openChapter(mBookId,mCategoryList.get(nextChapter).getTitle());
+
+            if (installSucceed){
+                mCurChapter = nextChapter;
+                //提示章节改变，缓冲接下来的章节
+                loadNextChapter();
+                return true;
             }
-            return true;
+            else {
+                ToastUtils.show("正在加载中，请稍等");
+                return false;
+            }
         }
     }
 
     //取消翻页 (这个cancel有点歧义，指的是不需要看的页面)
-    public void cancel(){
+    public void pageCancel(){
         if (mCurPage.begin == 0 && mCancelPage.begin != mCurPage.end){ //是否下翻了一章 （没有考虑到，第二页翻到第一页时候取消的情况）
-            preChapter();//取消的时候，回退到上一章
+            prevChapter();//取消的时候，回退到上一章
             //恢复position
             mBookManager.setPosition(mCancelPage.end);
         }
@@ -474,12 +513,101 @@ public class PageFactory {
         mCurPage = mCancelPage;
     }
 
-    //跳转到指定章节
-    public void skipToChapter(int pos){
-        //进行绘制解析
+    //清除使用，并设定是否缓存数据
+    public void clear(boolean isCache){
+
+        if (isCache){
+            mBookRecord.setBookId(mBookId);
+            mBookRecord.setChapter(mCurChapter);
+            mBookRecord.setStart(mCurPage.begin);
+            mBookRecord.setEnd(mCurPage.end);
+
+            BookRepository.getInstance()
+                    .saveBookRecord(mBookRecord);
+        }
+        else {
+            //清空缓存文件
+            BookRepository.getInstance()
+                    .deleteBook(mBookId);
+        }
+
+        //总感觉没必要用单例 0 0...算了就这样了
+        isBookOpen = false;
+        mBookRecord = null;
+        mPageView = null;
+        mCurPage = null;
+        mCurPage = null;
+        mCategoryList.clear();
+        mBookManager.clear();
     }
 
-    public void setTextColor(){
+    //跳转到指定章节
+    public void skipToChapter(int pos){
+        //初始化正在加载
+        mStatus = STATUS_LOADING;
+        //绘制当前的状态
+        drawStatus(mPageView.getCurPage());
+        drawStatus(mPageView.getNextPage());
+        mPageView.invalidate();
+
+        mCurChapter = pos;
+        //提示章节改变，需要下载
+        loadCurrentChapter();
+    }
+
+    private void loadPrevChapter(){
+        //提示加载上一章
+        if (mPageChangeListener != null){
+            //提示加载前面3个章节（不包括当前章节）
+            int current = mCurChapter;
+            int prev = current - 3;
+            if (prev < 0){
+                prev = 0;
+            }
+            mPageChangeListener.onChapterChange(mCategoryList.subList(prev,current),mCurChapter);
+        }
+    }
+
+    private void loadCurrentChapter(){
+        if (mPageChangeListener != null){
+            List<BookChapterBean> bookChapters = new ArrayList<>(5);
+            //提示加载当前章节和前面两章和后面两章
+            int current = mCurChapter;
+            bookChapters.add(mCategoryList.get(current));
+
+            //如果当前已经是最后一章，那么就没有必要加载后面章节
+            if (current != mCategoryList.size()){
+                int begin = current + 1;
+                int next = begin + 2;
+                if (next > mCategoryList.size()){
+                    next = mCategoryList.size();
+                }
+                bookChapters.addAll(mCategoryList.subList(begin,next));
+            }
+
+            //如果当前已经是第一章，那么就没有必要加载前面章节
+            if (current != 0){
+                int prev = current - 2;
+                if (prev < 0){
+                    prev = 0;
+                }
+                bookChapters.addAll(mCategoryList.subList(prev,current));
+            }
+            mPageChangeListener.onChapterChange(bookChapters,mCurChapter);
+        }
+    }
+
+    private void loadNextChapter(){
+        //提示加载下一章
+        if (mPageChangeListener != null){
+            //提示加载当前章节和后面3个章节
+            int current = mCurChapter + 1;
+            int next = mCurChapter + 3;
+            if (next > mCategoryList.size()){
+                next = mCategoryList.size();
+            }
+            mPageChangeListener.onChapterChange(mCategoryList.subList(current,next),mCurChapter);
+        }
     }
 
     public void setTextSize(int textSize){
@@ -509,9 +637,17 @@ public class PageFactory {
                 mPageBg = R.color.nb_read_bg_5;
                 break;
         }
+
+        mSettingManager.setReadBackground(theme);
+
+        if (isBookOpen){
+            mPageView.invalidate();
+        }
     }
 
     public void setPageMode(int pageMode){
+        mPageView.setPageMode(pageMode);
+        mSettingManager.setPageMode(pageMode);
     }
 
     public int getPageStatus(){
@@ -524,7 +660,7 @@ public class PageFactory {
 
     public interface OnPageChangeListener{
         //pos:表示下一章节
-        void onChapterChange(int pos);
+        void onChapterChange(List<BookChapterBean> beanList,int pos);
     }
 
     //创建临时的页面

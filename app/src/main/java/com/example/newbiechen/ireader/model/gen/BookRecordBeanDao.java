@@ -26,8 +26,8 @@ public class BookRecordBeanDao extends AbstractDao<BookRecordBean, String> {
     public static class Properties {
         public final static Property BookId = new Property(0, String.class, "bookId", true, "BOOK_ID");
         public final static Property Chapter = new Property(1, int.class, "chapter", false, "CHAPTER");
-        public final static Property Start = new Property(2, int.class, "start", false, "START");
-        public final static Property End = new Property(3, int.class, "end", false, "END");
+        public final static Property Start = new Property(2, long.class, "start", false, "START");
+        public final static Property End = new Property(3, long.class, "end", false, "END");
     }
 
 
@@ -91,8 +91,8 @@ public class BookRecordBeanDao extends AbstractDao<BookRecordBean, String> {
         BookRecordBean entity = new BookRecordBean( //
             cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // bookId
             cursor.getInt(offset + 1), // chapter
-            cursor.getInt(offset + 2), // start
-            cursor.getInt(offset + 3) // end
+            cursor.getLong(offset + 2), // start
+            cursor.getLong(offset + 3) // end
         );
         return entity;
     }
@@ -101,8 +101,8 @@ public class BookRecordBeanDao extends AbstractDao<BookRecordBean, String> {
     public void readEntity(Cursor cursor, BookRecordBean entity, int offset) {
         entity.setBookId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setChapter(cursor.getInt(offset + 1));
-        entity.setStart(cursor.getInt(offset + 2));
-        entity.setEnd(cursor.getInt(offset + 3));
+        entity.setStart(cursor.getLong(offset + 2));
+        entity.setEnd(cursor.getLong(offset + 3));
      }
     
     @Override

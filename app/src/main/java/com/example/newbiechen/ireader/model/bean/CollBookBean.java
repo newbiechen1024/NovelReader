@@ -21,7 +21,9 @@ import com.example.newbiechen.ireader.model.gen.CollBookBeanDao;
  * 收藏的书籍
  */
 @Entity
-public class CollBookBean{
+public class CollBookBean implements Serializable{
+    private static final long serialVersionUID = 64412123L;
+
     public static final int STATUS_UNCACHE = 0; //未缓存
     public static final int STATUS_CACHING = 1; //正在缓存
     public static final int STATUS_CACHED = 2;  //已经缓存
@@ -53,10 +55,8 @@ public class CollBookBean{
     //下面的参数都是自定义的
     private boolean isUpdate = true;  //是否更新
 
-    private int readChapter;  //上一次阅读的位置
-
     @ToMany(referencedJoinProperty = "bookId")
-    private List<BookChapterBean> bookChapterList;
+    private  List<BookChapterBean> bookChapterList;
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
@@ -64,10 +64,10 @@ public class CollBookBean{
     @Generated(hash = 1552163441)
     private transient CollBookBeanDao myDao;
 
-    @Generated(hash = 632363692)
+    @Generated(hash = 108770723)
     public CollBookBean(String _id, String title, String author, String shortIntro, String cover,
             boolean hasCp, int latelyFollower, double retentionRatio, String updated, int chaptersCount,
-            String lastChapter, boolean isUpdate, int readChapter) {
+            String lastChapter, boolean isUpdate) {
         this._id = _id;
         this.title = title;
         this.author = author;
@@ -80,9 +80,7 @@ public class CollBookBean{
         this.chaptersCount = chaptersCount;
         this.lastChapter = lastChapter;
         this.isUpdate = isUpdate;
-        this.readChapter = readChapter;
     }
-
 
     public CollBookBean() {
     }
@@ -193,14 +191,6 @@ public class CollBookBean{
 
     public void setIsUpdate(boolean isUpdate) {
         this.isUpdate = isUpdate;
-    }
-
-    public int getReadChapter() {
-        return readChapter;
-    }
-
-    public void setReadChapter(int readChapter) {
-        this.readChapter = readChapter;
     }
 
     public void setBookChapters(List<BookChapterBean> beans){

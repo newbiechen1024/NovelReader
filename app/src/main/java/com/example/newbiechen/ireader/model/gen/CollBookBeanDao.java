@@ -36,7 +36,6 @@ public class CollBookBeanDao extends AbstractDao<CollBookBean, String> {
         public final static Property ChaptersCount = new Property(9, int.class, "chaptersCount", false, "CHAPTERS_COUNT");
         public final static Property LastChapter = new Property(10, String.class, "lastChapter", false, "LAST_CHAPTER");
         public final static Property IsUpdate = new Property(11, boolean.class, "isUpdate", false, "IS_UPDATE");
-        public final static Property ReadChapter = new Property(12, int.class, "readChapter", false, "READ_CHAPTER");
     }
 
     private DaoSession daoSession;
@@ -66,8 +65,7 @@ public class CollBookBeanDao extends AbstractDao<CollBookBean, String> {
                 "\"UPDATED\" TEXT," + // 8: updated
                 "\"CHAPTERS_COUNT\" INTEGER NOT NULL ," + // 9: chaptersCount
                 "\"LAST_CHAPTER\" TEXT," + // 10: lastChapter
-                "\"IS_UPDATE\" INTEGER NOT NULL ," + // 11: isUpdate
-                "\"READ_CHAPTER\" INTEGER NOT NULL );"); // 12: readChapter
+                "\"IS_UPDATE\" INTEGER NOT NULL );"); // 11: isUpdate
     }
 
     /** Drops the underlying database table. */
@@ -119,7 +117,6 @@ public class CollBookBeanDao extends AbstractDao<CollBookBean, String> {
             stmt.bindString(11, lastChapter);
         }
         stmt.bindLong(12, entity.getIsUpdate() ? 1L: 0L);
-        stmt.bindLong(13, entity.getReadChapter());
     }
 
     @Override
@@ -165,7 +162,6 @@ public class CollBookBeanDao extends AbstractDao<CollBookBean, String> {
             stmt.bindString(11, lastChapter);
         }
         stmt.bindLong(12, entity.getIsUpdate() ? 1L: 0L);
-        stmt.bindLong(13, entity.getReadChapter());
     }
 
     @Override
@@ -193,8 +189,7 @@ public class CollBookBeanDao extends AbstractDao<CollBookBean, String> {
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // updated
             cursor.getInt(offset + 9), // chaptersCount
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // lastChapter
-            cursor.getShort(offset + 11) != 0, // isUpdate
-            cursor.getInt(offset + 12) // readChapter
+            cursor.getShort(offset + 11) != 0 // isUpdate
         );
         return entity;
     }
@@ -213,7 +208,6 @@ public class CollBookBeanDao extends AbstractDao<CollBookBean, String> {
         entity.setChaptersCount(cursor.getInt(offset + 9));
         entity.setLastChapter(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setIsUpdate(cursor.getShort(offset + 11) != 0);
-        entity.setReadChapter(cursor.getInt(offset + 12));
      }
     
     @Override

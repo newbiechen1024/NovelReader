@@ -11,7 +11,7 @@ import org.junit.Test;
  * Created by newbiechen on 17-4-22.
  */
 
-public class DateConvertTest extends TestCase{
+public class DateConvertTest{
 
     @Test
     public void testDate(){

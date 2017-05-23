@@ -85,6 +85,17 @@ public class BookRepository {
                 );
     }
 
+    public void saveBookChapters(List<BookChapterBean> beans){
+        mSession.startAsyncSession()
+                .runInTx(
+                        () -> {
+                            //存储BookChapterBean
+                            mSession.getBookChapterBeanDao()
+                                    .insertOrReplaceInTx(beans);
+                        }
+                );
+    }
+
     /**
      * 存储章节
      * @param folderName
@@ -190,6 +201,10 @@ public class BookRepository {
     }
 
     public void deleteBookChapterList(String taskName){
+    }
 
+    //删除书籍
+    public void deleteBook(String bookId){
+        FileUtils.deleteFile(Constant.BOOK_CACHE_PATH+bookId);
     }
 }

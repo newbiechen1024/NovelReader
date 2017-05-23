@@ -6,6 +6,7 @@ import com.example.newbiechen.ireader.App;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -33,7 +34,7 @@ public class FileUtils {
     }
 
     //获取文件
-    public static File getFile(String filePath){
+    public static synchronized File getFile(String filePath){
         File file = new File(filePath);
         try {
             if (!file.exists()){
@@ -120,5 +121,21 @@ public class FileUtils {
             return true;
         }
         return false;
+    }
+
+    //递归删除文件夹下的数据
+    public static synchronized void deleteFile(String filePath){
+        File file = new File(filePath);
+        if (!file.exists()) return;
+
+        if (file.isDirectory()){
+            File[] files = file.listFiles();
+            for (File subFile : files){
+                String path = subFile.getPath();
+                deleteFile(path);
+            }
+        }
+        //删除文件
+        file.delete();
     }
 }

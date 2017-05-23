@@ -29,12 +29,13 @@ public class CategoryHolder extends ViewHolderImpl<BookChapterBean> {
         if (value.getBookId() != null
                 && BookManager
                 .isChapterCached(value.getBookId(),value.getTitle())){
-            drawable = ContextCompat.getDrawable(getContext(),R.drawable.ic_item_category_download);
+            drawable = ContextCompat.getDrawable(getContext(),R.drawable.selector_category_load);
         }
         else {
-            drawable = ContextCompat.getDrawable(getContext(), R.drawable.selector_chapter_drawable);
+            drawable = ContextCompat.getDrawable(getContext(), R.drawable.selector_category_unload);
         }
         mTvChapter.setSelected(false);
+        mTvChapter.setTextColor(ContextCompat.getColor(getContext(),R.color.nb_text_default));
         mTvChapter.setCompoundDrawablesWithIntrinsicBounds(drawable,null,null,null);
         mTvChapter.setText(value.getTitle());
     }
@@ -45,6 +46,7 @@ public class CategoryHolder extends ViewHolderImpl<BookChapterBean> {
     }
 
     public void setSelectedChapter(){
+        mTvChapter.setTextColor(ContextCompat.getColor(getContext(),R.color.light_red));
         mTvChapter.setSelected(true);
     }
 }

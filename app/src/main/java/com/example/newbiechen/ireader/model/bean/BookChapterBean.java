@@ -12,7 +12,8 @@ import java.io.Serializable;
  * 书的章节链接(作为下载的进度数据)
  */
 @Entity
-public class BookChapterBean{
+public class BookChapterBean implements Serializable{
+    private static final long serialVersionUID = 56423411313L;
     /**
      * title : 第一章 他叫白小纯
      * link : http://read.qidian.com/chapter/rJgN8tJ_cVdRGoWu-UQg7Q2/6jr-buLIUJSaGfXRMrUjdw2
