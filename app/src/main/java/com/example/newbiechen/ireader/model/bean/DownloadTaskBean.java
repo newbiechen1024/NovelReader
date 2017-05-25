@@ -148,15 +148,11 @@ public class DownloadTaskBean{
 
     //多线程访问的问题，所以需要同步机制
     public int getStatus() {
-        Log.d("status", "getStatus: "+status+Thread.currentThread());
         return status;
     }
 
     public void setStatus(int status){
         this.status = status;
-        if (status == 3){
-            Log.d("status", "setStatus: ");
-        }
     }
 
     public long getSize() {
