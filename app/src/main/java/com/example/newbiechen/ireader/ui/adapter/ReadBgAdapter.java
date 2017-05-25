@@ -14,7 +14,7 @@ import com.example.newbiechen.ireader.ui.base.adapter.IViewHolder;
  */
 
 public class ReadBgAdapter extends BaseListAdapter<Drawable> {
-    private int currentChecked = 0;
+    private int currentChecked;
 
     @Override
     protected IViewHolder<Drawable> createViewHolder(int viewType) {
@@ -31,9 +31,9 @@ public class ReadBgAdapter extends BaseListAdapter<Drawable> {
         }
     }
 
-
     public void setBgChecked(int pos){
         currentChecked = pos;
+
     }
 
     @Override

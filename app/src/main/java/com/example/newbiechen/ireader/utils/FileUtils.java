@@ -91,6 +91,14 @@ public class FileUtils {
         return new DecimalFormat("#,##0.##").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
+    /**
+     * 本来是获取File的内容的。但是为了解决文本缩进、换行的问题
+     * 这个方法就是专门用来获取书籍的...
+     *
+     * 应该放在BookRepository中。。。，
+     * @param file
+     * @return
+     */
     public static String getFileContent(File file){
         Reader reader = null;
         String str = null;
@@ -102,7 +110,7 @@ public class FileUtils {
                 //过滤空语句
                 if (!str.equals("")){
                     //由于sb会自动过滤\n,所以需要加上去
-                    sb.append(str+"\n");
+                    sb.append("    "+str+"\n");
                 }
             }
         } catch (FileNotFoundException e) {

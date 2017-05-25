@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -36,6 +37,7 @@ import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoratio
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by newbiechen on 17-5-4.
@@ -43,8 +45,12 @@ import butterknife.BindView;
 
 public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presenter>
         implements BookDetailContract.View {
+    public static final String RESULT_IS_COLLECTED = "result_is_collected";
+
     private static final String TAG = "BookDetailActivity";
     private static final String EXTRA_BOOK_ID = "extra_book_id";
+
+    private static final int REQUEST_READ = 1;
 
     @BindView(R.id.book_detail_iv_cover)
     ImageView mIvCover;
@@ -182,24 +188,10 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
         );
 
         mTvRead.setOnClickListener(
-                (v) -> ReadActivity.startActivity(this, mCollBookBean, isCollected)
+                (v) -> startActivityForResult(new Intent(this,ReadActivity.class)
+                        .putExtra(ReadActivity.EXTRA_IS_COLLECTED,isCollected)
+                        .putExtra(ReadActivity.EXTRA_COLL_BOOK,mCollBookBean),REQUEST_READ)
         );
-
-        RxBus.getInstance()
-                .toObservable(BookCollectedEvent.class)
-                .subscribe(
-                        bean -> {
-                            isCollected = true;
-                            mTvChase.setText(getResources().getString(R.string.nb_book_detail_give_up));
-
-                            //修改背景
-                            Drawable drawable = getResources().getDrawable(R.drawable.shape_common_gray_corner);
-                            mTvChase.setBackground(drawable);
-                            //设置图片
-                            mTvChase.setCompoundDrawables(ContextCompat.getDrawable(this,R.drawable.ic_book_list_delete),null,
-                                    null,null);
-                        }
-                );
     }
 
     @Override
@@ -253,6 +245,7 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
             //设置图片
             mTvChase.setCompoundDrawables(ContextCompat.getDrawable(this,R.drawable.ic_book_list_delete),null,
                     null,null);
+            mTvRead.setText("继续阅读");
         }
         else {
             mCollBookBean = bean.getCollBookBean();
@@ -323,5 +316,23 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(EXTRA_BOOK_ID,mBookId);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //如果进入阅读页面收藏了，页面结束的时候，就需要返回改变收藏按钮
+        if (requestCode == REQUEST_READ){
+            isCollected = data.getBooleanExtra(RESULT_IS_COLLECTED, false);
+
+            mTvChase.setText(getResources().getString(R.string.nb_book_detail_give_up));
+            //修改背景
+            Drawable drawable = getResources().getDrawable(R.drawable.shape_common_gray_corner);
+            mTvChase.setBackground(drawable);
+            //设置图片
+            mTvChase.setCompoundDrawables(ContextCompat.getDrawable(this,R.drawable.ic_book_list_delete),null,
+                    null,null);
+            mTvRead.setText("继续阅读");
+        }
     }
 }

@@ -146,8 +146,10 @@ public class ReadSettingDialog extends Dialog{
         mRvBg.setLayoutManager(new GridLayoutManager(getContext(),5));
         mRvBg.setAdapter(mReadBgAdapter);
         mReadBgAdapter.refreshItems(Arrays.asList(drawables));
+
         //这里取巧了，直接将判断参数的值，传给了Recycler。如果以后要修改会造成大问题，所以不要学。
         mReadBgAdapter.setBgChecked(mReadBgTheme);
+
     }
 
     private void initPageMode(){
@@ -197,13 +199,38 @@ public class ReadSettingDialog extends Dialog{
                     ReadSettingManager.getInstance().setBrightness(progress);
                 }
         );
+
+        mSbBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                if (mCbBrightnessAuto.isChecked()) {
+                    mCbBrightnessAuto.setChecked(false);
+                }
+                BrightnessUtils.setBrightness(mActivity,progress);
+                //设置进度
+                ReadSettingManager.getInstance().setBrightness(progress);
+            }
+        });
         mCbBrightnessAuto.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> {
                     if (isChecked){
                         BrightnessUtils.startAutoBrightness(mActivity);
+                        BrightnessUtils.setBrightness(mActivity,BrightnessUtils.getScreenBrightness(mActivity));
                     }
                     else {
                         BrightnessUtils.stopAutoBrightness(mActivity);
+                        BrightnessUtils.setBrightness(mActivity,mSbBrightness.getProgress());
                     }
                     ReadSettingManager.getInstance().setAutoBrightness(isChecked);
                 }

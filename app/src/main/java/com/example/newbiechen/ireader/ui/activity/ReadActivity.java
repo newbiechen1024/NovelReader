@@ -1,9 +1,15 @@
 package com.example.newbiechen.ireader.ui.activity;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,19 +25,20 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.RxBus;
-import com.example.newbiechen.ireader.event.BookCollectedEvent;
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.local.BookRepository;
+import com.example.newbiechen.ireader.model.local.ReadSettingManager;
 import com.example.newbiechen.ireader.presenter.ReadPresenter;
 import com.example.newbiechen.ireader.presenter.contract.ReadContract;
 import com.example.newbiechen.ireader.ui.adapter.CategoryAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
 import com.example.newbiechen.ireader.ui.dialog.ReadSettingDialog;
+import com.example.newbiechen.ireader.utils.BrightnessUtils;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.RxUtils;
+import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.SystemBarUtils;
 import com.example.newbiechen.ireader.widget.PageView;
 
@@ -51,9 +58,8 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
  implements ReadContract.View{
     private static final String TAG = "ReadActivity";
 
-    private static final String EXTRA_COLL_BOOK = "extra_coll_book";
-    private static final String EXTRA_IS_COLLECTED = "extra_is_from_shelf";
-    private static final String EXTRA_BOOK_ID = "extra_book_id";
+    public static final String EXTRA_COLL_BOOK = "extra_coll_book";
+    public static final String EXTRA_IS_COLLECTED = "extra_is_from_shelf";
 
     @BindView(R.id.read_dl_slide)
     DrawerLayout mDlSlide;
@@ -81,8 +87,8 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     TextView mTvNextChapter;
     @BindView(R.id.read_tv_category)
     TextView mTvCategory;
-    @BindView(R.id.read_tv_mode)
-    TextView mTvMode;
+    @BindView(R.id.read_tv_night_mode)
+    TextView mTvNightMode;
     @BindView(R.id.read_tv_download)
     TextView mTvDownload;
     @BindView(R.id.read_tv_setting)
@@ -101,8 +107,26 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     private Animation mBottomOutAnim;
     private CategoryAdapter mCategoryAdapter;
     private CollBookBean mCollBook;
+    //控制屏幕常亮
+    private PowerManager.WakeLock mWakeLock;
+
+    // 接收电池信息和时间更新的广播
+    private BroadcastReceiver mReceiver = new BroadcastReceiver(){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
+                int level = intent.getIntExtra("level", 0);
+                mPageFactory.updateBattery(level);
+            }
+            //监听分钟的变化
+            else if (intent.getAction().equals(Intent.ACTION_TIME_TICK)){
+                mPageFactory.updateTime();
+            }
+        }
+    };
     /***************params*****************/
     private boolean isCollected = false; //isFromSd
+    private boolean isNightMode = false;
     private String mBookId;
 
 
@@ -129,6 +153,8 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         mCollBook = (CollBookBean) getIntent().getSerializableExtra(EXTRA_COLL_BOOK);
         isCollected = getIntent().getBooleanExtra(EXTRA_IS_COLLECTED,false);
         mBookId = mCollBook.get_id();
+
+        isNightMode = ReadSettingManager.getInstance().isNightMode();
     }
 
     @Override
@@ -149,8 +175,38 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         mPageFactory = PageFactory.getInstance();
         mPageFactory.setPageWidget(mPvPage);
         mSettingDialog = new ReadSettingDialog(this,mPageFactory);
-
         setUpAdapter();
+        //夜间模式按钮的状态
+        toggleNightMode();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        intentFilter.addAction(Intent.ACTION_TIME_TICK);
+        //注册广播
+        registerReceiver(mReceiver, intentFilter);
+        //设置当前Activity的Bright
+        if (ReadSettingManager.getInstance().isBrightnessAuto()){
+            BrightnessUtils.setBrightness(this,BrightnessUtils.getScreenBrightness(this));
+        }
+        else {
+            BrightnessUtils.setBrightness(this,ReadSettingManager.getInstance().getBrightness());
+        }
+        //初始化屏幕常亮类
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "keep bright");
+    }
+
+    private void toggleNightMode(){
+        if (isNightMode){
+            mTvNightMode.setText(StringUtils.getString(R.string.nb_mode_morning));
+            Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_read_menu_morning);
+            mTvNightMode.setCompoundDrawablesWithIntrinsicBounds(null,drawable,null,null);
+        }
+        else {
+            mTvNightMode.setText(StringUtils.getString(R.string.nb_mode_night));
+            Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_read_menu_night);
+            mTvNightMode.setCompoundDrawablesWithIntrinsicBounds(null,drawable,null,null);
+        }
     }
 
     private void setUpAdapter(){
@@ -178,6 +234,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
             @Override
             public Boolean prePage(){
+                hideStatusBar();
                 if (mAblTopMenu.getVisibility() == VISIBLE){
                     toggleMenu(true);
                     return false;
@@ -191,6 +248,8 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
             @Override
             public Boolean nextPage() {
+                hideStatusBar();
+
                 if (mAblTopMenu.getVisibility() == VISIBLE){
                     toggleMenu(true);
                     return false;
@@ -228,18 +287,37 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     mSettingDialog.show();
                 }
         );
+
+        mTvPreChapter.setOnClickListener(
+                (v) -> mPageFactory.skipPreChapter()
+        );
+
+        mTvNextChapter.setOnClickListener(
+                (v) -> mPageFactory.skipNextChapter()
+        );
+
+        mTvNightMode.setOnClickListener(
+                (v) -> {
+                    if (isNightMode){
+                        isNightMode = false;
+                    }
+                    else {
+                        isNightMode = true;
+                    }
+                    mPageFactory.setNightMode(isNightMode);
+                    toggleNightMode();
+                }
+        );
     }
 
-    //切换StatusBar显示状态
-    private void toggleStatusBar(){
-        if (SystemBarUtils.isFlagUsed(this,View.SYSTEM_UI_FLAG_FULLSCREEN)){
-            //显示
-            SystemBarUtils.clearFlag(this,View.SYSTEM_UI_FLAG_FULLSCREEN);
-        }
-        else{
-            //隐藏
-            SystemBarUtils.setFlag(this,View.SYSTEM_UI_FLAG_FULLSCREEN);
-        }
+    private void showStatusBar(){
+        //显示
+        SystemBarUtils.clearFlag(this,View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    private void hideStatusBar(){
+        //隐藏
+        SystemBarUtils.setFlag(this,View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
 
     private void toggleNavBar(){
@@ -259,16 +337,18 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             mLlBottomMenu.startAnimation(mBottomOutAnim);
             mAblTopMenu.setVisibility(GONE);
             mLlBottomMenu.setVisibility(GONE);
+
+            if (hideStatusBar){
+                hideStatusBar();
+            }
         }
         else {
             mAblTopMenu.setVisibility(View.VISIBLE);
             mLlBottomMenu.setVisibility(View.VISIBLE);
             mAblTopMenu.startAnimation(mTopInAnim);
             mLlBottomMenu.startAnimation(mBottomInAnim);
-        }
 
-        if (hideStatusBar){
-            toggleStatusBar();
+            showStatusBar();
         }
     }
 
@@ -320,7 +400,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
     @Override
     public void showCategory(List<BookChapterBean> bookChapters){
-        //进行下处理
+        //进行设定BookChapter所属的书的id。
         for (BookChapterBean bookChapter : bookChapters){
             bookChapter.setBookId(mBookId);
         }
@@ -347,7 +427,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus){
-            toggleStatusBar();
+            hideStatusBar();
         }
     }
 
@@ -365,7 +445,12 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                         mCollBook.setBookChapters(bookChapters);
                         BookRepository.getInstance()
                                 .saveCollBook(mCollBook);
-                        RxBus.getInstance().post(BookCollectedEvent.class);
+
+                        //返回给BookDetail。
+                        Intent result = new Intent();
+                        result.putExtra(BookDetailActivity.RESULT_IS_COLLECTED, isCollected);
+                        setResult(Activity.RESULT_OK,result);
+
                         super.onBackPressed();
                     })
                     .setNegativeButton("取消",(dialog, which) -> {
@@ -379,9 +464,21 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mWakeLock.acquire();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mWakeLock.release();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
+        unregisterReceiver(mReceiver);
         mPageFactory.clear(isCollected);
     }
 }

@@ -43,7 +43,6 @@ public class BookManager{
         if (!file.exists()){
             return false;
         }
-        Log.d(TAG, "openChapter: "+position);
         this.bookId = bookId;
         this.chapterName = chapterName;
         this.position = position;

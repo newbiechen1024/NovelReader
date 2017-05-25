@@ -67,7 +67,7 @@ public class BrightnessUtils {
      */
     public static void stopAutoBrightness(Activity activity) {
         Settings.System.putInt(activity.getContentResolver(),
-                Settings.System.SCREEN_BRIGHTNESS,
+                Settings.System.SCREEN_BRIGHTNESS_MODE,
                 Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
     }
 

@@ -52,7 +52,7 @@ public class PageView extends View {
     //翻页动画是否在执行
     private Boolean isRunning = false;
     private Boolean canTouch = true;
-    Bitmap mCurPageBitmap = null; // 当前页 -> 意思是最终整个页面是一张图片？
+    Bitmap mCurPageBitmap = null;
     Bitmap mNextPageBitmap = null;
 
     private AnimationProvider mAnimationProvider;

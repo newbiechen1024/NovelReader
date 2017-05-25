@@ -137,7 +137,7 @@
                 
                 <TextView
                     style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
-                    android:id="@+id/read_tv_mode"
+                    android:id="@+id/read_tv_night_mode"
                     android:drawableTop="@drawable/ic_read_menu_night"
                     android:text="@string/nb.mode.night" />
                 
