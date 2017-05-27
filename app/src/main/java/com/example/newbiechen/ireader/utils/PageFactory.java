@@ -226,17 +226,17 @@ public class PageFactory {
         if (!isBookOpen){
             //打开具体章节，并且跳转到指定位置
             mBookManager.openChapter(mBookId,
-                    mCategoryList.get(mBookRecord.getChapter()).getTitle(),
-                    mBookRecord.getStart());
+                    mCategoryList.get(mBookRecord.getChapter()).getTitle());
+            //创建currentPage对象
+            mCurPage = getCurPage(mBookRecord.getStart());
 
             isBookOpen = true;
         }
         else {
             //打开之前未加载完成的章节
             mBookManager.openChapter(mBookId, mCategoryList.get(mCurChapter).getTitle());
+            mCurPage = getCurPage(0);
         }
-        //创建currentPage对象
-        mCurPage = getCurPage(mBookRecord.getStart());
         onDraw(mPageView.getNextPage(),mCurPage);
         //重绘
         mPageView.invalidate();
@@ -253,6 +253,7 @@ public class PageFactory {
             mStatus = status;
             return;
         }
+
         /****绘制背景****/
         canvas.drawColor(mPageBg);
         /******绘制内容****/
@@ -329,6 +330,8 @@ public class PageFactory {
      * @return:获取初始显示的页面
      */
     private TPage getCurPage(long begin){
+        mBookManager.setPosition(begin);
+
         TPage tPage = new TPage();
         tPage.begin = begin; //起始字节
         tPage.lines = getNextLines();
@@ -473,7 +476,6 @@ public class PageFactory {
                 }
             }
         }
-
         //回退指针
         int size = 0;
         for (String str : lines){
@@ -574,10 +576,10 @@ public class PageFactory {
         else {
             int nextChapter = mCurChapter + 1;
             //装载下一章
-            boolean installSucceed = mBookManager
+            boolean nextExist = mBookManager
                     .openChapter(mBookId,mCategoryList.get(nextChapter).getTitle());
 
-            if (installSucceed){
+            if (nextExist){
                 mCurChapter = nextChapter;
                 //提示章节改变，缓冲接下来的章节
                 loadNextChapter();
@@ -611,13 +613,7 @@ public class PageFactory {
     public void clear(boolean isCache){
 
         if (isCache){
-            mBookRecord.setBookId(mBookId);
-            mBookRecord.setChapter(mCurChapter);
-            mBookRecord.setStart(mCurPage.begin);
-            mBookRecord.setEnd(mCurPage.end);
-
-            BookRepository.getInstance()
-                    .saveBookRecord(mBookRecord);
+            saveRecord();
         }
         else {
             //清空缓存文件
@@ -633,6 +629,16 @@ public class PageFactory {
         mCurPage = null;
         mCategoryList.clear();
         mBookManager.clear();
+    }
+
+    public void saveRecord(){
+        mBookRecord.setBookId(mBookId);
+        mBookRecord.setChapter(mCurChapter);
+        mBookRecord.setStart(mCurPage.begin);
+        mBookRecord.setEnd(mCurPage.end);
+
+        BookRepository.getInstance()
+                .saveBookRecord(mBookRecord);
     }
 
     //跳转到指定章节
@@ -737,8 +743,20 @@ public class PageFactory {
         }
     }
 
-    //没有找到有效率的实现方式
+    //在修改字体大小，再进行上翻页到首页的时候，会造成页面空缺的问题
     public void setTextSize(int textSize){
+        //设置textSize
+        mTextSize = textSize;
+        //存储状态
+        mSettingManager.setTextSize(mTextSize);
+        //重新计算LineCount
+        calculateLineCount();
+        //重新设置文章指针的位置
+        mCurPage = getCurPage(mCurPage.begin);
+        //绘制
+        onDraw(mPageView.getNextPage(),mCurPage);
+        //通知重绘
+        mPageView.invalidate();
     }
 
     public void setNightMode(boolean nightMode){
@@ -801,8 +819,9 @@ public class PageFactory {
     }
 
     public void setPageMode(int pageMode){
-        mPageView.setPageMode(pageMode);
-        mSettingManager.setPageMode(pageMode);
+        mPageMode = pageMode;
+        mPageView.setPageMode(mPageMode);
+        mSettingManager.setPageMode(mPageMode);
     }
 
     public int getPageStatus(){

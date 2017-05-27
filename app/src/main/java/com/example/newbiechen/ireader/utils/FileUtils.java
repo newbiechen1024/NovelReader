@@ -12,6 +12,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by newbiechen on 17-5-11.
@@ -145,5 +147,33 @@ public class FileUtils {
         }
         //删除文件
         file.delete();
+    }
+
+    //获取txt文件
+    public static List<File> getTxtFiles(String filePath){
+        List txtFiles = new ArrayList();
+        File file = new File(filePath);
+        //获取文件夹
+        File[] dirs = file.listFiles(
+                pathname -> {
+                    if (pathname.isDirectory()) {
+                        return true;
+                    }
+                    //获取txt文件
+                    else if(pathname.getName().endsWith(".txt")){
+                        txtFiles.add(pathname);
+                        return false;
+                    }
+                    else{
+                        return false;
+                    }
+                }
+        );
+        //遍历文件夹
+        for (File dir : dirs){
+            //递归遍历txt文件
+            txtFiles.addAll(getTxtFiles(dir.getPath()));
+        }
+        return txtFiles;
     }
 }

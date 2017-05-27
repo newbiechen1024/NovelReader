@@ -9,6 +9,8 @@ import android.text.TextUtils;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.RxBus;
+import com.example.newbiechen.ireader.event.DeleteResponseEvent;
+import com.example.newbiechen.ireader.event.DeleteTaskEvent;
 import com.example.newbiechen.ireader.event.DownloadMessage;
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
@@ -40,6 +42,7 @@ public class DownloadService extends BaseRxService{
     private static final int LOAD_ERROR= -1;
     private static final int LOAD_NORMAL= 0;
     private static final int LOAD_PAUSE = 1;
+    private static final int LOAD_DELETE = 2; //正在加载时候，用户删除收藏书籍的情况。
 
     //下载状态
     public static final int STATUS_CONTINUE = DownloadTaskBean.STATUS_LOADING;
@@ -75,7 +78,8 @@ public class DownloadService extends BaseRxService{
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(Intent intent, int flags, int startId){
+
         //接受创建的DownloadTask
         Disposable disposable = RxBus.getInstance()
                 .toObservable(DownloadTaskBean.class)
@@ -92,6 +96,36 @@ public class DownloadService extends BaseRxService{
                 );
         addDisposable(disposable);
 
+        //是否删除数据的问题
+        Disposable deleteDisp = RxBus.getInstance()
+                .toObservable(DeleteTaskEvent.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        (event) -> {
+                            //判断是否该数据存在加载列表中
+                            boolean isDelete = true;
+                            for (DownloadTaskBean bean : mDownloadTaskQueue){
+                                if (bean.getBookId().equals(event.collBook.get_id())){
+                                    isDelete = false;
+                                    break;
+                                }
+                            }
+                            //如果不存在则删除List中的task
+                            if (isDelete){
+                                //
+                                Iterator<DownloadTaskBean> taskIt = mDownloadTaskList.iterator();
+                                while (taskIt.hasNext()){
+                                    DownloadTaskBean task = taskIt.next();
+                                    if (task.getBookId().equals(event.collBook.get_id())) {
+                                        taskIt.remove();
+                                    }
+                                }
+                            }
+                            //返回状态
+                            RxBus.getInstance().post(new DeleteResponseEvent(isDelete,event.collBook));
+                        }
+                );
+        addDisposable(deleteDisp);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -230,7 +264,6 @@ public class DownloadService extends BaseRxService{
                 taskEvent.setStatus(DownloadTaskBean.STATUS_FINISH);//Task的状态
                 taskEvent.setCurrentChapter(taskEvent.getBookChapters().size());//当前下载的章节数量
                 taskEvent.setSize(BookManager.getBookSize(taskEvent.getBookId()));//Task的大小
-                //删除章节断点
 
                 //发送完成状态
                 postDownloadChange(taskEvent, DownloadTaskBean.STATUS_FINISH, "下载完成");
@@ -244,6 +277,10 @@ public class DownloadService extends BaseRxService{
                 taskEvent.setStatus(DownloadTaskBean.STATUS_PAUSE);//Task的状态
                 postDownloadChange(taskEvent, DownloadTaskBean.STATUS_PAUSE, "暂停加载");
             }
+            else if (result == LOAD_DELETE){
+                //没想好怎么做
+            }
+
             //存储状态
             LocalRepository.getInstance().saveDownloadTask(taskEvent);
 
@@ -368,6 +405,10 @@ public class DownloadService extends BaseRxService{
         public void setAllDownloadStatus(int status) {
             //修改所有Task的状态
         }
+
+        //首先判断是否在加载队列中。
+        //如果在加载队列中首先判断是否正在下载，
+        //然后判断是否在完成队列中。
     }
 
     @Override

@@ -94,6 +94,11 @@ public class BookSortListFragment extends BaseRxFragment<BookSortListContract.Pr
                     BookDetailActivity.startActivity(getContext(),bookId);
                 }
         );
+
+        mBookSortListAdapter.setOnLoadMoreListener(
+                () -> mPresenter.loadSortBook(mGender,mType,mMajor,mMinor,mStart,mLimit)
+        );
+
         //子类的切换
         Disposable disposable = RxBus.getInstance()
                 .toObservable(BookSubSortEvent.class)
@@ -144,7 +149,6 @@ public class BookSortListFragment extends BaseRxFragment<BookSortListContract.Pr
     public void finishLoad(List<SortBookBean> beans) {
         mBookSortListAdapter.addItems(beans);
         mStart += beans.size();
-
     }
 
     @Override

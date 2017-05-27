@@ -18,6 +18,7 @@ import com.example.newbiechen.ireader.model.gen.BookHelpsBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookReviewBeanDao;
 import com.example.newbiechen.ireader.model.gen.DaoSession;
 import com.example.newbiechen.ireader.model.gen.ReviewBookBeanDao;
+import com.example.newbiechen.ireader.utils.BookManager;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.SharedPreUtils;
@@ -148,6 +149,8 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
 
     @Override
     public void saveDownloadTask(DownloadTaskBean bean) {
+        BookRepository.getInstance()
+                .saveBookChapters(bean.getBookChapters());
         mSession.getDownloadTaskBeanDao()
                 .insertOrReplace(bean);
     }

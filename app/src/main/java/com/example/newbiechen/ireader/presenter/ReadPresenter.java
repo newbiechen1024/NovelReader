@@ -81,6 +81,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View>
                 mView.finishChapter();
             }
         }
+
         Single.concat(chapterInfos)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

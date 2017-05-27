@@ -1,5 +1,6 @@
 package com.example.newbiechen.ireader.ui.fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,14 +11,18 @@ import android.widget.ArrayAdapter;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.RxBus;
+import com.example.newbiechen.ireader.event.DeleteResponseEvent;
+import com.example.newbiechen.ireader.event.DeleteTaskEvent;
 import com.example.newbiechen.ireader.event.DownloadMessage;
 import com.example.newbiechen.ireader.event.RecommendBookEvent;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
+import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.presenter.BookShelfPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookShelfContract;
 import com.example.newbiechen.ireader.ui.activity.ReadActivity;
 import com.example.newbiechen.ireader.ui.adapter.CollBookAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
+import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.ToastUtils;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 import com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView;
@@ -27,6 +32,7 @@ import java.util.List;
 import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by newbiechen on 17-4-15.
@@ -86,6 +92,38 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
                         }
                 );
         addDisposable(donwloadDisp);
+        //删除书籍 (写的丑了点)
+        Disposable deleteDisp = RxBus.getInstance()
+                .toObservable(DeleteResponseEvent.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        event -> {
+                            if (event.isDelete){
+                                ProgressDialog progressDialog = new ProgressDialog(getContext());
+                                progressDialog.setMessage("正在删除中");
+                                progressDialog.show();
+                                BookRepository.getInstance().deleteCollBook(event.collBook)
+                                        .compose(RxUtils::toSimpleSingle)
+                                        .subscribe(
+                                                (Void) -> {
+                                                    mCollBookAdapter.removeItem(event.collBook);
+                                                    progressDialog.dismiss();
+                                                }
+                                        );
+                            }
+                            else {
+                                //弹出一个Dialog
+                                AlertDialog tipDialog = new AlertDialog.Builder(getContext())
+                                        .setTitle("您的任务正在加载")
+                                        .setMessage("先请暂停任务再进行删除")
+                                        .setPositiveButton("确定", (dialog, which) -> {
+                                            dialog.dismiss();
+                                        }).create();
+                                tipDialog.show();
+                            }
+                        }
+                );
+        addDisposable(deleteDisp);
 
         mRvContent.setOnRefreshListener(
                 () ->   mPresenter.updateCollBooks(mCollBookAdapter.getItems())
@@ -129,10 +167,11 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
                 //2. 进行判断，如果CollBean中状态为未更新。那么就创建Task，加入到Service中去。
                 //3. 如果状态为finish，并且isUpdate为true，那么就根据chapter创建状态
                 //4. 如果状态为finish，并且isUpdate为false。
-                cacheClick(itemPos);
+                downloadBook(itemPos);
                 break;
             //删除
             case 2:
+                deleteBook(itemPos);
                 break;
             //批量管理
             case 3:
@@ -142,10 +181,14 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
         }
     }
 
-    private void cacheClick(int itemPos){
+    private void downloadBook(int itemPos){
         CollBookBean bean = mCollBookAdapter.getItem(itemPos);
         //创建任务
         mPresenter.createDownloadTask(bean);
+    }
+
+    private void deleteBook(int itemPos){
+        RxBus.getInstance().post(new DeleteTaskEvent(mCollBookAdapter.getItem(itemPos)));
     }
 
     /*******************************************************************8*/

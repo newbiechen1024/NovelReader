@@ -192,6 +192,8 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
                         .putExtra(ReadActivity.EXTRA_IS_COLLECTED,isCollected)
                         .putExtra(ReadActivity.EXTRA_COLL_BOOK,mCollBookBean),REQUEST_READ)
         );
+
+
     }
 
     @Override
@@ -323,16 +325,20 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
         super.onActivityResult(requestCode, resultCode, data);
         //如果进入阅读页面收藏了，页面结束的时候，就需要返回改变收藏按钮
         if (requestCode == REQUEST_READ){
+            if (data == null) return;
+
             isCollected = data.getBooleanExtra(RESULT_IS_COLLECTED, false);
 
-            mTvChase.setText(getResources().getString(R.string.nb_book_detail_give_up));
-            //修改背景
-            Drawable drawable = getResources().getDrawable(R.drawable.shape_common_gray_corner);
-            mTvChase.setBackground(drawable);
-            //设置图片
-            mTvChase.setCompoundDrawables(ContextCompat.getDrawable(this,R.drawable.ic_book_list_delete),null,
-                    null,null);
-            mTvRead.setText("继续阅读");
+            if(isCollected){
+                mTvChase.setText(getResources().getString(R.string.nb_book_detail_give_up));
+                //修改背景
+                Drawable drawable = getResources().getDrawable(R.drawable.shape_common_gray_corner);
+                mTvChase.setBackground(drawable);
+                //设置图片
+                mTvChase.setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(this,R.drawable.ic_book_list_delete),null,
+                        null,null);
+                mTvRead.setText("继续阅读");
+            }
         }
     }
 }

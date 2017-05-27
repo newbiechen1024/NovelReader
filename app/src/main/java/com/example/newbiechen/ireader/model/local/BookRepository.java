@@ -8,6 +8,7 @@ import com.example.newbiechen.ireader.model.gen.BookChapterBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookRecordBeanDao;
 import com.example.newbiechen.ireader.model.gen.CollBookBeanDao;
 import com.example.newbiechen.ireader.model.gen.DaoSession;
+import com.example.newbiechen.ireader.model.gen.DownloadTaskBeanDao;
 import com.example.newbiechen.ireader.utils.BookManager;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.FileUtils;
@@ -24,6 +25,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
@@ -196,15 +200,42 @@ public class BookRepository {
     }
 
     /************************************************************/
-    public void deleteCollBook(CollBookBean bean){
-        mCollBookDao.delete(bean);
+    public Single<Void> deleteCollBook(CollBookBean bean) {
+        return Single.create(new SingleOnSubscribe<Void>() {
+            @Override
+            public void subscribe(SingleEmitter<Void> e) throws Exception {
+                //查看文本中是否存在删除的数据
+                deleteBook(bean.get_id());
+                //删除任务
+                deleteDownloadTask(bean.get_id());
+                //删除目录
+                deleteBookChapter(bean.get_id());
+                //删除CollBook
+                mCollBookDao.delete(bean);
+                e.onSuccess(new Void());
+            }
+        });
     }
 
-    public void deleteBookChapterList(String taskName){
+    public void deleteBookChapter(String bookId){
+        mSession.getBookChapterBeanDao()
+                .queryBuilder()
+                .where(BookChapterBeanDao.Properties.BookId.eq(bookId))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
     }
 
     //删除书籍
     public void deleteBook(String bookId){
         FileUtils.deleteFile(Constant.BOOK_CACHE_PATH+bookId);
+    }
+
+    //删除任务
+    public void deleteDownloadTask(String bookId){
+        mSession.getDownloadTaskBeanDao()
+                .queryBuilder()
+                .where(DownloadTaskBeanDao.Properties.BookId.eq(bookId))
+                .buildDelete()
+                .executeDeleteWithoutDetachingEntities();
     }
 }

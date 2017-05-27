@@ -40,6 +40,7 @@ import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.SystemBarUtils;
+import com.example.newbiechen.ireader.utils.ToastUtils;
 import com.example.newbiechen.ireader.widget.PageView;
 
 import java.util.List;
@@ -59,7 +60,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     private static final String TAG = "ReadActivity";
 
     public static final String EXTRA_COLL_BOOK = "extra_coll_book";
-    public static final String EXTRA_IS_COLLECTED = "extra_is_from_shelf";
+    public static final String EXTRA_IS_COLLECTED = "extra_is_collected";
 
     @BindView(R.id.read_dl_slide)
     DrawerLayout mDlSlide;
@@ -89,8 +90,8 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     TextView mTvCategory;
     @BindView(R.id.read_tv_night_mode)
     TextView mTvNightMode;
-    @BindView(R.id.read_tv_download)
-    TextView mTvDownload;
+/*    @BindView(R.id.read_tv_download)
+    TextView mTvDownload;*/
     @BindView(R.id.read_tv_setting)
     TextView mTvSetting;
 
@@ -308,6 +309,17 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     toggleNightMode();
                 }
         );
+
+        mTvBrief.setOnClickListener(
+                (v) -> BookDetailActivity.startActivity(this,mBookId)
+        );
+
+        mTvCommunity.setOnClickListener(
+                (v) -> {
+                    Intent intent = new Intent(this, CommunityActivity.class);
+                    startActivity(intent);
+                }
+        );
     }
 
     private void showStatusBar(){
@@ -414,13 +426,16 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         if (mPageFactory.getPageStatus() == PageFactory.STATUS_LOADING){
             mPageFactory.startRead();
         }
-
+        Log.d(TAG, "finishChapter: ");
         mCategoryAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void errorChapter() {
-
+        ToastUtils.show("章节加载错误");
+        if (mPageFactory.getPageStatus() == PageFactory.STATUS_LOADING){
+            mPageFactory.startRead();
+        }
     }
 
     @Override
@@ -432,7 +447,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed(){
         if (!isCollected){
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle("加入书架")
@@ -446,21 +461,26 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                         BookRepository.getInstance()
                                 .saveCollBook(mCollBook);
 
-                        //返回给BookDetail。
-                        Intent result = new Intent();
-                        result.putExtra(BookDetailActivity.RESULT_IS_COLLECTED, isCollected);
-                        setResult(Activity.RESULT_OK,result);
-
-                        super.onBackPressed();
+                        exit();
                     })
                     .setNegativeButton("取消",(dialog, which) -> {
-                        super.onBackPressed();
+                        exit();
                     }).create();
             alertDialog.show();
         }
         else {
-            super.onBackPressed();
+            exit();
         }
+    }
+
+    //退出
+    private void exit(){
+        //返回给BookDetail。
+        Intent result = new Intent();
+        result.putExtra(BookDetailActivity.RESULT_IS_COLLECTED, isCollected);
+        setResult(Activity.RESULT_OK,result);
+        //退出
+        super.onBackPressed();
     }
 
     @Override
@@ -473,6 +493,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     protected void onPause() {
         super.onPause();
         mWakeLock.release();
+        mPageFactory.saveRecord();
     }
 
     @Override

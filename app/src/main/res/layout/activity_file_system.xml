@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+	<!--指示器-->
+	<include layout="@layout/scroll_title_indicator"/>
+	
+	<android.support.v4.view.ViewPager
+		android:id="@+id/tab_vp"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
+	</android.support.v4.view.ViewPager>
+	
+	<!--文件点击按钮-->
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
+		android:paddingLeft="10dp"
+		android:paddingRight="10dp"
+		android:gravity="center_vertical">
+		
+		<android.support.v7.widget.AppCompatCheckBox
+			android:id="@+id/file_system_cb_selected_all"
+			android:layout_width="70dp"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:textAlignment="textEnd"
+			android:text="全选" />
+		
+		<Button
+			android:id="@+id/file_system_btn_add_book"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:minWidth="150dp"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
+			android:text="加入书架"/>
+		
+		<Button
+			android:id="@+id/file_system_btn_delete"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_toLeftOf="@id/file_system_btn_add_book"
+			android:text="删除"/>
+	</RelativeLayout>
+</LinearLayout>
