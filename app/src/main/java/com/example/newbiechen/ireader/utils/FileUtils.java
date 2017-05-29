@@ -15,6 +15,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Single;
+import io.reactivex.SingleEmitter;
+import io.reactivex.SingleOnSubscribe;
+
 /**
  * Created by newbiechen on 17-5-11.
  */
@@ -89,7 +93,6 @@ public class FileUtils {
         //计算单位的，原理是利用lg,公式是 lg(1024^n) = nlg(1024)，最后 nlg(1024)/lg(1024) = n。
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         //计算原理是，size/单位值。单位值指的是:比如说b = 1024,KB = 1024^2
-        //
         return new DecimalFormat("#,##0.##").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
@@ -175,5 +178,18 @@ public class FileUtils {
             txtFiles.addAll(getTxtFiles(dir.getPath()));
         }
         return txtFiles;
+    }
+
+    //由于遍历比较耗时
+    public static Single<List<File>> getSDTxtFile(){
+        //外部存储卡路径
+        String rootPath = Environment.getExternalStorageDirectory().getPath();
+        return Single.create(new SingleOnSubscribe<List<File>>() {
+            @Override
+            public void subscribe(SingleEmitter<List<File>> e) throws Exception {
+                List<File> files = getTxtFiles(rootPath);
+                e.onSuccess(files);
+            }
+        });
     }
 }

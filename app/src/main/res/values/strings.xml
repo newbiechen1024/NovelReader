@@ -150,6 +150,13 @@
     <string name="nb.read.community">社区</string>
     <string name="nb.read.brief">简介</string>
     <string name="nb.read.setting">设置</string>
-    <string name="nb.read.download">缓存</string>
+    <string name="nb.read.download">缓存</string>'
     <string name="nb.read.category">目录</string>
+    
+    
+    <!--file system-->
+    <string name="nb.file.sub_count">%1$d 项</string>
+    <string name="nb.file.path">存储卡:%1$s</string>
+    <string name="nb.file.add_shelf">加入书架</string>
+    <string name="nb.file.add_shelves">加入书架(%1$d)</string>
 </resources>

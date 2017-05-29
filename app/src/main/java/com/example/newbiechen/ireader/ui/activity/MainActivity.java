@@ -111,6 +111,7 @@ public class MainActivity extends BaseTabActivity{
             case R.id.action_sync_bookshelf:
                 break;
             case R.id.action_scan_local_book:
+                activityCls = FileSystemActivity.class;
                 break;
             case R.id.action_wifi_book:
                 break;

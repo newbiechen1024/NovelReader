@@ -2,6 +2,7 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:orientation="vertical">
@@ -19,32 +20,37 @@
 	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="60dp"
-		android:paddingLeft="10dp"
 		android:paddingRight="10dp"
 		android:gravity="center_vertical">
 		
-		<android.support.v7.widget.AppCompatCheckBox
+		<CheckBox
 			android:id="@+id/file_system_cb_selected_all"
-			android:layout_width="70dp"
-			android:layout_height="wrap_content"
+			android:layout_width="120dp"
+			android:layout_height="40dp"
 			android:layout_centerVertical="true"
-			android:textAlignment="textEnd"
-			android:text="全选" />
+			android:button="@drawable/selector_cb_file"
+			android:text="全选"
+			android:textColor="@color/selector_cb_file"/>
 		
 		<Button
 			android:id="@+id/file_system_btn_add_book"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:minWidth="150dp"
+			android:layout_height="35dp"
+			android:minWidth="110dp"
 			android:layout_alignParentRight="true"
 			android:layout_centerVertical="true"
-			android:text="加入书架"/>
+			android:background="@drawable/selector_btn_add"
+			android:textColor="@color/selector_btn_file_add"
+			android:text="加入书架" />
 		
 		<Button
 			android:id="@+id/file_system_btn_delete"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_width="70dp"
+			android:layout_height="35dp"
 			android:layout_centerVertical="true"
+			android:layout_marginRight="15dp"
+			android:background="@drawable/selector_btn_delete"
+			android:textColor="@color/selector_btn_file_delete"
 			android:layout_toLeftOf="@id/file_system_btn_add_book"
 			android:text="删除"/>
 	</RelativeLayout>

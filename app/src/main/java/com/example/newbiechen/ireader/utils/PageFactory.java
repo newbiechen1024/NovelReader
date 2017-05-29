@@ -747,6 +747,8 @@ public class PageFactory {
     public void setTextSize(int textSize){
         //设置textSize
         mTextSize = textSize;
+        //设置画笔的字体大小
+        mTextPaint.setTextSize(mTextSize);
         //存储状态
         mSettingManager.setTextSize(mTextSize);
         //重新计算LineCount

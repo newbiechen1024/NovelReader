@@ -129,8 +129,6 @@
 						android:text="@string/nb.book_detail.start_read"
 						android:textColor="@color/white" />
 				</LinearLayout>
-			
-			
 			</RelativeLayout>
 			
 			<View

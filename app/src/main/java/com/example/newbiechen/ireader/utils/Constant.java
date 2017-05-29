@@ -34,6 +34,7 @@ public class Constant {
     //Book Date Convert Format
     public static final String FORMAT_BOOK_DATE = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String FORMAT_TIME = "HH:mm";
+    public static final String FORMAT_FILE_DATE = "yyyy-MM-dd";
     //RxBus
     public static final int MSG_SELECTOR = 1;
     //BookCachePath (因为getCachePath引用了Context，所以必须是静态变量，不能够是静态常量)
