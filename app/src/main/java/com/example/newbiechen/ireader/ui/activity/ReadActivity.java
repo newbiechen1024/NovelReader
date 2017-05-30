@@ -38,6 +38,7 @@ import com.example.newbiechen.ireader.utils.BrightnessUtils;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.RxUtils;
+import com.example.newbiechen.ireader.utils.SimplePageFactory;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.SystemBarUtils;
 import com.example.newbiechen.ireader.utils.ToastUtils;
@@ -75,8 +76,8 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @BindView(R.id.read_pv_page)
     PageView mPvPage;
     /***************bottom_menu_view***************************/
-    @BindView(R.id.read_tv_download_tip)
-    TextView mTvDownloadTip;
+    @BindView(R.id.read_tv_page_tip)
+    TextView mTvPageTip;
 
     @BindView(R.id.read_ll_bottom_menu)
     LinearLayout mLlBottomMenu;
@@ -101,7 +102,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
     /*****************view******************/
     private ReadSettingDialog mSettingDialog;
-    private PageFactory mPageFactory;
+    private SimplePageFactory mPageFactory;
     private Animation mTopInAnim;
     private Animation mTopOutAnim;
     private Animation mBottomInAnim;
@@ -173,7 +174,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         mDlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         //创建页面工厂
-        mPageFactory = PageFactory.getInstance();
+        mPageFactory = new SimplePageFactory();
         mPageFactory.setPageWidget(mPvPage);
         mSettingDialog = new ReadSettingDialog(this,mPageFactory);
         setUpAdapter();
@@ -221,9 +222,59 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         super.initClick();
 
         mPageFactory.setOnPageChangeListener(
-                (beans,pos) -> {
-                    mPresenter.loadChapter(mBookId, beans);
-                    mCategoryAdapter.setSelectedChapter(pos);
+                new SimplePageFactory.OnPageChangeListener() {
+                    @Override
+                    public void onChapterChange(List<BookChapterBean> beanList, int pos) {
+                        mPresenter.loadChapter(mBookId, beanList);
+                        mCategoryAdapter.setSelectedChapter(pos);
+
+                        if (mPageFactory.getPageStatus() == SimplePageFactory.STATUS_LOADING
+                                || mPageFactory.getPageStatus() == SimplePageFactory.STATUS_ERROR){
+                            //冻结使用
+                            mSbChapterProgress.setEnabled(false);
+                        }
+                        //隐藏提示
+                        mTvPageTip.setVisibility(GONE);
+                        mSbChapterProgress.setProgress(0);
+                    }
+
+                    @Override
+                    public void onPageListChange(int count) {
+                        mSbChapterProgress.setEnabled(true);
+                        mSbChapterProgress.setMax(count-1);
+                        mSbChapterProgress.setProgress(0);
+                    }
+
+                    @Override
+                    public void onPageChange(int pos) {
+                        mSbChapterProgress.post(
+                                () -> mSbChapterProgress.setProgress(pos)
+                        );
+                    }
+                }
+        );
+        mSbChapterProgress.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        if (mLlBottomMenu.getVisibility() == VISIBLE){
+                            //显示标题
+                            mTvPageTip.setText((progress+1)+"/"+(mSbChapterProgress.getMax()+1));
+                            mTvPageTip.setVisibility(VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        //进行切换
+                        mPageFactory.skipToPage(mSbChapterProgress.getProgress());
+                        //隐藏提示
+                        mTvPageTip.setVisibility(GONE);
+                    }
                 }
         );
 
@@ -290,11 +341,11 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         );
 
         mTvPreChapter.setOnClickListener(
-                (v) -> mPageFactory.skipPreChapter()
+                (v) ->  mCategoryAdapter.setSelectedChapter(mPageFactory.skipPreChapter())
         );
 
         mTvNextChapter.setOnClickListener(
-                (v) -> mPageFactory.skipNextChapter()
+                (v) ->  mCategoryAdapter.setSelectedChapter(mPageFactory.skipNextChapter())
         );
 
         mTvNightMode.setOnClickListener(
@@ -424,17 +475,15 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @Override
     public void finishChapter() {
         if (mPageFactory.getPageStatus() == PageFactory.STATUS_LOADING){
-            mPageFactory.startRead();
+            mPageFactory.openChapter();
         }
-        Log.d(TAG, "finishChapter: ");
         mCategoryAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void errorChapter() {
-        ToastUtils.show("章节加载错误");
         if (mPageFactory.getPageStatus() == PageFactory.STATUS_LOADING){
-            mPageFactory.startRead();
+            mPageFactory.chapterError();
         }
     }
 
@@ -500,6 +549,6 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
-        mPageFactory.clear(isCollected);
+        mPageFactory.closeBook(isCollected);
     }
 }

@@ -26,6 +26,7 @@ import com.example.newbiechen.ireader.ui.adapter.ReadBgAdapter;
 import com.example.newbiechen.ireader.utils.BrightnessUtils;
 import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.ScreenUtils;
+import com.example.newbiechen.ireader.utils.SimplePageFactory;
 import com.example.newbiechen.ireader.widget.PageView;
 
 import java.io.Reader;
@@ -75,7 +76,7 @@ public class ReadSettingDialog extends Dialog{
     /************************************/
     private ReadBgAdapter mReadBgAdapter;
     private ReadSettingManager mSettingManager;
-    private PageFactory mPageFactory;
+    private SimplePageFactory mPageFactory;
     private Activity mActivity;
 
     private int mBrightness;
@@ -86,7 +87,7 @@ public class ReadSettingDialog extends Dialog{
     private int mReadBgTheme;
 
 
-    public ReadSettingDialog(@NonNull Activity activity, PageFactory pageFactory) {
+    public ReadSettingDialog(@NonNull Activity activity, SimplePageFactory pageFactory) {
         super(activity,R.style.ReadSettingDialog);
         mActivity = activity;
         mPageFactory = pageFactory;

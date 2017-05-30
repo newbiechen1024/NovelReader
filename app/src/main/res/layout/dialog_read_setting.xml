@@ -140,7 +140,6 @@
             android:layout_marginRight="18dp"
             android:gravity="center"
             android:button="@null"
-            android:textColor="@color/selector_btn_read_setting"
             android:background="@drawable/selector_btn_read_setting"
             style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
         

@@ -19,7 +19,7 @@
 	<!--文件点击按钮-->
 	<RelativeLayout
 		android:layout_width="match_parent"
-		android:layout_height="60dp"
+		android:layout_height="52dp"
 		android:paddingRight="10dp"
 		android:gravity="center_vertical">
 		

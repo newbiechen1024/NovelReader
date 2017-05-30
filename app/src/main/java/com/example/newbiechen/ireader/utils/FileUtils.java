@@ -100,7 +100,7 @@ public class FileUtils {
      * 本来是获取File的内容的。但是为了解决文本缩进、换行的问题
      * 这个方法就是专门用来获取书籍的...
      *
-     * 应该放在BookRepository中。。。，
+     * 应该放在BookRepository中。。。
      * @param file
      * @return
      */

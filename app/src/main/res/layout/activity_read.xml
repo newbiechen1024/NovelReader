@@ -60,20 +60,23 @@
 			android:layout_height="match_parent"
             android:clickable="true"/>
         
-        <!--缓存提示-->
+        <!--切换页面提示-->
         <TextView
-            android:id="@+id/read_tv_download_tip"
-            android:layout_width="match_parent"
+            android:id="@+id/read_tv_page_tip"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/read_ll_bottom_menu"
-            android:background="#89232323"
-            android:paddingBottom="10dp"
-            android:paddingLeft="25dp"
-            android:paddingTop="10dp"
-            android:singleLine="true"
-            android:text="@string/nb.download.add_succeed"
+            android:layout_marginBottom="10dp"
+            android:layout_centerHorizontal="true"
+            android:background="@color/nb.read.menu.bg"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:gravity="center"
+            android:text="1/12"
             android:textColor="@color/white"
-            android:visibility="gone" />
+            android:visibility="gone"/>
         
         <!--底部页面-->
         <LinearLayout

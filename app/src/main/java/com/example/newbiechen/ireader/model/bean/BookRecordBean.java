@@ -14,17 +14,14 @@ public class BookRecordBean{
     private String bookId;
     //阅读到了第几章
     private int chapter;
-    //起始的字节位置
-    private long start;
-    //结束的字节位置
-    private long end;
+    //当前的页码
+    private int pagePos;
 
-    @Generated(hash = 199277464)
-    public BookRecordBean(String bookId, int chapter, long start, long end) {
+    @Generated(hash = 340380968)
+    public BookRecordBean(String bookId, int chapter, int pagePos) {
         this.bookId = bookId;
         this.chapter = chapter;
-        this.start = start;
-        this.end = end;
+        this.pagePos = pagePos;
     }
 
     @Generated(hash = 398068002)
@@ -47,29 +44,11 @@ public class BookRecordBean{
         this.chapter = chapter;
     }
 
-    public long getStart() {
-        return start;
+    public int getPagePos() {
+        return pagePos;
     }
 
-    public void setStart(long start) {
-        this.start = start;
-    }
-
-    public long getEnd() {
-        return end;
-    }
-
-    public void setEnd(long end) {
-        this.end = end;
-    }
-
-    @Override
-    public String toString() {
-        return "BookRecordBean{" +
-                "bookId='" + bookId + '\'' +
-                ", chapter=" + chapter +
-                ", start=" + start +
-                ", end=" + end +
-                '}';
+    public void setPagePos(int pagePos) {
+        this.pagePos = pagePos;
     }
 }

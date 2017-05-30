@@ -35,6 +35,9 @@ import io.reactivex.schedulers.Schedulers;
 public class ReadPresenter extends RxPresenter<ReadContract.View>
         implements ReadContract.Presenter{
     private static final String TAG = "ReadPresenter";
+
+    private Subscription mChapterSub;
+
     @Override
     public void loadCategory(String bookId) {
         Disposable disposable = RemoteRepository.getInstance()
@@ -57,8 +60,12 @@ public class ReadPresenter extends RxPresenter<ReadContract.View>
 
     //需要重新考虑
     @Override
-    public void loadChapter(String bookId,List<BookChapterBean> bookChapters) {
+    public void loadChapter(String bookId,List<BookChapterBean> bookChapters){
         int size = bookChapters.size();
+        //取消上次的任务，防止多次加载
+        if (mChapterSub != null){
+            mChapterSub.cancel();
+        }
 
         List<Single<ChapterInfoBean>> chapterInfos = new ArrayList<>(bookChapters.size());
         ArrayDeque<String> titles = new ArrayDeque<>(bookChapters.size());
@@ -87,21 +94,22 @@ public class ReadPresenter extends RxPresenter<ReadContract.View>
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         new Subscriber<ChapterInfoBean>() {
-                            String title = "";
+                            String title = titles.poll();
                             @Override
                             public void onSubscribe(Subscription s) {
                                 s.request(Integer.MAX_VALUE);
+                                mChapterSub = s;
                             }
 
                             @Override
                             public void onNext(ChapterInfoBean chapterInfoBean) {
-                                //将获取到的数据进行存储
-                                title = titles.poll();
                                 //存储数据
                                 BookRepository.getInstance().saveChapterInfo(
                                         bookId, title, chapterInfoBean.getBody()
                                 );
                                 mView.finishChapter();
+                                //将获取到的数据进行存储
+                                title = titles.poll();
                             }
 
                             @Override
