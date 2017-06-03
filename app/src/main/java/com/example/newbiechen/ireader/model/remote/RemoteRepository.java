@@ -21,6 +21,7 @@ import com.example.newbiechen.ireader.model.bean.HotCommentBean;
 import com.example.newbiechen.ireader.model.bean.ReviewDetailBean;
 import com.example.newbiechen.ireader.model.bean.SortBookBean;
 import com.example.newbiechen.ireader.model.bean.packages.ChapterInfoPackage;
+import com.example.newbiechen.ireader.model.bean.packages.SearchBookPackage;
 
 import java.util.List;
 
@@ -242,5 +243,35 @@ public class RemoteRepository {
     public Single<List<BookListBean>> getRecommendBookList(String bookId,int limit){
         return mBookApi.getRecommendBookListPackage(bookId,limit+"")
                 .map(bean -> bean.getBooklists());
+    }
+    /********************************书籍搜索*********************************************/
+    /**
+     * 搜索热词
+     * @return
+     */
+    public Single<List<String>> getHotWords(){
+        return mBookApi.getHotWordPackage()
+                .map(bean -> bean.getHotWords());
+    }
+
+    /**
+     * 搜索关键字
+     * @param query
+     * @return
+     */
+    public Single<List<String>> getKeyWords(String query){
+        return mBookApi.getKeyWordPacakge(query)
+                .map(bean -> bean.getKeywords());
+
+    }
+
+    /**
+     * 查询书籍
+     * @param query:书名|作者名
+     * @return
+     */
+    public Single<List<SearchBookPackage.BooksBean>> getSearchBooks(String query){
+        return mBookApi.getSearchBookPackage(query)
+                .map(bean -> bean.getBooks());
     }
 }

@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+
 public class MainActivity extends BaseTabActivity{
     /*************Constant**********/
     private static final int WAIT_INTERVAL = 2000;
@@ -57,7 +59,6 @@ public class MainActivity extends BaseTabActivity{
         Fragment bookShelfFragment = new BookShelfFragment();
         Fragment communityFragment = new CommunityFragment();
         Fragment discoveryFragment = new FindFragment();
-
         mFragmentList.add(bookShelfFragment);
         mFragmentList.add(communityFragment);
         mFragmentList.add(discoveryFragment);
@@ -100,6 +101,7 @@ public class MainActivity extends BaseTabActivity{
         Class<?> activityCls = null;
         switch (id) {
             case R.id.action_search:
+                activityCls = SearchActivity.class;
                 break;
             case R.id.action_login:
                 break;

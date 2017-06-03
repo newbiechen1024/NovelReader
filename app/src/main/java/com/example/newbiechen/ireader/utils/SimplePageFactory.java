@@ -296,7 +296,7 @@ public class SimplePageFactory {
                     tip = "正在拼命加载中...";
                     break;
                 case STATUS_ERROR:
-                    tip = "加载失败(点击区域重试)";
+                    tip = "加载失败(点击边缘重试)";
                     break;
                 case STATUS_EMPTY:
                     tip = "文章内容为空";
@@ -622,8 +622,10 @@ public class SimplePageFactory {
         mStatus = STATUS_LOADING;
         //绘制当前的状态
         mCurChapter = pos;
-        //重置position的位置，防止正在加载的时候退出时候存储的位置为上一章的页码
-        mCurPage.position = 0;
+        if (mCurPage != null){
+            //重置position的位置，防止正在加载的时候退出时候存储的位置为上一章的页码
+            mCurPage.position = 0;
+        }
         onDraw(mPageView.getNextPage());
         mPageView.invalidate();
         //提示章节改变，需要下载
@@ -825,6 +827,7 @@ public class SimplePageFactory {
         void onChapterChange(List<BookChapterBean> beanList,int pos);
         //页码改变
         void onPageListChange(int count);
+        //页面改变
         void onPageChange(int pos);
     }
 

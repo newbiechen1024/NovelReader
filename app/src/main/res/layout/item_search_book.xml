@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:background="@drawable/selector_common_bg"
+	android:padding="10dp">
+	
+	<ImageView
+		android:id="@+id/search_book_iv_cover"
+		android:layout_width="45dp"
+		android:layout_height="60dp"
+		android:layout_alignParentLeft="true"
+		android:layout_centerVertical="true"
+		android:src="@drawable/ic_book_loading"
+		android:scaleType="centerCrop" />
+	
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_centerVertical="true"
+		android:layout_marginLeft="10dp"
+		android:layout_toRightOf="@+id/search_book_iv_cover">
+		
+		<TextView
+			style="@style/NB.Theme.TextAppearance.Common.SingleLine"
+			android:id="@+id/search_book_tv_name"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="10dp"
+			android:textColor="@color/nb.text.default"
+			android:textSize="16sp"
+			tools:text="武侠世界自由行"/>
+		
+		<TextView
+			android:id="@+id/search_book_tv_brief"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/search_book_tv_name"
+			android:ellipsize="end"
+			android:singleLine="true"
+			android:text="@string/nb.search.book.brief"
+			android:textColor="@color/nb.text.common_h2"
+			android:textSize="13sp" />
+	</RelativeLayout>
+</RelativeLayout>

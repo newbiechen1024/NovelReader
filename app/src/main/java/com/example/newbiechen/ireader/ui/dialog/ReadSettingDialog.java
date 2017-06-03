@@ -72,7 +72,8 @@ public class ReadSettingDialog extends Dialog{
     RadioButton mRbNone;
     @BindView(R.id.read_setting_rv_bg)
     RecyclerView mRvBg;
-
+    @BindView(R.id.read_setting_tv_more)
+    TextView mTvMore;
     /************************************/
     private ReadBgAdapter mReadBgAdapter;
     private ReadSettingManager mSettingManager;

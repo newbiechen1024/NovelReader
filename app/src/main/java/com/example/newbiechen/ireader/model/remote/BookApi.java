@@ -19,9 +19,12 @@ import com.example.newbiechen.ireader.model.bean.packages.CommentDetailPackage;
 import com.example.newbiechen.ireader.model.bean.packages.CommentsPackage;
 import com.example.newbiechen.ireader.model.bean.packages.HelpsDetailPackage;
 import com.example.newbiechen.ireader.model.bean.packages.HotCommentPackage;
+import com.example.newbiechen.ireader.model.bean.packages.HotWordPackage;
+import com.example.newbiechen.ireader.model.bean.packages.KeyWordPackage;
 import com.example.newbiechen.ireader.model.bean.packages.RecommendBookListPackage;
 import com.example.newbiechen.ireader.model.bean.packages.RecommendBookPackage;
 import com.example.newbiechen.ireader.model.bean.packages.ReviewDetailPackage;
+import com.example.newbiechen.ireader.model.bean.packages.SearchBookPackage;
 import com.example.newbiechen.ireader.model.bean.packages.SortBookPackage;
 import com.example.newbiechen.ireader.model.bean.packages.TagSearchPackage;
 
@@ -307,5 +310,25 @@ public interface BookApi {
     Single<TagSearchPackage> getTagSearchPackage(@Query("tags") String tags, @Query("start") String start, @Query("limit") String limit);
 
 
-    /*****************************************************************************************8*/
+    /************************************搜索书籍******************************************************/
+    @GET("/book/hot-word")
+    Single<HotWordPackage> getHotWordPackage();
+
+    /**
+     * 关键字自动补全
+     *
+     * @param query
+     * @return
+     */
+    @GET("/book/auto-complete")
+    Single<KeyWordPackage> getKeyWordPacakge(@Query("query") String query);
+
+    /**
+     * 书籍查询
+     *
+     * @param query:作者名或者书名
+     * @return
+     */
+    @GET("/book/fuzzy-search")
+    Single<SearchBookPackage> getSearchBookPackage(@Query("query") String query);
 }

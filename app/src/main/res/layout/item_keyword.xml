@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="horizontal"
+	android:layout_width="match_parent"
+	android:layout_height="45dp"
+	android:background="@drawable/selector_common_bg"
+	android:gravity="center_vertical">
+
+	<ImageView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="25dp"
+		android:src="@drawable/ic_search_selected"/>
+	
+	<TextView
+		style="@style/NB.Theme.TextAppearance.Common.SingleLine"
+		android:id="@+id/keyword_tv_name"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textColor="@color/black"
+		tools:text="斗罗大陆" />
+</LinearLayout>

@@ -69,7 +69,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getContentId());
         initData(savedInstanceState);
-
         unbinder = ButterKnife.bind(this);
         initToolbar();
         initWidget();

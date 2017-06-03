@@ -57,4 +57,7 @@ dependencies {
     //ORM Databae
     compile "org.greenrobot:greendao:$rootProject.greendaoVersion"
     testCompile "junit:junit:$rootProject.junitVersion"
+
+    //AndroidTagGroup
+    compile 'me.gujun.android.taggroup:library:1.4@aar'
 }

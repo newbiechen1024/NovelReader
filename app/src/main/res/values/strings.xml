@@ -159,4 +159,7 @@
     <string name="nb.file.path">存储卡:%1$s</string>
     <string name="nb.file.add_shelf">加入书架</string>
     <string name="nb.file.add_shelves">加入书架(%1$d)</string>
+    
+    <!--search-->
+    <string name="nb.search.book.brief">%1$d人在追 | %2$s读者留存 | %3$s著</string>
 </resources>

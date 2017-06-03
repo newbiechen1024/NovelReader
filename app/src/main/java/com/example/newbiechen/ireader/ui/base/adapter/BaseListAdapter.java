@@ -128,6 +128,10 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter<RecyclerV
         notifyDataSetChanged();
     }
 
+    public void clear(){
+        mList.clear();
+    }
+
     /***************************inner class area***********************************/
     public interface OnItemClickListener{
         void onItemClick(View view, int pos);

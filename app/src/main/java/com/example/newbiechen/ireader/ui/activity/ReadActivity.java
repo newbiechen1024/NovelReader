@@ -227,6 +227,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     public void onChapterChange(List<BookChapterBean> beanList, int pos) {
                         mPresenter.loadChapter(mBookId, beanList);
                         mCategoryAdapter.setSelectedChapter(pos);
+                        mRvCategory.scrollToPosition(pos);
 
                         if (mPageFactory.getPageStatus() == SimplePageFactory.STATUS_LOADING
                                 || mPageFactory.getPageStatus() == SimplePageFactory.STATUS_ERROR){
@@ -497,6 +498,15 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
     @Override
     public void onBackPressed(){
+        if(mAblTopMenu.getVisibility() == View.VISIBLE){
+            toggleMenu(true);
+            return;
+        }
+        else if (mSettingDialog.isShowing()){
+            mSettingDialog.dismiss();
+            return;
+        }
+
         if (!isCollected){
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle("加入书架")

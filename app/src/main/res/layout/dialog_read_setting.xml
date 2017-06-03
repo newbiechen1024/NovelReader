@@ -18,7 +18,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/read_setting_ll_menu"
     android:layout_width="match_parent"
-    android:layout_height="250dp"
+    android:layout_height="280dp"
     android:clickable="true"
     android:layout_alignParentBottom="true"
     android:background="@color/nb.read.menu.bg"
@@ -191,4 +191,13 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="@dimen/nb.read_setting.divider"
         android:scrollbars="none" />
+    
+    <TextView
+        android:id="@+id/read_setting_tv_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="更多设置 >>"
+        android:textColor="@color/white"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="10dp"/>
 </LinearLayout>
