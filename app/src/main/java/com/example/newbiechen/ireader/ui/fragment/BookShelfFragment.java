@@ -213,7 +213,6 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
     @Override
     public void finishRefresh(List<CollBookBean> collBookBeans){
         mCollBookAdapter.refreshItems(collBookBeans);
-
     }
 
 

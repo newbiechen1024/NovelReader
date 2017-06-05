@@ -25,7 +25,7 @@
 * [Glide](https://github.com/bumptech/glide)    ==>    图片加载
 * [retrolambda](https://github.com/orfjackal/retrolambda)    ==>    在AndroidStudio3.0以下版本支持Lambda
 * [treader](https://github.com/PeachBlossom/treader)    ==>    小说阅读页面的切换动画及整体架构都来自这个项目。
-
+* [AndroidTagGroup](https://github.com/2dxgujun/AndroidTagGroup)    ==>    标签效果
 # 应用展示
 
 ![](https://github.com/newbiechen1024/NovelReader/blob/master/screenshot/download.gif)

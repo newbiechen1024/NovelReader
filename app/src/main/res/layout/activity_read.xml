@@ -179,13 +179,17 @@
             android:layout_marginLeft="15dp"
             android:layout_marginBottom="8dp"/>
         
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/read_rv_category"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:overScrollMode="never"
-            android:scrollbars="vertical">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_weight="1">
+    
+            <ListView
+                android:id="@+id/read_iv_category"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical">
+            </ListView>
+        </RelativeLayout>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

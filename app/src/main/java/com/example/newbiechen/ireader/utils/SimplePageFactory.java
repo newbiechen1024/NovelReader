@@ -812,6 +812,10 @@ public class SimplePageFactory {
         return mStatus;
     }
 
+    public int getPosition(){
+        return mCurChapter;
+    }
+
     public void skipToPage(int pos){
         mCurPage = getCurPage(pos);
         onDraw(mPageView.getNextPage());

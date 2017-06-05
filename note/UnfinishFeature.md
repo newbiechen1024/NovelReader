@@ -12,7 +12,7 @@
 7. 支持其他多种格式(epub、pdf)
 8. 解析多种编码(目前只支持utf-8编码的文件)
 9. 支持上下翻页 (内部嵌套RecyclerView 还是使用多个Bitmap进行绘制)
-10. 支持侧滑栏有个ScrollBar，并且能够反转
+10. 支持侧滑栏有个ScrollBar (完成)
 ## BookShelfFragment
 
 1. 删除收藏的书籍  (完成)

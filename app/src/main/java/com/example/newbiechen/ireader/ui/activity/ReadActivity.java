@@ -12,15 +12,13 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -41,7 +39,6 @@ import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.SimplePageFactory;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.SystemBarUtils;
-import com.example.newbiechen.ireader.utils.ToastUtils;
 import com.example.newbiechen.ireader.widget.PageView;
 
 import java.util.List;
@@ -97,9 +94,8 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     TextView mTvSetting;
 
     /***************left slide*******************************/
-    @BindView(R.id.read_rv_category)
-    RecyclerView mRvCategory;
-
+    @BindView(R.id.read_iv_category)
+    ListView mLvCategory;
     /*****************view******************/
     private ReadSettingDialog mSettingDialog;
     private SimplePageFactory mPageFactory;
@@ -130,7 +126,6 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     private boolean isCollected = false; //isFromSd
     private boolean isNightMode = false;
     private String mBookId;
-
 
     //书架页进入
     public static void startActivity(Context context, CollBookBean collBook, boolean isCollected){
@@ -213,8 +208,8 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
     private void setUpAdapter(){
         mCategoryAdapter = new CategoryAdapter();
-        mRvCategory.setLayoutManager(new LinearLayoutManager(this));
-        mRvCategory.setAdapter(mCategoryAdapter);
+        mLvCategory.setAdapter(mCategoryAdapter);
+        mLvCategory.setFastScrollEnabled(true);
     }
 
     @Override
@@ -226,8 +221,10 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     @Override
                     public void onChapterChange(List<BookChapterBean> beanList, int pos) {
                         mPresenter.loadChapter(mBookId, beanList);
-                        mCategoryAdapter.setSelectedChapter(pos);
-                        mRvCategory.scrollToPosition(pos);
+                        mCategoryAdapter.setChapter(pos);
+                        mLvCategory.post(
+                                () -> mLvCategory.setSelection(mPageFactory.getPosition())
+                        );
 
                         if (mPageFactory.getPageStatus() == SimplePageFactory.STATUS_LOADING
                                 || mPageFactory.getPageStatus() == SimplePageFactory.STATUS_ERROR){
@@ -320,15 +317,18 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             }
         });
 
-        mCategoryAdapter.setOnItemClickListener(
-                (view, pos) ->  {
-                    mPageFactory.skipToChapter(pos);
+        mLvCategory.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    mPageFactory.skipToChapter(position);
                     mDlSlide.closeDrawer(Gravity.START);
                 }
         );
 
         mTvCategory.setOnClickListener(
                 (v) -> {
+                    //移动到指定位置
+                    mLvCategory.setSelection(mPageFactory.getPosition());
+                    //切换菜单
                     toggleMenu(true);
                     //打开侧滑动栏
                     mDlSlide.openDrawer(Gravity.START);
@@ -342,11 +342,11 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         );
 
         mTvPreChapter.setOnClickListener(
-                (v) ->  mCategoryAdapter.setSelectedChapter(mPageFactory.skipPreChapter())
+                (v) ->  mCategoryAdapter.setChapter(mPageFactory.skipPreChapter())
         );
 
         mTvNextChapter.setOnClickListener(
-                (v) ->  mCategoryAdapter.setSelectedChapter(mPageFactory.skipNextChapter())
+                (v) ->  mCategoryAdapter.setChapter(mPageFactory.skipNextChapter())
         );
 
         mTvNightMode.setOnClickListener(

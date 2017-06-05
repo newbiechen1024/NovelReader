@@ -5,8 +5,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.RxBus;
-import com.example.newbiechen.ireader.event.FileCheckedEvent;
 import com.example.newbiechen.ireader.ui.adapter.FileSystemAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.utils.FileUtils;
@@ -14,12 +12,7 @@ import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
 
-import java.io.File;
-import java.util.Map;
-import java.util.Set;
-
 import butterknife.BindView;
-import io.reactivex.disposables.Disposable;
 
 /**
  * Created by newbiechen on 17-5-27.
