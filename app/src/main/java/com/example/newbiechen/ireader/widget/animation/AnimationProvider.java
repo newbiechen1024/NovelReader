@@ -79,4 +79,11 @@ public abstract class AnimationProvider {
         return isCancel;
     }
 
+    public void setParams(Bitmap mCurrentBitmap,Bitmap mNextBitmap,int width,int height){
+        this.mCurPageBitmap = mCurrentBitmap;
+        this.mNextPageBitmap = mNextBitmap;
+        this.mScreenWidth = width;
+        this.mScreenHeight = height;
+    }
+
 }

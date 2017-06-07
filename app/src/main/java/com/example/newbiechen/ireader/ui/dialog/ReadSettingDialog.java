@@ -3,6 +3,7 @@ package com.example.newbiechen.ireader.ui.dialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +23,8 @@ import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.local.ReadSettingManager;
+import com.example.newbiechen.ireader.ui.activity.MoreSettingActivity;
+import com.example.newbiechen.ireader.ui.activity.ReadActivity;
 import com.example.newbiechen.ireader.ui.adapter.ReadBgAdapter;
 import com.example.newbiechen.ireader.utils.BrightnessUtils;
 import com.example.newbiechen.ireader.utils.PageFactory;
@@ -297,6 +300,16 @@ public class ReadSettingDialog extends Dialog{
         //背景的点击事件
         mReadBgAdapter.setOnItemClickListener(
                 (view, pos) -> mPageFactory.setBgColor(pos)
+        );
+
+        //更多设置
+        mTvMore.setOnClickListener(
+                (v) -> {
+                    Intent intent = new Intent(getContext(), MoreSettingActivity.class);
+                    mActivity.startActivityForResult(intent, ReadActivity.REQUEST_MORE_SETTING);
+                    //关闭当前设置
+                    dismiss();
+                }
         );
     }
 }

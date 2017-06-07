@@ -25,6 +25,8 @@ public class ReadSettingManager {
     public static final String SHARED_READ_IS_TEXT_DEFAULT = "shared_read_text_default";
     public static final String SHARED_READ_PAGE_MODE = "shared_read_mode";
     public static final String SHARED_READ_NIGHT_MODE = "shared_night_mode";
+    public static final String SHARED_READ_VOLUME_TURN_PAGE = "shared_read_volume_turn_page";
+    public static final String SHARED_READ_FULL_SCREEN = "shared_read_full_screen";
 
     private static volatile ReadSettingManager sInstance;
 
@@ -97,5 +99,21 @@ public class ReadSettingManager {
     
     public boolean isNightMode(){
         return sharedPreUtils.getBoolean(SHARED_READ_NIGHT_MODE, false);
+    }
+
+    public void setVolumeTurnPage(boolean isTurn){
+        sharedPreUtils.putBoolean(SHARED_READ_VOLUME_TURN_PAGE,isTurn);
+    }
+
+    public boolean isVolumeTurnPage(){
+        return sharedPreUtils.getBoolean(SHARED_READ_VOLUME_TURN_PAGE, false);
+    }
+
+    public void setFullScreen(boolean isFullScreen){
+        sharedPreUtils.putBoolean(SHARED_READ_FULL_SCREEN,isFullScreen);
+    }
+
+    public boolean isFullScreen(){
+        return sharedPreUtils.getBoolean(SHARED_READ_FULL_SCREEN,false);
     }
 }

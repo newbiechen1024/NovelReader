@@ -30,54 +30,77 @@ import com.example.newbiechen.ireader.R;
 
 public class SystemBarUtils {
 
+    private static final int UNSTABLE_STATUS = View.SYSTEM_UI_FLAG_FULLSCREEN;
+    private static final int UNSTABLE_NAV = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+    private static final int STABLE_STATUS = View.SYSTEM_UI_FLAG_FULLSCREEN |
+            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+    private static final int STABLE_NAV = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+    private static final int EXPAND_STATUS = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+    private static final int EXPAND_NAV = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
+
     //设置隐藏StatusBar(点击任意地方会恢复)
-    public static void hideStatusBar(Activity activity){
-        if (Build.VERSION.SDK_INT >= 19) {
-            //App全屏，隐藏StatusBar
-            setFlag(activity,View.SYSTEM_UI_FLAG_FULLSCREEN);
-        }
+    public static void hideUnStableStatusBar(Activity activity){
+        //App全屏，隐藏StatusBar
+        setFlag(activity,UNSTABLE_STATUS);
     }
 
-    //隐藏NavigationBar
-    public static void hideNavBar(Activity activity){
-        if (Build.VERSION.SDK_INT >= 19) {
-            setFlag(activity,View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
+    public static void showUnStableStatusBar(Activity activity){
+        clearFlag(activity,UNSTABLE_STATUS);
     }
 
-    //变换StatusBar(点击任意地方不会弹出)
-    public static void toggleStatusBar(Activity activity){
-        int option = View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        setToggleFlag(activity, option);
+    //隐藏NavigationBar(点击任意地方会恢复)
+    public static void hideUnStableNavBar(Activity activity){
+        setFlag(activity,UNSTABLE_NAV);
     }
 
-    //变换NavigationBar
-    public static void toggleNavBar(Activity activity){
-        int option = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        setToggleFlag(activity, option);
+    public static void showUnStableNavBar(Activity activity){
+        clearFlag(activity,UNSTABLE_NAV);
     }
 
-    //变化StatusBar和NavigationBar
-    public static void toggleAllBar(Activity activity){
-        int option = View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        setToggleFlag(activity, option);
+    public static void hideStableStatusBar(Activity activity){
+        //App全屏，隐藏StatusBar
+        setFlag(activity,STABLE_STATUS);
+    }
+
+    public static void showStableStatusBar(Activity activity){
+        clearFlag(activity,STABLE_STATUS);
+    }
+
+    public static void hideStableNavBar(Activity activity){
+        //App全屏，隐藏StatusBar
+        setFlag(activity,STABLE_NAV);
+    }
+
+    public static void showStableNavBar(Activity activity){
+        clearFlag(activity,STABLE_NAV);
+    }
+
+    /**
+     * 视图扩充到StatusBar
+     */
+    public static void expandStatusBar(Activity activity){
+        setFlag(activity, EXPAND_STATUS);
+    }
+
+    /**
+     * 视图扩充到NavBar
+     * @param activity
+     */
+    public static void expandNavBar(Activity activity){
+        setFlag(activity, EXPAND_NAV);
     }
 
     public static void transparentStatusBar(Activity activity){
         if (Build.VERSION.SDK_INT >= 21){
-            setFlag(activity, View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            expandStatusBar(activity);
             activity.getWindow()
                     .setStatusBarColor(activity.getResources().getColor(android.R.color.transparent));
         }
@@ -90,18 +113,28 @@ public class SystemBarUtils {
 
     public static void transparentNavBar(Activity activity){
         if (Build.VERSION.SDK_INT >= 21){
-            setFlag(activity, View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            expandNavBar(activity);
             //下面这个方法在sdk:21以上才有
             activity.getWindow()
-                    .setStatusBarColor(activity.getResources().getColor(android.R.color.transparent));
+                    .setNavigationBarColor(activity.getResources().getColor(android.R.color.transparent));
         }
     }
 
     public static void setFlag(Activity activity, int flag){
-        View decorView = activity.getWindow().getDecorView();
-        int option = decorView.getSystemUiVisibility() | flag;
-        decorView.setSystemUiVisibility(option);
+        if (Build.VERSION.SDK_INT >= 19){
+            View decorView = activity.getWindow().getDecorView();
+            int option = decorView.getSystemUiVisibility() | flag;
+            decorView.setSystemUiVisibility(option);
+        }
+    }
+
+    //取消flag
+    public static void clearFlag(Activity activity, int flag){
+        if (Build.VERSION.SDK_INT >= 19){
+            View decorView = activity.getWindow().getDecorView();
+            int option = decorView.getSystemUiVisibility() & (~flag);
+            decorView.setSystemUiVisibility(option);
+        }
     }
 
     public static void setToggleFlag(Activity activity, int option){
@@ -113,13 +146,6 @@ public class SystemBarUtils {
                 setFlag(activity,option);
             }
         }
-    }
-
-    //取消flag
-    public static void clearFlag(Activity activity, int flag){
-        View decorView = activity.getWindow().getDecorView();
-        int option = decorView.getSystemUiVisibility() & (~flag);
-        decorView.setSystemUiVisibility(option);
     }
 
     /**

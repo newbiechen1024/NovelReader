@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	
+	<include layout="@layout/toolbar" />
+	
+	<RelativeLayout
+		android:id="@+id/more_setting_rl_volume"
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
+		android:gravity="center"
+		android:paddingLeft="20dp"
+		android:paddingRight="20dp"
+		android:background="@drawable/selector_common_bg">
+		
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:text="音量键翻页"/>
+		
+		<android.support.v7.widget.SwitchCompat
+			android:id="@+id/more_setting_sc_volume"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_alignParentRight="true"
+			android:clickable="false"
+			android:longClickable="false"/>
+	</RelativeLayout>
+	
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:background="@color/nb.divider.narrow" />
+	
+	<RelativeLayout
+		android:id="@+id/more_setting_rl_full_screen"
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
+		android:gravity="center"
+		android:paddingLeft="20dp"
+		android:paddingRight="20dp"
+		android:background="@drawable/selector_common_bg">
+		
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:text="全屏模式"/>
+		
+		<android.support.v7.widget.SwitchCompat
+			android:id="@+id/more_setting_sc_full_screen"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_alignParentRight="true"
+			android:clickable="false"
+			android:longClickable="false"/>
+	</RelativeLayout>
+</LinearLayout>

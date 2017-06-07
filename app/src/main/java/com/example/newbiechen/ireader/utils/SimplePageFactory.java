@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.example.newbiechen.ireader.App;
 import com.example.newbiechen.ireader.R;
@@ -23,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +31,7 @@ import java.util.List;
  * Created by newbiechen on 17-5-29.
  */
 
-public class SimplePageFactory {
+public class SimplePageFactory{
     private static final String TAG = "PageFactory";
 
     private static final int DEFAULT_INTERVAL = 10;
@@ -62,8 +62,8 @@ public class SimplePageFactory {
     //当前的状态
     private int mStatus = STATUS_LOADING;
     //应用的宽高
-    private int mAppWidth;
-    private int mAppHeight;
+    private int mDisplayWidth;
+    private int mDisplayHeight;
     //间距
     private int mMarginWidth;
     private int mMarginHeight;
@@ -111,24 +111,18 @@ public class SimplePageFactory {
         else {
             setBgColor(mBgTheme);
         }
-        //获取当前App的宽高
-        int[] size = ScreenUtils.getAppSize();
-        mAppWidth = size[0];
-        mAppHeight = size[1];
+
         //初始化参数
         mMarginWidth = ScreenUtils.dpToPx(DEFAULT_MARGIN_WIDTH);
         mMarginHeight = ScreenUtils.dpToPx(DEFAULT_MARGIN_HEIGHT);
-        mVisibleWidth = mAppWidth - mMarginWidth * 2;
-        mVisibleHeight = mAppHeight - mMarginHeight * 2;
         mIntervalSize = ScreenUtils.dpToPx(DEFAULT_INTERVAL);
-        //计算行数
-        calculateLineCount();
     }
 
     //计算每页的行数
     private void calculateLineCount(){
         //这里需要加上intervalSize 是为保证当达到最后一行的时候没有间距
         mLineCount = (mVisibleHeight+mIntervalSize) /(mIntervalSize + mTextSize);
+        Log.d(TAG, "calculateLineCount: "+mVisibleHeight+" "+mLineCount);
     }
 
     private void initPaint(){
@@ -155,9 +149,6 @@ public class SimplePageFactory {
         initPageView();
         //正在加载状态
         mStatus = STATUS_LOADING;
-        //绘制当前的状态
-        onDraw(mPageView.getCurPage());
-        onDraw(mPageView.getNextPage());
     }
 
     private void initPageView(){
@@ -165,6 +156,38 @@ public class SimplePageFactory {
         mPageView.setBgColor(mPageBg);
         //当前状态变成Loading
         mStatus = STATUS_LOADING;
+        //这里为了实现全屏的功能导致代码逻辑混乱，各位将就着理解一下。
+        mPageView.setOnSizeChangeListener(
+                (w, h, oldw, oldh) -> {
+                    initDisplaySize(w, h);
+                    //如果当前页面未展开，现实正在加载
+                    if (!isBookOpen){
+                        //绘制当前的状态
+                        onDraw(mPageView.getCurPage());
+                        onDraw(mPageView.getNextPage());
+                    }
+                }
+        );
+    }
+
+    private void initDisplaySize(int width,int height){
+        //获取PageView的宽高
+        mDisplayWidth = width;
+        mDisplayHeight = height;
+
+        mVisibleWidth = mDisplayWidth - mMarginWidth * 2;
+        mVisibleHeight = mDisplayHeight - mMarginHeight * 2;
+        //计算行数
+        calculateLineCount();
+
+        //如果章节已显示，那么就重新计算页面
+        if (mStatus == STATUS_FINISH){
+            mPageList = createPageList(mCurChapter);
+            //重新设置文章指针的位置
+            mCurPage = getCurPage(mCurPage.position);
+            //绘制
+            onDraw(mPageView.getNextPage());
+        }
     }
 
     //初始化书籍
@@ -307,8 +330,8 @@ public class SimplePageFactory {
             Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
             float textHeight = fontMetrics.top - fontMetrics.bottom;
             float textWidth = mTextPaint.measureText(tip);
-            float pivotX = (mAppWidth - textWidth)/2;
-            float pivotY = (mAppHeight - textHeight)/2;
+            float pivotX = (mDisplayWidth - textWidth)/2;
+            float pivotY = (mDisplayHeight - textHeight)/2;
             canvas.drawText(tip,pivotX,pivotY, mTextPaint);
         }
         else {
@@ -337,7 +360,7 @@ public class SimplePageFactory {
         }
 
         //底部的字显示的位置Y
-        float y = mAppHeight - mTextPaint.getFontMetrics().bottom - tipMarginHeight;
+        float y = mDisplayHeight - mTextPaint.getFontMetrics().bottom - tipMarginHeight;
         /******绘制页码********/
         //只有finish的时候采用页码
         if (mStatus == STATUS_FINISH){
@@ -345,8 +368,8 @@ public class SimplePageFactory {
             canvas.drawText(percent, mMarginWidth, y, mTextPaint);
         }
         /******绘制电池********/
-        int visibleRight = mAppWidth - mMarginWidth;
-        int visibleBottom = mAppHeight - tipMarginHeight;
+        int visibleRight = mDisplayWidth - mMarginWidth;
+        int visibleBottom = mDisplayHeight - tipMarginHeight;
 
         int outFrameWidth = (int) mTextPaint.measureText("xxx");
         int outFrameHeight = (int) mTextPaint.getTextSize();
@@ -820,6 +843,14 @@ public class SimplePageFactory {
         mCurPage = getCurPage(pos);
         onDraw(mPageView.getNextPage());
         mPageView.invalidate();
+    }
+
+    public void autoNextPage(){
+        mPageView.autoNextPage();
+    }
+
+    public void autoPrevPage(){
+        mPageView.autoPrevPage();
     }
 
     public void setOnPageChangeListener(OnPageChangeListener listener){

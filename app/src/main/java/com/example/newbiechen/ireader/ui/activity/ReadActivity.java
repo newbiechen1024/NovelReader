@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.design.widget.AppBarLayout;
@@ -13,12 +14,17 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -36,6 +42,7 @@ import com.example.newbiechen.ireader.utils.BrightnessUtils;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.RxUtils;
+import com.example.newbiechen.ireader.utils.ScreenUtils;
 import com.example.newbiechen.ireader.utils.SimplePageFactory;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.SystemBarUtils;
@@ -56,7 +63,7 @@ import static android.view.View.VISIBLE;
 public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
  implements ReadContract.View{
     private static final String TAG = "ReadActivity";
-
+    public static final int REQUEST_MORE_SETTING = 1;
     public static final String EXTRA_COLL_BOOK = "extra_coll_book";
     public static final String EXTRA_IS_COLLECTED = "extra_is_collected";
 
@@ -125,6 +132,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     /***************params*****************/
     private boolean isCollected = false; //isFromSd
     private boolean isNightMode = false;
+    private boolean isFullScreen = false;
     private String mBookId;
 
     //书架页进入
@@ -152,6 +160,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         mBookId = mCollBook.get_id();
 
         isNightMode = ReadSettingManager.getInstance().isNightMode();
+        isFullScreen = ReadSettingManager.getInstance().isFullScreen();
     }
 
     @Override
@@ -191,6 +200,37 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         //初始化屏幕常亮类
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "keep bright");
+        //隐藏StatusBar
+        mPvPage.post(
+                () -> hideSystemBar()
+        );
+
+        //初始化TopMenu
+        initTopMenu();
+        //初始化BottomMenu
+        initBottomMenu();
+    }
+
+    private void initTopMenu(){
+        if (Build.VERSION.SDK_INT >= 19){
+            mAblTopMenu.setPadding(0,ScreenUtils.getStatusBarHeight(),0,0);
+        }
+    }
+
+    private void initBottomMenu(){
+        //判断是否全屏
+        if (ReadSettingManager.getInstance().isFullScreen()){
+            //还需要设置mBottomMenu的底部高度
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mLlBottomMenu.getLayoutParams();
+            params.bottomMargin = ScreenUtils.getNavigationBarHeight();
+            mLlBottomMenu.setLayoutParams(params);
+        }
+        else{
+            //设置mBottomMenu的底部距离
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mLlBottomMenu.getLayoutParams();
+            params.bottomMargin = 0;
+            mLlBottomMenu.setLayoutParams(params);
+        }
     }
 
     private void toggleNightMode(){
@@ -284,7 +324,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
             @Override
             public Boolean prePage(){
-                hideStatusBar();
+                hideSystemBar();
                 if (mAblTopMenu.getVisibility() == VISIBLE){
                     toggleMenu(true);
                     return false;
@@ -298,7 +338,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
             @Override
             public Boolean nextPage() {
-                hideStatusBar();
+                hideSystemBar();
 
                 if (mAblTopMenu.getVisibility() == VISIBLE){
                     toggleMenu(true);
@@ -372,20 +412,26 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     startActivity(intent);
                 }
         );
+
+        mSettingDialog.setOnDismissListener(
+                dialog ->  hideSystemBar()
+        );
     }
 
-    private void showStatusBar(){
+    private void showSystemBar(){
         //显示
-        SystemBarUtils.clearFlag(this,View.SYSTEM_UI_FLAG_FULLSCREEN);
+        SystemBarUtils.showUnStableStatusBar(this);
+        if (isFullScreen){
+            SystemBarUtils.showUnStableNavBar(this);
+        }
     }
 
-    private void hideStatusBar(){
+    private void hideSystemBar(){
         //隐藏
-        SystemBarUtils.setFlag(this,View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
-
-    private void toggleNavBar(){
-        //有三种状态，设置中是否使用、是否有虚拟按键，该版本是否支持NavBar。
+        SystemBarUtils.hideStableStatusBar(this);
+        if (isFullScreen){
+            SystemBarUtils.hideStableNavBar(this);
+        }
     }
 
     /**
@@ -403,7 +449,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             mLlBottomMenu.setVisibility(GONE);
 
             if (hideStatusBar){
-                hideStatusBar();
+                hideSystemBar();
             }
         }
         else {
@@ -412,7 +458,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             mAblTopMenu.startAnimation(mTopInAnim);
             mLlBottomMenu.startAnimation(mBottomInAnim);
 
-            showStatusBar();
+            showSystemBar();
         }
     }
 
@@ -489,21 +535,20 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus){
-            hideStatusBar();
-        }
-    }
-
-    @Override
     public void onBackPressed(){
         if(mAblTopMenu.getVisibility() == View.VISIBLE){
-            toggleMenu(true);
-            return;
+            //非全屏下才收缩，全屏下直接退出
+            if (!ReadSettingManager.getInstance().isFullScreen()){
+                toggleMenu(true);
+                return;
+            }
         }
         else if (mSettingDialog.isShowing()){
             mSettingDialog.dismiss();
+            return;
+        }
+        else if (mDlSlide.isDrawerOpen(Gravity.START)){
+            mDlSlide.closeDrawer(Gravity.START);
             return;
         }
 
@@ -560,5 +605,50 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         super.onDestroy();
         unregisterReceiver(mReceiver);
         mPageFactory.closeBook(isCollected);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        boolean isVolumeTurnPage = ReadSettingManager
+                .getInstance().isVolumeTurnPage();
+        switch (keyCode){
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                if (isVolumeTurnPage){
+                    mPageFactory.autoPrevPage();
+                    return true;
+                }
+                break;
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+                if (isVolumeTurnPage){
+                    mPageFactory.autoNextPage();
+                    return true;
+                }
+                break;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        SystemBarUtils.hideStableStatusBar(this);
+        if (requestCode == REQUEST_MORE_SETTING){
+            boolean fullScreen = ReadSettingManager.getInstance().isFullScreen();
+            if (isFullScreen != fullScreen){
+                isFullScreen = fullScreen;
+                //刷新BottomMenu
+                initBottomMenu();
+            }
+
+            //设置显示状态
+            if (isFullScreen){
+                SystemBarUtils.hideStableNavBar(this);
+            }
+            else {
+                SystemBarUtils.showStableNavBar(this);
+            }
+
+            //重新计算
+        }
     }
 }

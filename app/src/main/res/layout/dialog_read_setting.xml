@@ -186,7 +186,6 @@
         android:id="@+id/read_setting_rv_bg"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginBottom="15dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="@dimen/nb.read_setting.divider"
@@ -197,7 +196,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="更多设置 >>"
-        android:textColor="@color/white"
+        android:textColor="@color/nb.read.menu.text"
         android:gravity="center_horizontal"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="20dp"/>
 </LinearLayout>

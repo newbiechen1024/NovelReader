@@ -13,53 +13,51 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/theme_leather_bg">
-    
-        <!--头部菜单栏:可用Toolbar代替-->
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/read_abl_top_menu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            android:visibility="gone"
-            tools:visibility="visible">
-            
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="?attr/actionBarSize"
-                android:fitsSystemWindows="true"
-                android:background="@color/nb.read.menu.bg"
-                android:theme="@style/Theme.ToolBar.Menu">
-                <RelativeLayout
-                    android:layout_width="120dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="right"
-                    android:background="@color/nb.read.menu.bg">
-                    <TextView
-                        android:id="@+id/read_tv_brief"
-                        android:layout_alignParentRight="true"
-                        android:text="@string/nb.read.brief"
-	                    android:layout_marginRight="15dp"
-                        style="@style/NB.Theme.TextAppearance.Read.TopMenu"/>
-        
-                    <TextView
-                        android:id="@+id/read_tv_community"
-                        android:layout_toLeftOf="@id/read_tv_brief"
-                        android:text="@string/nb.read.community"
-                        style="@style/NB.Theme.TextAppearance.Read.TopMenu"/>
-                </RelativeLayout>
-            </android.support.v7.widget.Toolbar>
-        </android.support.design.widget.AppBarLayout>
-    
-    
+	
+	
+	    <android.support.design.widget.AppBarLayout
+		    android:id="@+id/read_abl_top_menu"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:background="@color/nb.read.menu.bg"
+		    android:visibility="gone"
+		    tools:visibility="visible">
+		
+		    <android.support.v7.widget.Toolbar
+			    android:id="@+id/toolbar"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:minHeight="?attr/actionBarSize"
+			    android:theme="@style/Theme.ToolBar.Menu">
+			    <RelativeLayout
+				    android:layout_width="120dp"
+				    android:layout_height="50dp"
+				    android:layout_gravity="right"
+				    android:background="@color/nb.read.menu.bg">
+				    <TextView
+					    android:id="@+id/read_tv_brief"
+					    android:layout_alignParentRight="true"
+					    android:text="@string/nb.read.brief"
+					    style="@style/NB.Theme.TextAppearance.Read.TopMenu"/>
+				
+				    <TextView
+					    android:id="@+id/read_tv_community"
+					    android:layout_toLeftOf="@id/read_tv_brief"
+					    android:text="@string/nb.read.community"
+					    style="@style/NB.Theme.TextAppearance.Read.TopMenu"/>
+			    </RelativeLayout>
+		    </android.support.v7.widget.Toolbar>
+	    </android.support.design.widget.AppBarLayout>
+	    
+	    
         <!--阅读页面-->
 		<com.example.newbiechen.ireader.widget.PageView
 			android:id="@+id/read_pv_page"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-            android:clickable="true"/>
-        
+            android:clickable="true"
+			tools:visibility="gone"/>
+	    
         <!--切换页面提示-->
         <TextView
             android:id="@+id/read_tv_page_tip"

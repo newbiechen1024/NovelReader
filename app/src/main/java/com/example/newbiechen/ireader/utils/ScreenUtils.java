@@ -78,7 +78,7 @@ public class ScreenUtils {
      * 获取虚拟按键的高度
      * @return
      */
-    private static int getNavigationBarHeight() {
+    public static int getNavigationBarHeight() {
         int navigationBarHeight = 0;
         Resources rs = App.getContext().getResources();
         int id = rs.getIdentifier("navigation_bar_height", "dimen", "android");

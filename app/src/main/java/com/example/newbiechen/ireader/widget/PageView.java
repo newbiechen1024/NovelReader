@@ -4,12 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
@@ -32,10 +30,9 @@ public class PageView extends View {
 
     private final static String TAG = "BookPageWidget";
 
-    private int mScreenWidth = 0; // 屏幕宽
-    private int mScreenHeight = 0; // 屏幕高
+    private int mViewWidth = 0; // 当前View的宽
+    private int mViewHeight = 0; // 当前View的高
 
-    private Context mContext;
     //是否移动了
     private Boolean isMove = false;
     //是否翻到下一页
@@ -60,6 +57,10 @@ public class PageView extends View {
     Scroller mScroller;
     private int mBgColor = 0xFFCEC29C;
     private TouchListener mTouchListener;
+    private OnSizeChangeListener mSizeChangeListener;
+
+    //
+    private int mPageMode = PAGE_MODE_SIMULATION;
 
     public PageView(Context context) {
         this(context,null);
@@ -71,41 +72,49 @@ public class PageView extends View {
 
     public PageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mContext = context;
-        initPage();
         mScroller = new Scroller(getContext(),new LinearInterpolator());
         //动画集合
-        mAnimationProvider = new SimulationAnimation(mCurPageBitmap,mNextPageBitmap,mScreenWidth,mScreenHeight);
+        mAnimationProvider = new SimulationAnimation(mCurPageBitmap,mNextPageBitmap, mViewWidth, mViewHeight);
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mViewWidth = w;
+        mViewHeight = h;
+        //因为View的大小会根据是否全屏进行变化，所以在这里初始化Bitmap
+        initPage();
+        if (mSizeChangeListener != null){
+            mSizeChangeListener.sizeChange(w, h, oldw, oldh);
+        }
     }
 
     private void initPage(){
-        WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics metric = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(metric);
-        mScreenWidth = metric.widthPixels;
-        mScreenHeight = metric.heightPixels;
         //绘制Bitmap
-        mCurPageBitmap = Bitmap.createBitmap(mScreenWidth, mScreenHeight, Bitmap.Config.RGB_565);      //android:LargeHeap=true  use in  manifest application
-        mNextPageBitmap = Bitmap.createBitmap(mScreenWidth, mScreenHeight, Bitmap.Config.RGB_565);
+        mCurPageBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);      //android:LargeHeap=true  use in  manifest application
+        mNextPageBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
+
+        setPageMode(mPageMode);
     }
 
     //设置翻页的模式
     public void setPageMode(int pageMode){
+        mPageMode = pageMode;
         switch (pageMode){
             case PAGE_MODE_SIMULATION:
-                mAnimationProvider = new SimulationAnimation(mCurPageBitmap,mNextPageBitmap,mScreenWidth,mScreenHeight);
+                mAnimationProvider = new SimulationAnimation(mCurPageBitmap,mNextPageBitmap, mViewWidth, mViewHeight);
                 break;
             case PAGE_MODE_COVER:
-                mAnimationProvider = new CoverAnimation(mCurPageBitmap,mNextPageBitmap,mScreenWidth,mScreenHeight);
+                mAnimationProvider = new CoverAnimation(mCurPageBitmap,mNextPageBitmap, mViewWidth, mViewHeight);
                 break;
             case PAGE_MODE_SLIDE:
-                mAnimationProvider = new SlideAnimation(mCurPageBitmap,mNextPageBitmap,mScreenWidth,mScreenHeight);
+                mAnimationProvider = new SlideAnimation(mCurPageBitmap,mNextPageBitmap, mViewWidth, mViewHeight);
                 break;
             case PAGE_MODE_NONE:
-                mAnimationProvider = new NoneAnimation(mCurPageBitmap,mNextPageBitmap,mScreenWidth,mScreenHeight);
+                mAnimationProvider = new NoneAnimation(mCurPageBitmap,mNextPageBitmap, mViewWidth, mViewHeight);
                 break;
             default:
-                mAnimationProvider = new SimulationAnimation(mCurPageBitmap,mNextPageBitmap,mScreenWidth,mScreenHeight);
+                mAnimationProvider = new SimulationAnimation(mCurPageBitmap,mNextPageBitmap, mViewWidth, mViewHeight);
         }
     }
 
@@ -115,6 +124,53 @@ public class PageView extends View {
 
     public Bitmap getNextPage(){
         return mNextPageBitmap;
+    }
+
+    public void autoNextPage(){
+        startPageAnim(AnimationProvider.Direction.next);
+    }
+
+    public void autoPrevPage(){
+        startPageAnim(AnimationProvider.Direction.pre);
+    }
+
+    private void startPageAnim(AnimationProvider.Direction direction){
+        if (mTouchListener == null) return;
+        //是否正在执行动画
+        isRunning = false;
+        abortAnimation();
+        if (direction == AnimationProvider.Direction.next){
+            int x = mViewWidth;
+            int y = mViewHeight;
+            //设置点击点
+            mAnimationProvider.setTouchPoint(x,y);
+            //初始化动画
+            mAnimationProvider.setStartPoint(x,y);
+            //设置方向方向
+            Boolean isNext = mTouchListener.nextPage();
+            mAnimationProvider.setDirection(direction);
+            if (!isNext) {
+                return;
+            }
+        }
+        else{
+            int x = 0;
+            int y = mViewHeight;
+            //设置点击点
+            mAnimationProvider.setTouchPoint(x,y);
+            //初始化动画
+            mAnimationProvider.setStartPoint(x,y);
+            //设置方向方向
+            Boolean isPrev = mTouchListener.prePage();
+            mAnimationProvider.setDirection(direction);
+            if (!isPrev) {
+                return;
+            }
+        }
+        //执行动画
+        isRunning = true;
+        mAnimationProvider.startAnimation(mScroller);
+        this.postInvalidate();
     }
 
     public void setBgColor(int color){
@@ -195,7 +251,6 @@ public class PageView extends View {
                     if (isNext) {
                         //判断是否下一页存在
                         Boolean isNext = mTouchListener.nextPage();
-//                        calcCornerXY(downX,mScreenHeight);
                         //如果存在设置动画方向
                         mAnimationProvider.setDirection(AnimationProvider.Direction.next);
                         //如果不存在表示没有下一页了
@@ -245,12 +300,12 @@ public class PageView extends View {
             if (!isMove){
                 cancelPage = false;
                 //是否点击了中间
-                if (downX > mScreenWidth / 5 && downX < mScreenWidth * 4 / 5 && downY > mScreenHeight / 3 && downY < mScreenHeight * 2 / 3){
+                if (downX > mViewWidth / 5 && downX < mViewWidth * 4 / 5 && downY > mViewHeight / 3 && downY < mViewHeight * 2 / 3){
                     if (mTouchListener != null){
                         mTouchListener.center();
                     }
                     return true;
-                }else if (x < mScreenWidth / 2){
+                }else if (x < mViewWidth / 2){
                     isNext = false;
                 }else{
                     isNext = true;
@@ -317,10 +372,18 @@ public class PageView extends View {
         this.mTouchListener = mTouchListener;
     }
 
+    public void setOnSizeChangeListener(OnSizeChangeListener listener){
+        mSizeChangeListener = listener;
+    }
+
     public interface TouchListener{
         void center();
         Boolean prePage();
         Boolean nextPage();
         void cancel();
+    }
+
+    public interface OnSizeChangeListener{
+        void sizeChange(int w, int h, int oldw, int oldh);
     }
 }
