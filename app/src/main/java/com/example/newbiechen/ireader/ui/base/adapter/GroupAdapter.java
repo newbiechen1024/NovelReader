@@ -175,7 +175,6 @@ public abstract class GroupAdapter<T,R> extends RecyclerView.Adapter{
         }
     }
 
-
     public int getGroupToPosition(int groupPos){
         int position = 0;
         for (int i=0; i<groupPos; ++i){

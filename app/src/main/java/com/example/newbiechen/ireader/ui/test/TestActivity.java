@@ -9,6 +9,10 @@ import android.view.View;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.service.DownloadService;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
+
 /**
  * Created by newbiechen on 17-5-5.
  */

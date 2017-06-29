@@ -1,5 +1,6 @@
 package com.example.newbiechen.ireader.widget;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

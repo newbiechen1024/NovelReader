@@ -122,7 +122,6 @@ public class SimplePageFactory{
     private void calculateLineCount(){
         //这里需要加上intervalSize 是为保证当达到最后一行的时候没有间距
         mLineCount = (mVisibleHeight+mIntervalSize) /(mIntervalSize + mTextSize);
-        Log.d(TAG, "calculateLineCount: "+mVisibleHeight+" "+mLineCount);
     }
 
     private void initPaint(){
@@ -214,7 +213,12 @@ public class SimplePageFactory{
         //获取制定页面
         if (!isBookOpen){
             isBookOpen = true;
-            mCurPage = getCurPage(mBookRecord.getPagePos());
+            //可能会出现当前页的大小大于记录页的情况。
+            int position = mBookRecord.getPagePos();
+            if (position >= mPageList.size()){
+                position = mPageList.size() - 1;
+            }
+            mCurPage = getCurPage(position);
         }
         else {
             mCurPage = getCurPage(0);
@@ -310,7 +314,7 @@ public class SimplePageFactory{
         canvas.drawColor(mPageBg);
 
         /******绘制内容****/
-        //内容比标题先绘制的原因是，内容的字体大小和标题还有地步的字体大小不相同
+        //内容比标题先绘制的原因是，内容的字体大小和标题还有底部的字体大小不相同
         if (mStatus != STATUS_FINISH){
             //绘制字体
             String tip = "";
@@ -597,11 +601,11 @@ public class SimplePageFactory{
 
     //取消翻页 (这个cancel有点歧义，指的是不需要看的页面)
     public void pageCancel(){
-        //加载到下一页取消了
+        //加载到下一章取消了
         if (mCurPage.position == 0 && mCurChapter > mLastChapter){
             prevChapter();
         }
-        //加载上一页取消了
+        //加载上一章取消了
         else if (mCurPage.position == mPageList.size()-1 && mCurChapter < mLastChapter){
             nextChapter();
         }
@@ -745,7 +749,6 @@ public class SimplePageFactory{
         }
     }
 
-    //在修改字体大小，再进行上翻页到首页的时候，会造成页面空缺的问题
     //TODO:限制TextSize的大小，一直长按可能会造成重绘的卡顿问题
     public void setTextSize(int textSize){
         //设置textSize
@@ -758,6 +761,12 @@ public class SimplePageFactory{
         calculateLineCount();
         //重新计算页面
         mPageList = createPageList(mCurChapter);
+
+        //防止在最后一页，通过修改字体，以至于页面数减少导致崩溃的问题
+        if (mCurPage.position >= mPageList.size()){
+            mCurPage.position = mPageList.size() - 1;
+        }
+
         //重新设置文章指针的位置
         mCurPage = getCurPage(mCurPage.position);
         //绘制

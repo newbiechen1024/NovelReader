@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * Created by newbiechen on 17-5-19.
+ * 已弃用，仅供参考,最新见SimplePageFactory。
  */
 
 public class PageFactory {

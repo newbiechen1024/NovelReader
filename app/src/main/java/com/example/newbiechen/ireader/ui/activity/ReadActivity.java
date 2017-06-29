@@ -647,8 +647,6 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             else {
                 SystemBarUtils.showStableNavBar(this);
             }
-
-            //重新计算
         }
     }
 }

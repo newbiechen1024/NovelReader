@@ -50,7 +50,7 @@ public class DownloadService extends BaseRxService{
 
     //线程池
     private final ExecutorService mSingleExecutor = Executors.newSingleThreadExecutor();
-    //加载队列(这个队列是线程安全的)
+    //加载队列
     private final List<DownloadTaskBean> mDownloadTaskQueue = Collections.synchronizedList(new ArrayList<>());
     //Handler
     private Handler mHandler;
