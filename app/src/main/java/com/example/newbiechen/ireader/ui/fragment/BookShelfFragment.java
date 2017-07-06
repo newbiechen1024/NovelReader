@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,9 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
     /************************************/
     private CollBookAdapter mCollBookAdapter;
     private FooterItemView mFooterItem;
+
+    //是否是第一次进入
+    private boolean isInit = true;
 
     @Override
     protected int getContentId() {
@@ -180,6 +184,12 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
         );
     }
 
+    @Override
+    protected void processLogic() {
+        super.processLogic();
+        mRvContent.startRefresh();
+    }
+
     private void openItemDialog(CollBookBean collBook){
         String[] menus;
         if (collBook.isLocal()){
@@ -296,6 +306,13 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
     @Override
     public void finishRefresh(List<CollBookBean> collBookBeans){
         mCollBookAdapter.refreshItems(collBookBeans);
+        //如果是初次进入，则更新书籍信息
+        if (isInit){
+            isInit = false;
+            mRvContent.post(
+                    () -> mPresenter.updateCollBooks(mCollBookAdapter.getItems())
+            );
+        }
     }
 
     @Override

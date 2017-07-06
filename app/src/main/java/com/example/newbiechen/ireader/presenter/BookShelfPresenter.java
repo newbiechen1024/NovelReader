@@ -34,10 +34,9 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
 
     @Override
     public void refreshCollBooks() {
-        //从数据库加载数据
-        mView.finishRefresh(BookRepository
-                .getInstance().getCollBooks());
-        mView.complete();
+        List<CollBookBean> collBooks = BookRepository
+                .getInstance().getCollBooks();
+        mView.finishRefresh(collBooks);
     }
 
     @Override

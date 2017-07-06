@@ -40,9 +40,7 @@ import io.reactivex.disposables.Disposable;
  * 2. 加载的性能优化有待改进
  * 3. 预加载没有做
  * 4. 模板模式用的不太好，还需要修改
- * 5. 没有设置本地存储
- * 6. Bitmap显示的优化
- * 7. 正在加载时候的判断
+ * 7. 正在解析时候的判断
  * 8. 如果本地加载下一章节的速度，太慢会发生什么事情
  */
 
@@ -166,36 +164,47 @@ public class LocalPageLoader extends PageLoader {
             ++blockPos;
             //如果存在Chapter
             if (hasChapter){
+                //段落的起始点
                 int pgStart = 0;
+                //段落的结束点
                 int pgEnd = 0;
+                //段落的长度
                 int pgLength = 0;
+                //从buffer中读取一段数据
                 while ((pgLength = readParagraphForward(buffer,pgStart)) != 0){
                     pgEnd += pgLength;
                     String str = new String(buffer, pgStart, pgLength,mCharset.getName());
+                    //进行正则匹配
                     Matcher matcher = mChapterPattern.matcher(str);
+                    //如果匹配成功
                     if (matcher.find()){
                         //创建章节
                         TxtChapter chapter = new TxtChapter();
                         chapter.title = matcher.group().trim();
                         if (chapters.size() != 0){
+                            //将上一章的最后位置，设置当前章节的初始位置
                             TxtChapter lastChapter = chapters.get(chapters.size() - 1);
                             chapter.start =  lastChapter.end;
                             chapter.end = chapter.start + pgLength;
                             lastChapter.end -= 1;
+                            //如果一章大小，小于30byte那么就抛弃
                             if (lastChapter.end - lastChapter.start < 30){
                                 chapters.remove(lastChapter);
                             }
                         }
+
                         else {
                             chapter.start = 0;
                             chapter.end = chapter.start + pgLength;
                         }
                         chapters.add(chapter);
                     }
+                    //如果当前段落不存在章节，那么就将该段落加入到当前章节的内容中
                     else if (chapters.size() != 0){
                         TxtChapter chapter = chapters.get(chapters.size() - 1);
                         chapter.end += pgLength;
                     }
+                    //如果存在章节、前面几个段落属于章节范围内，那么就叫做序章。
                     else {
                         TxtChapter chapter = new TxtChapter();
                         chapter.title = "序章";
@@ -206,9 +215,8 @@ public class LocalPageLoader extends PageLoader {
                     pgStart = pgEnd;
                 }
             }
+            //进行本地虚拟分章
             else {
-                //进行虚拟分章
-
                 //章节在buffer的偏移量
                 int chapterOffset = 0;
                 //当前剩余可分配的长度
@@ -283,9 +291,9 @@ public class LocalPageLoader extends PageLoader {
         }
         return index-start;
     }
+
     /**
      * 耗时操作，需要修改。
-     * 其实自己也有点看不下去了。。
      */
     @Override
     protected List<TxtPage> loadPageList(int chapterPos){
@@ -434,6 +442,7 @@ public class LocalPageLoader extends PageLoader {
     @Override
     public void saveRecord() {
         super.saveRecord();
+        //修改当前COllBook记录
         if (mCollBook != null){
             //表示当前CollBook已经阅读
             mCollBook.setIsUpdate(false);

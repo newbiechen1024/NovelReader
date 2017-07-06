@@ -14,7 +14,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -265,7 +264,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     public void onLoadChapter(List<TxtChapter> chapters, int pos){
                         mPresenter.loadChapter(mBookId, chapters);
                         mLvCategory.post(
-                                () -> mLvCategory.setSelection(mPageLoader.getPosition())
+                                () -> mLvCategory.setSelection(mPageLoader.getChapterPos())
                         );
                         if (mPageLoader.getPageStatus() == NetPageLoader.STATUS_LOADING
                                 || mPageLoader.getPageStatus() == NetPageLoader.STATUS_ERROR){
@@ -357,7 +356,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         mTvCategory.setOnClickListener(
                 (v) -> {
                     //移动到指定位置
-                    mLvCategory.setSelection(mPageLoader.getPosition());
+                    mLvCategory.setSelection(mPageLoader.getChapterPos());
                     //切换菜单
                     toggleMenu(true);
                     //打开侧滑动栏

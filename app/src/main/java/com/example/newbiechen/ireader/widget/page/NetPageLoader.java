@@ -62,8 +62,7 @@ public class NetPageLoader extends PageLoader{
         //加载错误
         mStatus = STATUS_ERROR;
         //显示加载错误
-        onDraw(mPageView.getNextPage());
-        mPageView.invalidate();
+        onDraw(mPageView.getNextPage(),false);
     }
 
     @Nullable
@@ -115,8 +114,7 @@ public class NetPageLoader extends PageLoader{
                 mStatus = STATUS_LOADING;
                 //重置position的位置，防止正在加载的时候退出时候存储的位置为上一章的页码
                 mCurPage.position = 0;
-                onDraw(mPageView.getNextPage());
-                mPageView.invalidate();
+                onDraw(mPageView.getNextPage(),false);
                 loadCurrentChapter();
                 return false;
             }
@@ -151,8 +149,7 @@ public class NetPageLoader extends PageLoader{
                 mStatus = STATUS_LOADING;
                 //重置position的位置，防止正在加载的时候退出时候存储的位置为上一章的页码
                 mCurPage.position = 0;
-                onDraw(mPageView.getNextPage());
-                mPageView.invalidate();
+                onDraw(mPageView.getNextPage(),false);
                 loadCurrentChapter();
                 return false;
             }
@@ -175,8 +172,7 @@ public class NetPageLoader extends PageLoader{
             mPageChangeListener.onChapterChange(mCurChapterPos);
         }
 
-        onDraw(mPageView.getNextPage());
-        mPageView.invalidate();
+        onDraw(mPageView.getNextPage(),false);
 
         //提示章节改变，需要下载
         loadCurrentChapter();
@@ -239,8 +235,7 @@ public class NetPageLoader extends PageLoader{
 
     public void skipToPage(int pos){
         mCurPage = getCurPage(pos);
-        onDraw(mPageView.getNextPage());
-        mPageView.invalidate();
+        onDraw(mPageView.getNextPage(),false);
     }
 
     @Override
