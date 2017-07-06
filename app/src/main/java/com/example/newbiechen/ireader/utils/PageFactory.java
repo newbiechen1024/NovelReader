@@ -1,8 +1,5 @@
 package com.example.newbiechen.ireader.utils;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import com.example.newbiechen.ireader.App;
 import com.example.newbiechen.ireader.R;
@@ -18,7 +14,7 @@ import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.BookRecordBean;
 import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.model.local.ReadSettingManager;
-import com.example.newbiechen.ireader.widget.PageView;
+import com.example.newbiechen.ireader.widget.page.PageView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

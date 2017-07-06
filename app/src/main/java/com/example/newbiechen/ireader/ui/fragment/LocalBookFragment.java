@@ -5,12 +5,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.model.bean.CollBookBean;
+import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.adapter.FileSystemAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.utils.FileUtils;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+
+import java.io.File;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -49,11 +54,17 @@ public class LocalBookFragment extends BaseFragment{
         super.initClick();
         mAdapter.setOnItemClickListener(
                 (view, pos) -> {
+                    //如果是已加载的文件，则点击事件无效。
+                    String id = mAdapter.getItem(pos).getAbsolutePath();
+                    if (BookRepository.getInstance().getCollBook(id) != null){
+                        return;
+                    }
+
                     //点击选中
-                    mAdapter.setCheckItem(pos);
+                    mAdapter.setCheckedItem(pos);
                     //反馈
                     if (mCheckedListener != null){
-                        mCheckedListener.fileChecked(mAdapter.getItemSelected(pos));
+                        mCheckedListener.onItemCheckedChange(mAdapter.getItemIsChecked(pos));
                     }
                 }
         );
@@ -76,7 +87,7 @@ public class LocalBookFragment extends BaseFragment{
                                 mRlRefresh.showFinish();
                                 //反馈
                                 if (mCheckedListener != null){
-                                    mCheckedListener.fileCategoryChange();
+                                    mCheckedListener.onCategoryChanged();
                                 }
                             }
                         }
@@ -91,16 +102,11 @@ public class LocalBookFragment extends BaseFragment{
         mAdapter.setSelectedAll(isSelected);
     }
 
-    public int getBookCount(){
-        return mAdapter.getItemCount();
+    public List<File> getCheckedFiles(){
+        return mAdapter.getCheckedFiles();
     }
 
-    /**
-     * 删除已选中的书籍
-     */
-    public void deleteCheckedBook(){
-        //获取文件
-        //弹出确定按钮
-        //更新状态
+    public int getFileCount(){
+        return mAdapter.getItemCount();
     }
 }

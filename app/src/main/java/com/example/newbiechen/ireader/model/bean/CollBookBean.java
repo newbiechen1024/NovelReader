@@ -38,11 +38,12 @@ public class CollBookBean implements Serializable{
      * latelyFollower : 60213
      * retentionRatio : 22.87
      * updated : 2017-05-07T18:24:34.720Z
+     *
      * chaptersCount : 1660
      * lastChapter : 第1659章 朱长老
      */
     @Id
-    private String _id;
+    private String _id;//如果是本地文件，那么id为所在的地址
     private String title;
     private String author;
     private String shortIntro;
@@ -50,11 +51,16 @@ public class CollBookBean implements Serializable{
     private boolean hasCp;
     private int latelyFollower;
     private double retentionRatio;
+    //最新更新日期
     private String updated;
+    //最新阅读日期
+    private String lastRead;
     private int chaptersCount;
     private String lastChapter;
-    //下面的参数都是自定义的
-    private boolean isUpdate = true;  //是否更新
+    //是否更新或未阅读
+    private boolean isUpdate = true;
+    //是否是本地文件
+    private boolean isLocal = false;
 
     @ToMany(referencedJoinProperty = "bookId")
     private  List<BookChapterBean> bookChapterList;
@@ -65,10 +71,10 @@ public class CollBookBean implements Serializable{
     @Generated(hash = 1552163441)
     private transient CollBookBeanDao myDao;
 
-    @Generated(hash = 108770723)
+    @Generated(hash = 757968961)
     public CollBookBean(String _id, String title, String author, String shortIntro, String cover,
-            boolean hasCp, int latelyFollower, double retentionRatio, String updated, int chaptersCount,
-            String lastChapter, boolean isUpdate) {
+            boolean hasCp, int latelyFollower, double retentionRatio, String updated, String lastRead,
+            int chaptersCount, String lastChapter, boolean isUpdate, boolean isLocal) {
         this._id = _id;
         this.title = title;
         this.author = author;
@@ -78,9 +84,11 @@ public class CollBookBean implements Serializable{
         this.latelyFollower = latelyFollower;
         this.retentionRatio = retentionRatio;
         this.updated = updated;
+        this.lastRead = lastRead;
         this.chaptersCount = chaptersCount;
         this.lastChapter = lastChapter;
         this.isUpdate = isUpdate;
+        this.isLocal = isLocal;
     }
 
     public CollBookBean() {
@@ -194,6 +202,22 @@ public class CollBookBean implements Serializable{
         this.isUpdate = isUpdate;
     }
 
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    public void setLocal(boolean local) {
+        isLocal = local;
+    }
+
+    public String getLastRead() {
+        return lastRead;
+    }
+
+    public void setLastRead(String lastRead) {
+        this.lastRead = lastRead;
+    }
+
     public void setBookChapters(List<BookChapterBean> beans){
         bookChapterList = beans;
         for (BookChapterBean bean : bookChapterList){
@@ -285,5 +309,13 @@ public class CollBookBean implements Serializable{
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getCollBookBeanDao() : null;
+    }
+
+    public boolean getIsLocal() {
+        return this.isLocal;
+    }
+
+    public void setIsLocal(boolean isLocal) {
+        this.isLocal = isLocal;
     }
 }

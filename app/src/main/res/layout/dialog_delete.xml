@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="horizontal"
+	android:gravity="center_vertical|center_horizontal">
+	
+	<CheckBox
+		android:id="@+id/delete_cb_select"
+		android:layout_width="70dp"
+		android:layout_height="70dp"
+		android:layout_centerInParent="true"
+		android:button="@null"
+		android:background="@drawable/selector_cb_file" />
+	
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@+id/delete_cb_select"
+		android:layout_centerInParent="true"
+		android:text="同时删除源文件"
+		android:textSize="@dimen/nb.text.normal"/>
+</LinearLayout>

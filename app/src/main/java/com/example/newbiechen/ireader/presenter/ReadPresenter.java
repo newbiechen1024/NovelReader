@@ -11,6 +11,7 @@ import com.example.newbiechen.ireader.presenter.contract.ReadContract;
 import com.example.newbiechen.ireader.ui.base.RxPresenter;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.RxUtils;
+import com.example.newbiechen.ireader.widget.page.TxtChapter;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -42,8 +43,15 @@ public class ReadPresenter extends RxPresenter<ReadContract.View>
     public void loadCategory(String bookId) {
         Disposable disposable = RemoteRepository.getInstance()
                 .getBookChapters(bookId)
-
-                .subscribeOn(Schedulers.io())
+                .doOnSuccess(new Consumer<List<BookChapterBean>>() {
+                    @Override
+                    public void accept(List<BookChapterBean> bookChapterBeen) throws Exception {
+                        //进行设定BookChapter所属的书的id。
+                        for (BookChapterBean bookChapter : bookChapterBeen){
+                            bookChapter.setBookId(bookId);
+                        }
+                    }
+                })
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(
                         beans -> {
@@ -60,7 +68,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View>
 
     //需要重新考虑
     @Override
-    public void loadChapter(String bookId,List<BookChapterBean> bookChapters){
+    public void loadChapter(String bookId,List<TxtChapter> bookChapters){
         int size = bookChapters.size();
         //取消上次的任务，防止多次加载
         if (mChapterSub != null){
@@ -72,7 +80,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View>
 
         //首先判断是否Chapter已经存在
         for (int i=0; i < size; ++i){
-            BookChapterBean bookChapter = bookChapters.get(i);
+            TxtChapter bookChapter = bookChapters.get(i);
             if (!(BookManager
                     .isChapterCached(bookId,bookChapter.getTitle()))){
                 //网络中获取数据

@@ -9,8 +9,10 @@ import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.BookShelfContract;
 import com.example.newbiechen.ireader.ui.base.RxPresenter;
+import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.RxUtils;
+import com.example.newbiechen.ireader.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -32,16 +34,10 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
 
     @Override
     public void refreshCollBooks() {
-        //首先从数据库加载数据，然后根据id从网络中获取详情，之后根据最新时间进行修改
-        BookRepository.getInstance()
-                .getCollBooks()
-                .compose(RxUtils::toSimpleSingle)
-                .subscribe(
-                        beans -> {
-                            mView.finishRefresh(beans);
-                            mView.complete();
-                        }
-                );
+        //从数据库加载数据
+        mView.finishRefresh(BookRepository
+                .getInstance().getCollBooks());
+        mView.complete();
     }
 
     @Override
@@ -62,12 +58,12 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
                 .getRecommendBooks(gender)
                 .doOnSuccess(new Consumer<List<CollBookBean>>() {
                     @Override
-                    public void accept(List<CollBookBean> collBookBeen) throws Exception {
+                    public void accept(List<CollBookBean> collBooks) throws Exception{
                         //更新目录
-                        updateCategory(collBookBeen);
-                        //存储到数据库中
+                        updateCategory(collBooks);
+                        //异步存储到数据库中
                         BookRepository.getInstance()
-                                .saveCollBooks(collBookBeen);
+                                .saveCollBooksWithAsync(collBooks);
                     }
                 })
                 .compose(RxUtils::toSimpleSingle)
@@ -86,24 +82,31 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
         addDisposable(disposable);
     }
 
+
+    //需要修改
     @Override
     public void updateCollBooks(List<CollBookBean> collBookBeans) {
         if (collBookBeans == null || collBookBeans.isEmpty()) return;
-
         List<Single<BookDetailBean>> observables = new ArrayList<>(collBookBeans.size());
-        for (int i=0; i<collBookBeans.size(); ++i){
-            observables.add(RemoteRepository.getInstance()
-                    .getBookDetail(collBookBeans.get(i).get_id()));
+        Iterator<CollBookBean> it = collBookBeans.iterator();
+        while (it.hasNext()){
+            CollBookBean collBook = it.next();
+            //删除本地文件
+            if (collBook.isLocal()) {
+                it.remove();
+            }
+            else {
+                observables.add(RemoteRepository.getInstance()
+                        .getBookDetail(collBook.get_id()));
+            }
         }
         Single.zip(observables, new Function<Object[], List<CollBookBean>>() {
             @Override
             public List<CollBookBean> apply(Object[] objects) throws Exception {
-
                 List<CollBookBean> newCollBooks = new ArrayList<CollBookBean>(objects.length);
                 for (int i=0; i<collBookBeans.size(); ++i){
                     CollBookBean oldCollBook = collBookBeans.get(i);
                     CollBookBean newCollBook = ((BookDetailBean)objects[i]).getCollBookBean();
-
                     //如果是oldBook是update状态，或者newCollBook与oldBook章节数不同
                     if (oldCollBook.isUpdate() ||
                             !oldCollBook.getLastChapter().equals(newCollBook.getLastChapter())){
@@ -112,28 +115,15 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
                     else {
                         newCollBook.setUpdate(false);
                     }
+                    newCollBook.setLastRead(oldCollBook.getLastRead());
                     newCollBooks.add(newCollBook);
+                    //存储到数据库中
+                    BookRepository.getInstance()
+                            .saveCollBooks(newCollBooks);
                 }
                 return newCollBooks;
             }
-        }).doOnSuccess(new Consumer<List<CollBookBean>>() {
-                    @Override
-                    public void accept(List<CollBookBean> collBookBeen) throws Exception {
-                        List<CollBookBean> beans = new ArrayList<CollBookBean>();
-                        //获取更新的CollBook
-                        for (CollBookBean bean : collBookBeen){
-                            if (bean.isUpdate()){
-                                beans.add(bean);
-                            }
-                        }
-                        //更新目录
-                        updateCategory(beans);
-
-                        //存储到数据库中
-                        BookRepository.getInstance()
-                                .saveCollBooks(collBookBeen);
-                    }
-                })
+        })
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(new SingleObserver<List<CollBookBean>>() {
                     @Override
@@ -144,7 +134,7 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
                     @Override
                     public void onSuccess(List<CollBookBean> value) {
                         //跟原先比较
-                        mView.finishRefresh(value);
+                        mView.finishUpdate();
                         mView.complete();
                     }
 
@@ -172,6 +162,8 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
                 .subscribe(
                         chapterList -> {
                             CollBookBean bean = it.next();
+                            bean.setLastRead(StringUtils.
+                                    dateConvert(System.currentTimeMillis(), Constant.FORMAT_BOOK_DATE));
                             bean.setBookChapters(chapterList);
                         }
                 );

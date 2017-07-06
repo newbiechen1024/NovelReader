@@ -29,8 +29,6 @@ public class CollBookHolder extends ViewHolderImpl<CollBookBean>{
     private ImageView mIvRedDot;
     private ImageView mIvTop;
 
-    private CollBookBean mCollBookBean;
-
 
     @Override
     public void initView() {
@@ -45,20 +43,35 @@ public class CollBookHolder extends ViewHolderImpl<CollBookBean>{
 
     @Override
     public void onBind(CollBookBean value, int pos) {
-        //书的图片
-        Glide.with(getContext())
-                .load(Constant.IMG_BASE_URL+value.getCover())
-                .placeholder(R.drawable.ic_book_loading)
-                .error(R.drawable.ic_load_error)
-                .fitCenter()
-                .into(mIvCover);
+        if (value.isLocal()){
+            //本地文件的图片
+            Glide.with(getContext())
+                    .load(R.drawable.ic_local_file)
+                    .fitCenter()
+                    .into(mIvCover);
+        }
+        else {
+            //书的图片
+            Glide.with(getContext())
+                    .load(Constant.IMG_BASE_URL+value.getCover())
+                    .placeholder(R.drawable.ic_book_loading)
+                    .error(R.drawable.ic_load_error)
+                    .fitCenter()
+                    .into(mIvCover);
+        }
         //书名
         mTvName.setText(value.getTitle());
+        if (!value.isLocal()){
+            //时间
+            mTvTime.setText(StringUtils.
+                    dateConvert(value.getUpdated(), Constant.FORMAT_BOOK_DATE)+":");
+            mTvTime.setVisibility(View.VISIBLE);
+        }
+        else {
+            mTvTime.setText("阅读进度:");
+        }
         //章节
         mTvChapter.setText(value.getLastChapter());
-        //时间
-        mTvTime.setText(StringUtils.dateConvert(value.getUpdated(), Constant.FORMAT_BOOK_DATE));
-        //红点的显示，怎么办。
         //我的想法是，在Collection中加一个字段，当追更的时候设置为true。当点击的时候设置为false。
         //当更新的时候，最新数据跟旧数据进行比较，如果更新的话，设置为true。
         if (value.isUpdate()){
@@ -66,21 +79,6 @@ public class CollBookHolder extends ViewHolderImpl<CollBookBean>{
         }
         else {
             mIvRedDot.setVisibility(View.GONE);
-        }
-
-        mCollBookBean = value;
-    }
-
-    @Override
-    public void onClick() {
-        super.onClick();
-        //点击更新红点，并且更新数据
-        if (mIvRedDot.getVisibility() == View.VISIBLE){
-            mIvRedDot.setVisibility(View.GONE);
-            //更新数据
-            mCollBookBean.setIsUpdate(false);
-            BookRepository.getInstance()
-                    .updateCollBook(mCollBookBean);
         }
     }
 

@@ -1,11 +1,9 @@
 package com.example.newbiechen.ireader.ui.adapter;
 
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-
+import com.example.newbiechen.ireader.model.bean.CollBookBean;
+import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.adapter.view.FileHolder;
 import com.example.newbiechen.ireader.ui.base.adapter.BaseListAdapter;
-import com.example.newbiechen.ireader.ui.base.adapter.BaseViewHolder;
 import com.example.newbiechen.ireader.ui.base.adapter.IViewHolder;
 
 import java.io.File;
@@ -20,74 +18,98 @@ import java.util.Set;
  */
 
 public class FileSystemAdapter extends BaseListAdapter<File>{
-    private HashMap<File,Boolean> mSelectedMap = new HashMap<>();
+    //记录item是否被选中的Map
+    private HashMap<File,Boolean> mCheckMap = new HashMap<>();
 
     @Override
     protected IViewHolder<File> createViewHolder(int viewType) {
-        return new FileHolder(mSelectedMap);
+        return new FileHolder(mCheckMap);
     }
 
     @Override
     public void refreshItems(List<File> list) {
-        mSelectedMap.clear();
+        mCheckMap.clear();
         for(File file : list){
-            mSelectedMap.put(file, false);
+            mCheckMap.put(file, false);
         }
         super.refreshItems(list);
     }
 
     @Override
     public void addItem(File value) {
-        mSelectedMap.put(value, false);
+        mCheckMap.put(value, false);
         super.addItem(value);
     }
 
     @Override
     public void addItem(int index, File value) {
-        mSelectedMap.put(value, false);
+        mCheckMap.put(value, false);
         super.addItem(index, value);
     }
 
     @Override
     public void addItems(List<File> values) {
         for(File file : values){
-            mSelectedMap.put(file, false);
+            mCheckMap.put(file, false);
         }
         super.addItems(values);
     }
 
     @Override
     public void removeItem(File value) {
-        mSelectedMap.remove(value);
+        mCheckMap.remove(value);
         super.removeItem(value);
     }
 
     //设置点击切换
-    public void setCheckItem(int pos){
+    public void setCheckedItem(int pos){
         File file = getItem(pos);
-        boolean isSelected = mSelectedMap.get(file);
+        if (isFileLoaded(file.getAbsolutePath())) return;
+
+        boolean isSelected = mCheckMap.get(file);
         if (isSelected)
-            mSelectedMap.put(file, false);
+            mCheckMap.put(file, false);
         else
-            mSelectedMap.put(file, true);
+            mCheckMap.put(file, true);
 
         notifyDataSetChanged();
     }
 
     public void setSelectedAll(boolean isSelected){
-        Set<Map.Entry<File, Boolean>> entrys = mSelectedMap.entrySet();
+        Set<Map.Entry<File, Boolean>> entrys = mCheckMap.entrySet();
         for (Map.Entry<File, Boolean> entry:entrys){
-            entry.setValue(isSelected);
+            if (!isFileLoaded(entry.getKey().getAbsolutePath())){
+                entry.setValue(isSelected);
+            }
         }
         notifyDataSetChanged();
     }
 
-    public boolean getItemSelected(int pos){
-        File file = getItem(pos);
-        return mSelectedMap.get(file);
+    private boolean isFileLoaded(String id){
+        //如果是已加载的文件，则点击事件无效。
+        if (BookRepository.getInstance().getCollBook(id) != null){
+            return true;
+        }
+        return false;
     }
 
-    public HashMap<File,Boolean> getSelectedMap(){
-        return mSelectedMap;
+    public boolean getItemIsChecked(int pos){
+        File file = getItem(pos);
+        return mCheckMap.get(file);
+    }
+
+    public List<File> getCheckedFiles(){
+        List<File> files = new ArrayList<>();
+        Set<Map.Entry<File, Boolean>> entrys = mCheckMap.entrySet();
+        for (Map.Entry<File, Boolean> entry:entrys){
+            if (entry.getValue() && !entry.getKey().isDirectory()){
+                files.add(entry.getKey());
+            }
+        }
+        return files;
+    }
+
+    public HashMap<File,Boolean> getCheckMap(){
+        return mCheckMap;
     }
 }

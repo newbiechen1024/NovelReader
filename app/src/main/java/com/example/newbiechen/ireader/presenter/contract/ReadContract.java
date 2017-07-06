@@ -2,6 +2,7 @@ package com.example.newbiechen.ireader.presenter.contract;
 
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.ui.base.BaseContract;
+import com.example.newbiechen.ireader.widget.page.TxtChapter;
 
 import java.util.List;
 
@@ -18,6 +19,6 @@ public interface ReadContract extends BaseContract{
 
     interface Presenter extends BaseContract.BasePresenter<View>{
         void loadCategory(String bookId);
-        void loadChapter(String bookId,List<BookChapterBean> bookChapterList);
+        void loadChapter(String bookId,List<TxtChapter> bookChapterList);
     }
 }

@@ -1,18 +1,25 @@
 package com.example.newbiechen.ireader.ui.activity;
 
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.model.bean.CollBookBean;
+import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.base.BaseTabActivity;
 import com.example.newbiechen.ireader.ui.fragment.FileCategoryFragment;
 import com.example.newbiechen.ireader.ui.fragment.LocalBookFragment;
 import com.example.newbiechen.ireader.ui.fragment.OnFileCheckedListener;
+import com.example.newbiechen.ireader.utils.Constant;
+import com.example.newbiechen.ireader.utils.StringUtils;
+import com.example.newbiechen.ireader.utils.ToastUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +45,7 @@ public class FileSystemActivity extends BaseTabActivity {
     private List<MenuStatus> mMenuStatusList = new ArrayList<>(2);
     private OnFileCheckedListener mListener = new OnFileCheckedListener() {
         @Override
-        public void fileChecked(boolean isChecked) {
+        public void onItemCheckedChange(boolean isChecked) {
             MenuStatus menuStatus = mMenuStatusList.get(mCurFragment);
             if (isChecked){
                 menuStatus.checkedCount++;
@@ -54,7 +61,7 @@ public class FileSystemActivity extends BaseTabActivity {
         }
 
         @Override
-        public void fileCategoryChange() {
+        public void onCategoryChanged() {
             //状态归零
             MenuStatus menuStatus = mMenuStatusList.get(mCurFragment);
             menuStatus.checkedCount = 0;
@@ -112,13 +119,14 @@ public class FileSystemActivity extends BaseTabActivity {
                     else {
                         mCategoryFragment.setSelectedAll(isChecked);
                     }
+
                     //获取全选的数量
                     if (isChecked){
                         if (mCurFragment == 0){
-                            menuStatus.checkedCount = mLocalFragment.getBookCount();
+                            menuStatus.checkedCount = mLocalFragment.getCheckedFiles().size();
                         }
                         else {
-                            menuStatus.checkedCount = mCategoryFragment.getBookCount();
+                            menuStatus.checkedCount = mCategoryFragment.getCheckedFiles().size();
                         }
                     }
                     else {
@@ -146,8 +154,85 @@ public class FileSystemActivity extends BaseTabActivity {
 
             }
         });
+
+        mBtnAddBook.setOnClickListener(
+                (v) -> {
+                    List<File> files = null;
+                    //0表示:local
+                    if (mCurFragment == 0){
+                        files = mLocalFragment.getCheckedFiles();
+                        mLocalFragment.setSelectedAll(false);
+                    }
+                    else {
+                        files = mCategoryFragment.getCheckedFiles();
+                        mCategoryFragment.setSelectedAll(false);
+                    }
+
+                    //转换成CollBook,并存储
+                    List<CollBookBean> collBooks = convertCollBook(files);
+                    BookRepository.getInstance()
+                            .saveCollBooks(collBooks);
+
+                    //提示加入书架成功
+                    ToastUtils.show(getResources().getString(R.string.nb_file_add_succeed,collBooks.size()));
+
+                    //刷新Adapter的显示，将HasMap为false，将加入书架的数量归零
+                    MenuStatus menuStatus = mMenuStatusList.get(mCurFragment);
+                    menuStatus.checkedCount = 0;
+                    menuStatus.isCheckedAll = false;
+                    //改变菜单状态
+                    changeMenuStatus();
+                }
+        );
+
+        mBtnDelete.setOnClickListener(
+                (v) -> {
+                    //弹出，确定删除文件吗。
+                    new AlertDialog.Builder(this)
+                            .setTitle("删除文件")
+                            .setMessage("确定删除文件吗?")
+                            .setPositiveButton(getResources().getString(R.string.nb_common_sure), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //这个功能还没有想好。。。
+/*                                    List<File> files;
+                                    //删除文件
+                                    if(mCurFragment == 0){
+                                        files = mLocalFragment.getCheckedFiles();
+                                    }
+                                    else {
+                                        files = mCategoryFragment.getCheckedFiles();
+                                    }
+
+                                    for(File file : files){
+                                        file.delete();
+                                    }
+                                    //提示删除文件成功*/
+
+                                }
+                            })
+                            .setNegativeButton(getResources().getString(R.string.nb_common_cancel), null)
+                            .show();
+                }
+        );
+
         mLocalFragment.setOnFileCheckedListener(mListener);
         mCategoryFragment.setOnFileCheckedListener(mListener);
+    }
+
+    private List<CollBookBean> convertCollBook(List<File> files){
+        List<CollBookBean> collBooks = new ArrayList<>(files.size());
+        for(File file : files){
+            CollBookBean collBook = new CollBookBean();
+            collBook.setLocal(true);
+            collBook.set_id(file.getAbsolutePath());
+            collBook.setTitle(file.getName().replace(".txt",""));
+            collBook.setLastChapter("开始阅读");
+            collBook.setLastRead(StringUtils.
+                    dateConvert(System.currentTimeMillis(), Constant.FORMAT_BOOK_DATE));
+            collBooks.add(collBook);
+        }
+        return collBooks;
     }
 
     private void changeMenuStatus(){
@@ -184,10 +269,10 @@ public class FileSystemActivity extends BaseTabActivity {
         int count = 0;
 
         if (mCurFragment == 0){
-            count = mLocalFragment.getBookCount();
+            count = mLocalFragment.getFileCount();
         }
         else {
-            count = mCategoryFragment.getBookCount();
+            count = mCategoryFragment.getFileCount();
         }
 
         if (count > 0){

@@ -26,7 +26,7 @@ android {
     }
 }
 greendao{
-    schemaVersion 1
+    schemaVersion 2
     daoPackage 'com.example.newbiechen.ireader.model.gen'
     targetGenDir 'src/main/java'
 }

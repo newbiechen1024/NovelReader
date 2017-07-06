@@ -22,12 +22,14 @@ public class StringUtils {
     private static final int DAY_OF_YESTERDAY = 2;
     private static final int TIME_UNIT = 60;
 
+    //将时间转换成日期
     public static String dateConvert(long time,String pattern){
         Date date = new Date(time);
         SimpleDateFormat format = new SimpleDateFormat(pattern);
         return format.format(date);
     }
 
+    //将日期转换成昨天、今天、明天
     public static String dateConvert(String source,String pattern){
         DateFormat format = new SimpleDateFormat(pattern);
         Calendar calendar = Calendar.getInstance();

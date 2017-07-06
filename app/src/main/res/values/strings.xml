@@ -25,12 +25,23 @@
     </string-array>
     
     <!--CollBook的长按点击-->
-    <string-array name="nb_menu_coll_book">
-        <item>置顶</item>
-        <item>缓存</item>
-        <item>删除</item>
-        <item>批量管理</item>
+    <string-array name="nb_menu_net_book">
+        <item>@string/nb.menu.action.top</item>
+        <item>@string/nb.menu.action.cache</item>
+        <item>@string/nb.menu.action.delete</item>
+        <item>@string/nb.menu.action.batch_manage</item>
     </string-array>
+    
+    <string-array name="nb_menu_local_book">
+        <item>@string/nb.menu.action.top</item>
+        <item>@string/nb.menu.action.delete</item>
+        <item>@string/nb.menu.action.batch_manage</item>
+    </string-array>
+    
+    <!--常用-->
+    <string name="nb.common.tip">提示</string>
+    <string name="nb.common.sure">确定</string>
+    <string name="nb.common.cancel">取消</string>
     
     <!--网络相关-->
     
@@ -84,6 +95,7 @@
     <string name="nb.dialog.text.choose_tip">--请选择你的喜好--</string>
     <string name="nb.dialog.text.boy_story">男生小说</string>
     <string name="nb.dialog.text.girl_story">女生小说</string>
+    
     <!--menu-->
     <string name="nb.menu.action.search">搜索</string>
     <string name="nb.menu.action.login">请登录</string>
@@ -95,6 +107,12 @@
     <string name="nb.menu.action.feedback">意见反馈</string>
     <string name="nb.menu.action.night_mode">夜间模式</string>
     <string name="nb.menu.action.setting">设置</string>
+    
+    <string name="nb.menu.action.top">置顶</string>
+    <string name="nb.menu.action.cache">缓存</string>
+    <string name="nb.menu.action.delete">删除</string>
+    <string name="nb.menu.action.batch_manage">批量管理</string>
+    
     <!--SplashActivity-->
     <string name="nb.splash.skip">跳过</string>
 
@@ -113,6 +131,7 @@
     <string name="nb.tag.sex">性别</string>
     <string name="nb.tag.boy">男生</string>
     <string name="nb.tag.girl">女生</string>
+    
     
     <!--book_detail : -->
     <string name="nb.book_detail.hot_comment">热门书评</string>
@@ -152,13 +171,14 @@
     <string name="nb.read.setting">设置</string>
     <string name="nb.read.download">缓存</string>'
     <string name="nb.read.category">目录</string>
-    
+    <string name="nb.read.no_chapter">第 %1$d 章(%2$d)</string>
     
     <!--file system-->
     <string name="nb.file.sub_count">%1$d 项</string>
     <string name="nb.file.path">存储卡:%1$s</string>
     <string name="nb.file.add_shelf">加入书架</string>
     <string name="nb.file.add_shelves">加入书架(%1$d)</string>
+    <string name="nb.file.add_succeed">成功添加%1$d本书</string>
     
     <!--search-->
     <string name="nb.search.book.brief">%1$d人在追 | %2$s读者留存 | %3$s著</string>

@@ -19,12 +19,10 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -39,14 +37,17 @@ import com.example.newbiechen.ireader.ui.adapter.CategoryAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
 import com.example.newbiechen.ireader.ui.dialog.ReadSettingDialog;
 import com.example.newbiechen.ireader.utils.BrightnessUtils;
+import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.ScreenUtils;
-import com.example.newbiechen.ireader.utils.SimplePageFactory;
+import com.example.newbiechen.ireader.widget.page.NetPageLoader;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.SystemBarUtils;
-import com.example.newbiechen.ireader.widget.PageView;
+import com.example.newbiechen.ireader.widget.page.PageLoader;
+import com.example.newbiechen.ireader.widget.page.PageView;
+import com.example.newbiechen.ireader.widget.page.TxtChapter;
 
 import java.util.List;
 
@@ -105,7 +106,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     ListView mLvCategory;
     /*****************view******************/
     private ReadSettingDialog mSettingDialog;
-    private SimplePageFactory mPageFactory;
+    private PageLoader mPageLoader;
     private Animation mTopInAnim;
     private Animation mTopOutAnim;
     private Animation mBottomInAnim;
@@ -121,11 +122,11 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
                 int level = intent.getIntExtra("level", 0);
-                mPageFactory.updateBattery(level);
+                mPageLoader.updateBattery(level);
             }
             //监听分钟的变化
             else if (intent.getAction().equals(Intent.ACTION_TIME_TICK)){
-                mPageFactory.updateTime();
+                mPageLoader.updateTime();
             }
         }
     };
@@ -135,7 +136,6 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     private boolean isFullScreen = false;
     private String mBookId;
 
-    //书架页进入
     public static void startActivity(Context context, CollBookBean collBook, boolean isCollected){
         context.startActivity(new Intent(context,ReadActivity.class)
         .putExtra(EXTRA_IS_COLLECTED,isCollected)
@@ -157,10 +157,10 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         super.initData(savedInstanceState);
         mCollBook = (CollBookBean) getIntent().getSerializableExtra(EXTRA_COLL_BOOK);
         isCollected = getIntent().getBooleanExtra(EXTRA_IS_COLLECTED,false);
-        mBookId = mCollBook.get_id();
-
         isNightMode = ReadSettingManager.getInstance().isNightMode();
         isFullScreen = ReadSettingManager.getInstance().isFullScreen();
+
+        mBookId = mCollBook.get_id();
     }
 
     @Override
@@ -174,13 +174,11 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @Override
     protected void initWidget() {
         super.initWidget();
+        //获取页面加载器
+        mPageLoader = mPvPage.getPageLoader(mCollBook.isLocal());
         //禁止滑动展示DrawerLayout
         mDlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-
-        //创建页面工厂
-        mPageFactory = new SimplePageFactory();
-        mPageFactory.setPageWidget(mPvPage);
-        mSettingDialog = new ReadSettingDialog(this,mPageFactory);
+        mSettingDialog = new ReadSettingDialog(this, mPageLoader);
         setUpAdapter();
         //夜间模式按钮的状态
         toggleNightMode();
@@ -204,7 +202,6 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         mPvPage.post(
                 () -> hideSystemBar()
         );
-
         //初始化TopMenu
         initTopMenu();
         //初始化BottomMenu
@@ -256,18 +253,22 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     protected void initClick() {
         super.initClick();
 
-        mPageFactory.setOnPageChangeListener(
-                new SimplePageFactory.OnPageChangeListener() {
-                    @Override
-                    public void onChapterChange(List<BookChapterBean> beanList, int pos) {
-                        mPresenter.loadChapter(mBookId, beanList);
-                        mCategoryAdapter.setChapter(pos);
-                        mLvCategory.post(
-                                () -> mLvCategory.setSelection(mPageFactory.getPosition())
-                        );
+        mPageLoader.setOnPageChangeListener(
+                new PageLoader.OnPageChangeListener() {
 
-                        if (mPageFactory.getPageStatus() == SimplePageFactory.STATUS_LOADING
-                                || mPageFactory.getPageStatus() == SimplePageFactory.STATUS_ERROR){
+                    @Override
+                    public void onChapterChange(int pos) {
+                        mCategoryAdapter.setChapter(pos);
+                    }
+
+                    @Override
+                    public void onLoadChapter(List<TxtChapter> chapters, int pos){
+                        mPresenter.loadChapter(mBookId, chapters);
+                        mLvCategory.post(
+                                () -> mLvCategory.setSelection(mPageLoader.getPosition())
+                        );
+                        if (mPageLoader.getPageStatus() == NetPageLoader.STATUS_LOADING
+                                || mPageLoader.getPageStatus() == NetPageLoader.STATUS_ERROR){
                             //冻结使用
                             mSbChapterProgress.setEnabled(false);
                         }
@@ -277,7 +278,12 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     }
 
                     @Override
-                    public void onPageListChange(int count) {
+                    public void onCategoryFinish(List<TxtChapter> chapters) {
+                        mCategoryAdapter.addItems(chapters);
+                    }
+
+                    @Override
+                    public void onPageCountChange(int count) {
                         mSbChapterProgress.setEnabled(true);
                         mSbChapterProgress.setMax(count-1);
                         mSbChapterProgress.setProgress(0);
@@ -291,6 +297,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     }
                 }
         );
+
         mSbChapterProgress.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
                     @Override
@@ -309,7 +316,10 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
                         //进行切换
-                        mPageFactory.skipToPage(mSbChapterProgress.getProgress());
+                        int pagePos = mSbChapterProgress.getProgress();
+                        if (pagePos != mPageLoader.getPagePos()){
+                            mPageLoader.skipToPage(pagePos);
+                        }
                         //隐藏提示
                         mTvPageTip.setVisibility(GONE);
                     }
@@ -323,43 +333,23 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             }
 
             @Override
-            public Boolean prePage(){
-                hideSystemBar();
-                if (mAblTopMenu.getVisibility() == VISIBLE){
-                    toggleMenu(true);
-                    return false;
-                }
-                else if (mSettingDialog.isShowing()){
-                    mSettingDialog.dismiss();
-                    return false;
-                }
-                return mPageFactory.prev();
+            public boolean prePage(){
+                return !hideReadMenu();
             }
 
             @Override
-            public Boolean nextPage() {
-                hideSystemBar();
-
-                if (mAblTopMenu.getVisibility() == VISIBLE){
-                    toggleMenu(true);
-                    return false;
-                }
-                else if (mSettingDialog.isShowing()){
-                    mSettingDialog.dismiss();
-                    return false;
-                }
-                return mPageFactory.next();
+            public boolean nextPage() {
+                return !hideReadMenu();
             }
 
             @Override
             public void cancel() {
-                mPageFactory.pageCancel();
             }
         });
 
         mLvCategory.setOnItemClickListener(
                 (parent, view, position, id) -> {
-                    mPageFactory.skipToChapter(position);
+                    mPageLoader.skipToChapter(position);
                     mDlSlide.closeDrawer(Gravity.START);
                 }
         );
@@ -367,7 +357,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         mTvCategory.setOnClickListener(
                 (v) -> {
                     //移动到指定位置
-                    mLvCategory.setSelection(mPageFactory.getPosition());
+                    mLvCategory.setSelection(mPageLoader.getPosition());
                     //切换菜单
                     toggleMenu(true);
                     //打开侧滑动栏
@@ -382,11 +372,11 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         );
 
         mTvPreChapter.setOnClickListener(
-                (v) ->  mCategoryAdapter.setChapter(mPageFactory.skipPreChapter())
+                (v) ->  mCategoryAdapter.setChapter(mPageLoader.skipPreChapter())
         );
 
         mTvNextChapter.setOnClickListener(
-                (v) ->  mCategoryAdapter.setChapter(mPageFactory.skipNextChapter())
+                (v) ->  mCategoryAdapter.setChapter(mPageLoader.skipNextChapter())
         );
 
         mTvNightMode.setOnClickListener(
@@ -397,7 +387,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
                     else {
                         isNightMode = true;
                     }
-                    mPageFactory.setNightMode(isNightMode);
+                    mPageLoader.setNightMode(isNightMode);
                     toggleNightMode();
                 }
         );
@@ -416,6 +406,23 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         mSettingDialog.setOnDismissListener(
                 dialog ->  hideSystemBar()
         );
+    }
+
+    /**
+     * 隐藏阅读界面的菜单显示
+     * @return 是否隐藏成功
+     */
+    private boolean hideReadMenu(){
+        hideSystemBar();
+        if (mAblTopMenu.getVisibility() == VISIBLE){
+            toggleMenu(true);
+            return true;
+        }
+        else if (mSettingDialog.isShowing()){
+            mSettingDialog.dismiss();
+            return true;
+        }
+        return false;
     }
 
     private void showSystemBar(){
@@ -447,6 +454,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             mLlBottomMenu.startAnimation(mBottomOutAnim);
             mAblTopMenu.setVisibility(GONE);
             mLlBottomMenu.setVisibility(GONE);
+            mTvPageTip.setVisibility(GONE);
 
             if (hideStatusBar){
                 hideSystemBar();
@@ -478,23 +486,34 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @Override
     protected void processLogic() {
         super.processLogic();
-        //初始化目录
-        if (isCollected){
-            Disposable disposable = BookRepository.getInstance()
-                    .getBookChapters(mBookId)
-                    .compose(RxUtils::toSimpleSingle)
-                    .subscribe(
-                            (bookChapterBeen, throwable) -> {
-                                mCategoryAdapter.refreshItems(bookChapterBeen);
-                                mPageFactory.openBook(mBookId,bookChapterBeen);
-                                LogUtils.e(throwable);
-                            }
-                    );
-            addDisposable(disposable);
+        //如果是本地文件
+        if (mCollBook.isLocal()){
+            mPageLoader.openBook(mCollBook);
         }
-        else{
-            //从网络中加载
-            mPresenter.loadCategory(mBookId);
+        else {
+            //如果是网络文件
+            //如果是已经收藏的，那么就从数据库中获取目录
+            if (isCollected){
+                Disposable disposable = BookRepository.getInstance()
+                        .getBookChaptersInRx(mBookId)
+                        .compose(RxUtils::toSimpleSingle)
+                        .subscribe(
+                                (bookChapterBeen, throwable) -> {
+                                    mCollBook.setBookChapters(bookChapterBeen);
+                                    mPageLoader.openBook(mCollBook);
+                                    //如果是被标记更新的,重新从网络中获取目录
+                                    if (mCollBook.isUpdate()){
+                                        mPresenter.loadCategory(mBookId);
+                                    }
+                                    LogUtils.e(throwable);
+                                }
+                        );
+                addDisposable(disposable);
+            }
+            else{
+                //从网络中获取目录
+                mPresenter.loadCategory(mBookId);
+            }
         }
     }
 /***************************view************************************/
@@ -510,27 +529,31 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
     @Override
     public void showCategory(List<BookChapterBean> bookChapters){
-        //进行设定BookChapter所属的书的id。
-        for (BookChapterBean bookChapter : bookChapters){
-            bookChapter.setBookId(mBookId);
+        mCollBook.setBookChapters(bookChapters);
+        //如果是更新加载，那么重置PageLoader的Chapter
+        if (mCollBook.isUpdate()){
+            mPageLoader.setChapterList(bookChapters);
+            BookRepository.getInstance()
+                    .saveBookChaptersWithAsync(bookChapters);
         }
-        //显示
-        mCategoryAdapter.refreshItems(bookChapters);
-        mPageFactory.openBook(mBookId,bookChapters);
+        else {
+            mPageLoader.openBook(mCollBook);
+        }
     }
 
     @Override
     public void finishChapter() {
-        if (mPageFactory.getPageStatus() == PageFactory.STATUS_LOADING){
-            mPageFactory.openChapter();
+        if (mPageLoader.getPageStatus() == PageFactory.STATUS_LOADING){
+            mPageLoader.openChapter();
         }
+        //当完成章节的时候，刷新列表
         mCategoryAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void errorChapter() {
-        if (mPageFactory.getPageStatus() == PageFactory.STATUS_LOADING){
-            mPageFactory.chapterError();
+        if (mPageLoader.getPageStatus() == PageFactory.STATUS_LOADING){
+            mPageLoader.chapterError();
         }
     }
 
@@ -552,18 +575,21 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             return;
         }
 
-        if (!isCollected){
+        if (!mCollBook.isLocal() && !isCollected){
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle("加入书架")
                     .setMessage("喜欢本书就加入书架吧")
                     .setPositiveButton("确定",(dialog, which) -> {
                         //设置为已收藏
                         isCollected = true;
+                        //设置BookChapter
+                        mCollBook.setBookChapters(mCollBook.getBookChapters());
+                        //设置阅读时间
+                        mCollBook.setLastRead(StringUtils.
+                                dateConvert(System.currentTimeMillis(), Constant.FORMAT_BOOK_DATE));
 
-                        List<BookChapterBean> bookChapters = mCategoryAdapter.getItems();
-                        mCollBook.setBookChapters(bookChapters);
                         BookRepository.getInstance()
-                                .saveCollBook(mCollBook);
+                                .saveCollBookWithAsync(mCollBook);
 
                         exit();
                     })
@@ -597,14 +623,16 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     protected void onPause() {
         super.onPause();
         mWakeLock.release();
-        mPageFactory.saveRecord();
+        if (isCollected){
+            mPageLoader.saveRecord();
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
-        mPageFactory.closeBook(isCollected);
+        mPageLoader.closeBook();
     }
 
     @Override
@@ -614,13 +642,13 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (isVolumeTurnPage){
-                    mPageFactory.autoPrevPage();
+                    mPageLoader.autoPrevPage();
                     return true;
                 }
                 break;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (isVolumeTurnPage){
-                    mPageFactory.autoNextPage();
+                    mPageLoader.autoNextPage();
                     return true;
                 }
                 break;

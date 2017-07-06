@@ -10,6 +10,7 @@ import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.ui.adapter.view.CategoryHolder;
 import com.example.newbiechen.ireader.ui.base.EasyAdapter;
 import com.example.newbiechen.ireader.ui.base.adapter.IViewHolder;
+import com.example.newbiechen.ireader.widget.page.TxtChapter;
 
 import java.util.List;
 
@@ -17,10 +18,10 @@ import java.util.List;
  * Created by newbiechen on 17-6-5.
  */
 
-public class CategoryAdapter extends EasyAdapter<BookChapterBean> {
+public class CategoryAdapter extends EasyAdapter<TxtChapter> {
     private int currentSelected = 0;
     @Override
-    protected IViewHolder<BookChapterBean> onCreateViewHolder(int viewType) {
+    protected IViewHolder<TxtChapter> onCreateViewHolder(int viewType) {
         return new CategoryHolder();
     }
 

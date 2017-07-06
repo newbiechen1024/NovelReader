@@ -5,6 +5,6 @@ package com.example.newbiechen.ireader.ui.fragment;
  */
 
 public interface OnFileCheckedListener {
-    void fileChecked(boolean isChecked);
-    void fileCategoryChange();
+    void onItemCheckedChange(boolean isChecked);
+    void onCategoryChanged();
 }

@@ -115,7 +115,7 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter<RecyclerV
     }
 
     public List<T> getItems(){
-        return Collections.unmodifiableList(mList);
+        return mList;
     }
 
     public int getItemSize(){

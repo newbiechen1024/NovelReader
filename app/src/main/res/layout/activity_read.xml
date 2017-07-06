@@ -51,7 +51,7 @@
 	    
 	    
         <!--阅读页面-->
-		<com.example.newbiechen.ireader.widget.PageView
+		<com.example.newbiechen.ireader.widget.page.PageView
 			android:id="@+id/read_pv_page"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"

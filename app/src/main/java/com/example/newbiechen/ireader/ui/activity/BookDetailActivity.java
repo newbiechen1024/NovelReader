@@ -29,6 +29,7 @@ import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.ToastUtils;
+import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
 
 import java.util.List;
@@ -48,6 +49,8 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
 
     private static final int REQUEST_READ = 1;
 
+    @BindView(R.id.refresh_layout)
+    RefreshLayout mRefreshLayout;
     @BindView(R.id.book_detail_iv_cover)
     ImageView mIvCover;
     @BindView(R.id.book_detail_tv_title)
@@ -154,7 +157,7 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
                     if (isCollected){
                         //放弃点击
                         BookRepository.getInstance()
-                                .deleteCollBook(mCollBookBean);
+                                .deleteCollBookInRx(mCollBookBean);
 
                         mTvChase.setText(getResources().getString(R.string.nb_book_detail_chase_update));
 
@@ -195,6 +198,7 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
     @Override
     protected void processLogic() {
         super.processLogic();
+        mRefreshLayout.showLoading();
         mPresenter.refreshBookDetail(mBookId);
     }
 
@@ -301,12 +305,12 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
 
     @Override
     public void showError() {
-
+        mRefreshLayout.showError();
     }
 
     @Override
     public void complete() {
-
+        mRefreshLayout.showFinish();
     }
 
     /*******************************************************/

@@ -1,8 +1,7 @@
 package com.example.newbiechen.ireader.model.local;
 
-import com.example.newbiechen.ireader.utils.ScreenUtils;
 import com.example.newbiechen.ireader.utils.SharedPreUtils;
-import com.example.newbiechen.ireader.widget.PageView;
+import com.example.newbiechen.ireader.widget.page.PageView;
 
 /**
  * Created by newbiechen on 17-5-17.

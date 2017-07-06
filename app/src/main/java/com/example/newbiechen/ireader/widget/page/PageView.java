@@ -1,6 +1,5 @@
-package com.example.newbiechen.ireader.widget;
+package com.example.newbiechen.ireader.widget.page;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -12,6 +11,7 @@ import android.view.ViewConfiguration;
 import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 
+import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.widget.animation.AnimationProvider;
 import com.example.newbiechen.ireader.widget.animation.CoverAnimation;
 import com.example.newbiechen.ireader.widget.animation.NoneAnimation;
@@ -24,6 +24,7 @@ import com.example.newbiechen.ireader.widget.animation.SlideAnimation;
  * 绘制页面显示内容的类
  */
 public class PageView extends View {
+
     public final static int PAGE_MODE_SIMULATION = 0;
     public final static int PAGE_MODE_COVER = 1;
     public final static int PAGE_MODE_SLIDE = 2;
@@ -34,6 +35,15 @@ public class PageView extends View {
     private int mViewWidth = 0; // 当前View的宽
     private int mViewHeight = 0; // 当前View的高
 
+    private int downX = 0;
+    private int downY = 0;
+
+    private int moveX = 0;
+    private int moveY = 0;
+    //翻页动画是否在执行
+    private Boolean isRunning = false;
+    //是否允许点击
+    private Boolean canTouch = true;
     //是否移动了
     private Boolean isMove = false;
     //是否翻到下一页
@@ -42,26 +52,22 @@ public class PageView extends View {
     private Boolean cancelPage = false;
     //是否没下一页或者上一页
     private Boolean noNext = false;
-    private int downX = 0;
-    private int downY = 0;
 
-    private int moveX = 0;
-    private int moveY = 0;
-    //翻页动画是否在执行
-    private Boolean isRunning = false;
-    private Boolean canTouch = true;
-    Bitmap mCurPageBitmap = null;
-    Bitmap mNextPageBitmap = null;
-
-    private AnimationProvider mAnimationProvider;
-
-    Scroller mScroller;
+    //初始化参数
     private int mBgColor = 0xFFCEC29C;
-    private TouchListener mTouchListener;
-    private OnSizeChangeListener mSizeChangeListener;
-
-    //
     private int mPageMode = PAGE_MODE_SIMULATION;
+
+    //滑动类
+    private Scroller mScroller;
+    //动画执行
+    private AnimationProvider mAnimationProvider;
+    //点击监听
+    private TouchListener mTouchListener;
+    //显示的图片
+    private Bitmap mCurPageBitmap = null;
+    private Bitmap mNextPageBitmap = null;
+    //内容加载器
+    private PageLoader mPageLoader;
 
     public PageView(Context context) {
         this(context,null);
@@ -83,18 +89,17 @@ public class PageView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         mViewWidth = w;
         mViewHeight = h;
-        //因为View的大小会根据是否全屏进行变化，所以在这里初始化Bitmap
+        //重置图片的大小,由于w,h可能比原始的Bitmap更大，所以如果使用Bitmap.setWidth/Height()是会报错的。
+        //所以最终还是创建Bitmap的方式。这种方式比较消耗性能，暂时没有找到更好的方法。
         initPage();
-        if (mSizeChangeListener != null){
-            mSizeChangeListener.sizeChange(w, h, oldw, oldh);
-        }
+        //重置页面加载器的页面
+        mPageLoader.setDisplaySize(w,h);
     }
 
     private void initPage(){
         //绘制Bitmap
         mCurPageBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);      //android:LargeHeap=true  use in  manifest application
         mNextPageBitmap = Bitmap.createBitmap(mViewWidth, mViewHeight, Bitmap.Config.RGB_565);
-
         setPageMode(mPageMode);
     }
 
@@ -127,12 +132,13 @@ public class PageView extends View {
         return mNextPageBitmap;
     }
 
-    public void autoNextPage(){
-        startPageAnim(AnimationProvider.Direction.next);
-    }
-
+    //这个有点小问题
     public void autoPrevPage(){
         startPageAnim(AnimationProvider.Direction.pre);
+    }
+
+    public void autoNextPage(){
+        startPageAnim(AnimationProvider.Direction.next);
     }
 
     private void startPageAnim(AnimationProvider.Direction direction){
@@ -148,9 +154,10 @@ public class PageView extends View {
             //初始化动画
             mAnimationProvider.setStartPoint(x,y);
             //设置方向方向
-            Boolean isNext = mTouchListener.nextPage();
+            Boolean hasNext = hasNext();
+
             mAnimationProvider.setDirection(direction);
-            if (!isNext) {
+            if (!hasNext) {
                 return;
             }
         }
@@ -162,9 +169,9 @@ public class PageView extends View {
             //初始化动画
             mAnimationProvider.setStartPoint(x,y);
             //设置方向方向
-            Boolean isPrev = mTouchListener.prePage();
+            Boolean hashPrev = hasPrev();
             mAnimationProvider.setDirection(direction);
-            if (!isPrev) {
+            if (!hashPrev) {
                 return;
             }
         }
@@ -173,6 +180,8 @@ public class PageView extends View {
         mAnimationProvider.startAnimation(mScroller);
         this.postInvalidate();
     }
+
+    public void openBook(CollBookBean cookBook,boolean isLocal){}
 
     public void setBgColor(int color){
         mBgColor = color;
@@ -184,11 +193,10 @@ public class PageView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        canvas.drawColor(0xFFAAAAAA);
         //high背景
         canvas.drawColor(mBgColor);
         Log.e("onDraw","isNext:" + isNext + "          isRunning:" + isRunning);
-        //什么叫绘制不滑动页面和绘制滑动页面 0 0
+
         if (isRunning) {
             mAnimationProvider.drawMove(canvas);
         } else {
@@ -206,7 +214,7 @@ public class PageView extends View {
         //获取相对点击位置
         int x = (int)event.getX();
         int y = (int)event.getY();
-        //设置点击点
+        //设置点击位置
         mAnimationProvider.setTouchPoint(x,y);
 
         if (event.getAction() == MotionEvent.ACTION_DOWN){
@@ -251,19 +259,19 @@ public class PageView extends View {
 
                     if (isNext) {
                         //判断是否下一页存在
-                        Boolean isNext = mTouchListener.nextPage();
+                        Boolean hasNext = hasNext();
                         //如果存在设置动画方向
                         mAnimationProvider.setDirection(AnimationProvider.Direction.next);
                         //如果不存在表示没有下一页了
-                        if (!isNext) {
+                        if (!hasNext) {
                             noNext = true;
                             return true;
                         }
                     } else {
-                        Boolean isPre = mTouchListener.prePage();
+                        Boolean hasPrev = hasPrev();
                         mAnimationProvider.setDirection(AnimationProvider.Direction.pre);
 
-                        if (!isPre) {
+                        if (!hasPrev) {
                             noNext = true;
                             return true;
                         }
@@ -313,15 +321,17 @@ public class PageView extends View {
                 }
 
                 if (isNext) {
-                    Boolean isNext = mTouchListener.nextPage();
+                    //判断是否下一页存在
+                    Boolean hasNext = hasNext();
+                    //设置动画方向
                     mAnimationProvider.setDirection(AnimationProvider.Direction.next);
-                    if (!isNext) {
+                    if (!hasNext) {
                         return true;
                     }
                 } else {
-                    Boolean isPre = mTouchListener.prePage();
+                    Boolean hasPrev = hasPrev();
                     mAnimationProvider.setDirection(AnimationProvider.Direction.pre);
-                    if (!isPre) {
+                    if (!hasPrev) {
                         return true;
                     }
                 }
@@ -329,6 +339,7 @@ public class PageView extends View {
 
             if (cancelPage && mTouchListener != null){
                 mTouchListener.cancel();
+                mPageLoader.pageCancel();
             }
 
             Log.e(TAG,"isNext:" + isNext);
@@ -338,8 +349,33 @@ public class PageView extends View {
                 this.postInvalidate();
             }
         }
-
         return true;
+    }
+
+    //判断是否下一页存在
+    private boolean hasNext(){
+        Boolean hasNext = false;
+        if (mTouchListener != null){
+            hasNext = mTouchListener.nextPage();
+            //加载下一页
+            if (hasNext){
+                hasNext = mPageLoader.next();
+            }
+        }
+        return hasNext;
+    }
+
+    //判断是否存在上一页
+    private boolean hasPrev(){
+        Boolean hasPrev = false;
+        if (mTouchListener != null){
+            hasPrev = mTouchListener.prePage();
+            //加载下一页
+            if (hasPrev){
+                hasPrev = mPageLoader.prev();
+            }
+        }
+        return hasPrev;
     }
 
     @Override
@@ -373,18 +409,23 @@ public class PageView extends View {
         this.mTouchListener = mTouchListener;
     }
 
-    public void setOnSizeChangeListener(OnSizeChangeListener listener){
-        mSizeChangeListener = listener;
+    //获取PageLoader
+    public PageLoader getPageLoader(boolean isLocal){
+        if (mPageLoader == null){
+            if (isLocal){
+                mPageLoader = new LocalPageLoader(this);
+            }
+            else {
+                mPageLoader = new NetPageLoader(this);
+            }
+        }
+        return mPageLoader;
     }
 
     public interface TouchListener{
         void center();
-        Boolean prePage();
-        Boolean nextPage();
+        boolean prePage();
+        boolean nextPage();
         void cancel();
-    }
-
-    public interface OnSizeChangeListener{
-        void sizeChange(int w, int h, int oldw, int oldh);
     }
 }

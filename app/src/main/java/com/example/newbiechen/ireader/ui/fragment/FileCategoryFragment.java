@@ -7,9 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.adapter.FileSystemAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.utils.FileStack;
+import com.example.newbiechen.ireader.utils.FileUtils;
 import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
 
 import java.io.File;
@@ -76,11 +78,17 @@ public class FileCategoryFragment extends BaseFragment {
                         toggleFileTree(file);
                     }
                     else {
+
+                        //如果是已加载的文件，则点击事件无效。
+                        String id = mAdapter.getItem(pos).getAbsolutePath();
+                        if (BookRepository.getInstance().getCollBook(id) != null){
+                            return;
+                        }
                         //点击选中
-                        mAdapter.setCheckItem(pos);
+                        mAdapter.setCheckedItem(pos);
                         //反馈
                         if (mCheckedListener != null){
-                            mCheckedListener.fileChecked(mAdapter.getItemSelected(pos));
+                            mCheckedListener.onItemCheckedChange(mAdapter.getItemIsChecked(pos));
                         }
                     }
                 }
@@ -96,10 +104,11 @@ public class FileCategoryFragment extends BaseFragment {
                     mRvContent.scrollBy(0,snapshot.scrollOffset - oldScrollOffset);
                     //反馈
                     if (mCheckedListener != null){
-                        mCheckedListener.fileCategoryChange();
+                        mCheckedListener.onCategoryChanged();
                     }
                 }
         );
+
     }
 
     @Override
@@ -122,7 +131,7 @@ public class FileCategoryFragment extends BaseFragment {
         mAdapter.refreshItems(rootFiles);
         //反馈
         if (mCheckedListener != null){
-            mCheckedListener.fileCategoryChange();
+            mCheckedListener.onCategoryChanged();
         }
     }
 
@@ -134,9 +143,9 @@ public class FileCategoryFragment extends BaseFragment {
         mCheckedListener = listener;
     }
 
-    public int getBookCount(){
+    public int getFileCount(){
         int count = 0;
-        Set<Map.Entry<File, Boolean>> entrys = mAdapter.getSelectedMap().entrySet();
+        Set<Map.Entry<File, Boolean>> entrys = mAdapter.getCheckMap().entrySet();
         for (Map.Entry<File, Boolean> entry:entrys){
             if (!entry.getKey().isDirectory()){
                 ++count;
@@ -145,10 +154,8 @@ public class FileCategoryFragment extends BaseFragment {
         return count;
     }
 
-    /**
-     * 删除已选中的书籍
-     */
-    public void deleteCheckedBook(){
+    public List<File> getCheckedFiles(){
+        return mAdapter.getCheckedFiles();
     }
 
     public class FileComparator implements Comparator<File>{
@@ -167,16 +174,20 @@ public class FileCategoryFragment extends BaseFragment {
     public class SimpleFileFilter implements FileFilter{
         @Override
         public boolean accept(File pathname) {
+            if (pathname.getName().startsWith(".")){
+                return false;
+            }
             //文件夹内部数量为0
             if (pathname.isDirectory() && pathname.list().length == 0){
                 return false;
             }
-            //文件夹以.开头的
-            if (pathname.isDirectory() && pathname.getName().startsWith(".")) {
-                return false;
-            }
-            //文件内容为空
-            if (!pathname.isDirectory() && pathname.length() == 0){
+
+            /**
+             * 现在只支持TXT文件的显示
+             */
+            //文件内容为空,或者不以txt为开头
+            if (!pathname.isDirectory() &&
+                    (pathname.length() == 0 || !pathname.getName().endsWith(FileUtils.SUFFIX_TXT))){
                 return false;
             }
             return true;

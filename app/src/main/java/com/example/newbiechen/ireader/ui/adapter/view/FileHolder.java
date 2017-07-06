@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.base.adapter.ViewHolderImpl;
 import com.example.newbiechen.ireader.utils.Constant;
@@ -60,22 +61,26 @@ public class FileHolder extends ViewHolderImpl<File> {
 
     private void setFile(File file){
         //选择
-        String name = file.getName().replace(".txt","");
-        if (BookRepository.getInstance().getCollBook(name) != null){
+        String id = file.getAbsolutePath();
+
+        if (BookRepository.getInstance().getCollBook(id) != null){
             mIvIcon.setImageResource(R.drawable.ic_file_loaded);
+            mIvIcon.setVisibility(View.VISIBLE);
+            mCbSelect.setVisibility(View.GONE);
         }
         else {
-            mIvIcon.setVisibility(View.GONE);
-            mCbSelect.setVisibility(View.VISIBLE);
             boolean isSelected = mSelectedMap.get(file);
             mCbSelect.setChecked(isSelected);
+            mIvIcon.setVisibility(View.GONE);
+            mCbSelect.setVisibility(View.VISIBLE);
         }
+
         mLlBrief.setVisibility(View.VISIBLE);
         mTvSubCount.setVisibility(View.GONE);
-        mTvName.setText(name);
+
+        mTvName.setText(file.getName());
         mTvSize.setText(FileUtils.getFileSize(file.length()));
         mTvDate.setText(StringUtils.dateConvert(file.lastModified(), Constant.FORMAT_FILE_DATE));
-
     }
 
     public void setFolder(File folder){

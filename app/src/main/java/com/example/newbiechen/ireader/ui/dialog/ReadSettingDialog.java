@@ -2,7 +2,6 @@ package com.example.newbiechen.ireader.ui.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
@@ -27,12 +25,10 @@ import com.example.newbiechen.ireader.ui.activity.MoreSettingActivity;
 import com.example.newbiechen.ireader.ui.activity.ReadActivity;
 import com.example.newbiechen.ireader.ui.adapter.ReadBgAdapter;
 import com.example.newbiechen.ireader.utils.BrightnessUtils;
-import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.ScreenUtils;
-import com.example.newbiechen.ireader.utils.SimplePageFactory;
-import com.example.newbiechen.ireader.widget.PageView;
+import com.example.newbiechen.ireader.widget.page.PageLoader;
+import com.example.newbiechen.ireader.widget.page.PageView;
 
-import java.io.Reader;
 import java.util.Arrays;
 
 import butterknife.BindView;
@@ -80,7 +76,7 @@ public class ReadSettingDialog extends Dialog{
     /************************************/
     private ReadBgAdapter mReadBgAdapter;
     private ReadSettingManager mSettingManager;
-    private SimplePageFactory mPageFactory;
+    private PageLoader mPageLoader;
     private Activity mActivity;
 
     private int mBrightness;
@@ -91,10 +87,10 @@ public class ReadSettingDialog extends Dialog{
     private int mReadBgTheme;
 
 
-    public ReadSettingDialog(@NonNull Activity activity, SimplePageFactory pageFactory) {
+    public ReadSettingDialog(@NonNull Activity activity, PageLoader mPageLoader) {
         super(activity,R.style.ReadSettingDialog);
         mActivity = activity;
-        mPageFactory = pageFactory;
+        this.mPageLoader = mPageLoader;
     }
 
     @Override
@@ -250,7 +246,7 @@ public class ReadSettingDialog extends Dialog{
                     int fontSize = Integer.valueOf(mTvFont.getText().toString())-1;
                     if (fontSize < 0) return;
                     mTvFont.setText(fontSize+"");
-                    mPageFactory.setTextSize(fontSize);
+                    mPageLoader.setTextSize(fontSize);
                 }
         );
 
@@ -261,7 +257,7 @@ public class ReadSettingDialog extends Dialog{
                     }
                     int fontSize = Integer.valueOf(mTvFont.getText().toString())+1;
                     mTvFont.setText(fontSize+"");
-                    mPageFactory.setTextSize(fontSize);
+                    mPageLoader.setTextSize(fontSize);
                 }
         );
 
@@ -270,7 +266,7 @@ public class ReadSettingDialog extends Dialog{
                     if (isChecked){
                         int fontSize = ScreenUtils.dpToPx(DEFAULT_TEXT_SIZE);
                         mTvFont.setText(fontSize+"");
-                        mPageFactory.setTextSize(fontSize);
+                        mPageLoader.setTextSize(fontSize);
                     }
                 }
         );
@@ -293,13 +289,13 @@ public class ReadSettingDialog extends Dialog{
                             pageMode = PageView.PAGE_MODE_NONE;
                             break;
                     }
-                    mPageFactory.setPageMode(pageMode);
+                    mPageLoader.setPageMode(pageMode);
                 }
         );
 
         //背景的点击事件
         mReadBgAdapter.setOnItemClickListener(
-                (view, pos) -> mPageFactory.setBgColor(pos)
+                (view, pos) -> mPageLoader.setBgColor(pos)
         );
 
         //更多设置

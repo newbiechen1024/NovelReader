@@ -14,6 +14,7 @@ public interface BookShelfContract {
 
     interface View extends BaseContract.BaseView{
         void finishRefresh(List<CollBookBean> collBookBeans);
+        void finishUpdate();
         void showErrorTip(String error);
     }
 

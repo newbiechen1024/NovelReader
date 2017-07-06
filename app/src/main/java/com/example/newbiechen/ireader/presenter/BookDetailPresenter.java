@@ -30,6 +30,7 @@ public class BookDetailPresenter extends RxPresenter<BookDetailContract.View>
         refreshBook();
         refreshComment();
         refreshRecommend();
+
     }
 
     @Override
@@ -44,12 +45,11 @@ public class BookDetailPresenter extends RxPresenter<BookDetailContract.View>
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         beans -> {
-                            Log.d(TAG, "addToBookShelf: ");
                             //设置目录
                             collBookBean.setBookChapters(beans);
                             //存储收藏
                             BookRepository.getInstance()
-                                    .saveCollBook(collBookBean);
+                                    .saveCollBookWithAsync(collBookBean);
 
                             mView.succeedToBookShelf();
                         }
