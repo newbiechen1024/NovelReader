@@ -39,8 +39,7 @@ import io.reactivex.disposables.Disposable;
  * 1. 异常处理没有做好
  * 2. 加载的性能优化有待改进
  * 3. 预加载没有做
- * 4. 模板模式用的不太好，还需要修改
- * 7. 正在解析时候的判断
+ * 4. 模板模式用的不太好，还需要修改1
  * 8. 如果本地加载下一章节的速度，太慢会发生什么事情
  */
 
@@ -443,7 +442,7 @@ public class LocalPageLoader extends PageLoader {
     public void saveRecord() {
         super.saveRecord();
         //修改当前COllBook记录
-        if (mCollBook != null){
+        if (mCollBook != null && isBookOpen){
             //表示当前CollBook已经阅读
             mCollBook.setIsUpdate(false);
             mCollBook.setLastChapter(mChapterList.get(mCurChapterPos).getTitle());

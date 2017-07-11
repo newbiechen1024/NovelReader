@@ -20,6 +20,7 @@ import java.util.Set;
 public class FileSystemAdapter extends BaseListAdapter<File>{
     //记录item是否被选中的Map
     private HashMap<File,Boolean> mCheckMap = new HashMap<>();
+    private int mCheckedCount = 0;
 
     @Override
     protected IViewHolder<File> createViewHolder(int viewType) {
@@ -61,25 +62,46 @@ public class FileSystemAdapter extends BaseListAdapter<File>{
         super.removeItem(value);
     }
 
+    @Override
+    public void removeItems(List<File> value) {
+        //删除在HashMap中的文件
+        for (File file : value){
+            mCheckMap.remove(file);
+            //因为，能够被移除的文件，肯定是选中的
+            --mCheckedCount;
+        }
+        //删除列表中的文件
+        super.removeItems(value);
+    }
+
     //设置点击切换
     public void setCheckedItem(int pos){
         File file = getItem(pos);
         if (isFileLoaded(file.getAbsolutePath())) return;
 
         boolean isSelected = mCheckMap.get(file);
-        if (isSelected)
+        if (isSelected){
             mCheckMap.put(file, false);
-        else
+            --mCheckedCount;
+        }
+        else{
             mCheckMap.put(file, true);
-
+            ++mCheckedCount;
+        }
         notifyDataSetChanged();
     }
 
-    public void setSelectedAll(boolean isSelected){
+    public void setCheckedAll(boolean isChecked){
         Set<Map.Entry<File, Boolean>> entrys = mCheckMap.entrySet();
+        mCheckedCount = 0;
         for (Map.Entry<File, Boolean> entry:entrys){
-            if (!isFileLoaded(entry.getKey().getAbsolutePath())){
-                entry.setValue(isSelected);
+            //必须是文件，必须没有被收藏
+            if (entry.getKey().isFile() && !isFileLoaded(entry.getKey().getAbsolutePath())){
+                entry.setValue(isChecked);
+                //如果选中，则增加点击的数量
+                if (isChecked){
+                    ++mCheckedCount;
+                }
             }
         }
         notifyDataSetChanged();
@@ -93,6 +115,16 @@ public class FileSystemAdapter extends BaseListAdapter<File>{
         return false;
     }
 
+    public int getCheckableCount(){
+        List<File> files = getItems();
+        int count = 0;
+        for (File file : files){
+            if (!isFileLoaded(file.getAbsolutePath()) && file.isFile())
+                ++count;
+        }
+        return count;
+    }
+
     public boolean getItemIsChecked(int pos){
         File file = getItem(pos);
         return mCheckMap.get(file);
@@ -102,11 +134,15 @@ public class FileSystemAdapter extends BaseListAdapter<File>{
         List<File> files = new ArrayList<>();
         Set<Map.Entry<File, Boolean>> entrys = mCheckMap.entrySet();
         for (Map.Entry<File, Boolean> entry:entrys){
-            if (entry.getValue() && !entry.getKey().isDirectory()){
+            if (entry.getValue()){
                 files.add(entry.getKey());
             }
         }
         return files;
+    }
+
+    public int getCheckedCount(){
+        return mCheckedCount;
     }
 
     public HashMap<File,Boolean> getCheckMap(){

@@ -30,7 +30,7 @@ import butterknife.BindView;
  * Created by newbiechen on 17-5-27.
  */
 
-public class FileCategoryFragment extends BaseFragment {
+public class FileCategoryFragment extends BaseFileFragment {
     private static final String TAG = "FileCategoryFragment";
     @BindView(R.id.file_category_tv_path)
     TextView mTvPath;
@@ -39,9 +39,7 @@ public class FileCategoryFragment extends BaseFragment {
     @BindView(R.id.file_category_rv_content)
     RecyclerView mRvContent;
 
-    private FileSystemAdapter mAdapter;
     private FileStack mFileStack;
-    private OnFileCheckedListener mCheckedListener;
     @Override
     protected int getContentId() {
         return R.layout.fragment_file_category;
@@ -87,8 +85,8 @@ public class FileCategoryFragment extends BaseFragment {
                         //点击选中
                         mAdapter.setCheckedItem(pos);
                         //反馈
-                        if (mCheckedListener != null){
-                            mCheckedListener.onItemCheckedChange(mAdapter.getItemIsChecked(pos));
+                        if (mListener != null){
+                            mListener.onItemCheckedChange(mAdapter.getItemIsChecked(pos));
                         }
                     }
                 }
@@ -103,8 +101,8 @@ public class FileCategoryFragment extends BaseFragment {
                     mAdapter.refreshItems(snapshot.files);
                     mRvContent.scrollBy(0,snapshot.scrollOffset - oldScrollOffset);
                     //反馈
-                    if (mCheckedListener != null){
-                        mCheckedListener.onCategoryChanged();
+                    if (mListener != null){
+                        mListener.onCategoryChanged();
                     }
                 }
         );
@@ -130,19 +128,12 @@ public class FileCategoryFragment extends BaseFragment {
         //加入
         mAdapter.refreshItems(rootFiles);
         //反馈
-        if (mCheckedListener != null){
-            mCheckedListener.onCategoryChanged();
+        if (mListener != null){
+            mListener.onCategoryChanged();
         }
     }
 
-    public void setSelectedAll(boolean isSelected){
-        mAdapter.setSelectedAll(isSelected);
-    }
-
-    public void setOnFileCheckedListener(OnFileCheckedListener listener){
-        mCheckedListener = listener;
-    }
-
+    @Override
     public int getFileCount(){
         int count = 0;
         Set<Map.Entry<File, Boolean>> entrys = mAdapter.getCheckMap().entrySet();
@@ -152,10 +143,6 @@ public class FileCategoryFragment extends BaseFragment {
             }
         }
         return count;
-    }
-
-    public List<File> getCheckedFiles(){
-        return mAdapter.getCheckedFiles();
     }
 
     public class FileComparator implements Comparator<File>{

@@ -5,7 +5,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.adapter.FileSystemAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
@@ -24,13 +23,11 @@ import butterknife.BindView;
  * 本地书籍
  */
 
-public class LocalBookFragment extends BaseFragment{
+public class LocalBookFragment extends BaseFileFragment{
     @BindView(R.id.refresh_layout)
     RefreshLayout mRlRefresh;
     @BindView(R.id.local_book_rv_content)
     RecyclerView mRvContent;
-    private FileSystemAdapter mAdapter;
-    private OnFileCheckedListener mCheckedListener;
     @Override
     protected int getContentId() {
         return R.layout.fragment_local_book;
@@ -62,9 +59,10 @@ public class LocalBookFragment extends BaseFragment{
 
                     //点击选中
                     mAdapter.setCheckedItem(pos);
+
                     //反馈
-                    if (mCheckedListener != null){
-                        mCheckedListener.onItemCheckedChange(mAdapter.getItemIsChecked(pos));
+                    if (mListener != null){
+                        mListener.onItemCheckedChange(mAdapter.getItemIsChecked(pos));
                     }
                 }
         );
@@ -86,27 +84,11 @@ public class LocalBookFragment extends BaseFragment{
                                 mAdapter.refreshItems(files);
                                 mRlRefresh.showFinish();
                                 //反馈
-                                if (mCheckedListener != null){
-                                    mCheckedListener.onCategoryChanged();
+                                if (mListener != null){
+                                    mListener.onCategoryChanged();
                                 }
                             }
                         }
                 );
-    }
-
-    public void setOnFileCheckedListener(OnFileCheckedListener listener){
-        mCheckedListener = listener;
-    }
-
-    public void setSelectedAll(boolean isSelected){
-        mAdapter.setSelectedAll(isSelected);
-    }
-
-    public List<File> getCheckedFiles(){
-        return mAdapter.getCheckedFiles();
-    }
-
-    public int getFileCount(){
-        return mAdapter.getItemCount();
     }
 }

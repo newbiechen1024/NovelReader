@@ -278,7 +278,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
                     @Override
                     public void onCategoryFinish(List<TxtChapter> chapters) {
-                        mCategoryAdapter.addItems(chapters);
+                        mCategoryAdapter.refreshItems(chapters);
                     }
 
                     @Override
@@ -530,7 +530,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     public void showCategory(List<BookChapterBean> bookChapters){
         mCollBook.setBookChapters(bookChapters);
         //如果是更新加载，那么重置PageLoader的Chapter
-        if (mCollBook.isUpdate()){
+        if (mCollBook.isUpdate() && isCollected){
             mPageLoader.setChapterList(bookChapters);
             BookRepository.getInstance()
                     .saveBookChaptersWithAsync(bookChapters);

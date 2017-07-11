@@ -86,8 +86,9 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
     @Override
     public void updateCollBooks(List<CollBookBean> collBookBeans) {
         if (collBookBeans == null || collBookBeans.isEmpty()) return;
-        List<Single<BookDetailBean>> observables = new ArrayList<>(collBookBeans.size());
-        Iterator<CollBookBean> it = collBookBeans.iterator();
+        List<CollBookBean> collBooks = new ArrayList<>(collBookBeans);
+        List<Single<BookDetailBean>> observables = new ArrayList<>(collBooks.size());
+        Iterator<CollBookBean> it = collBooks.iterator();
         while (it.hasNext()){
             CollBookBean collBook = it.next();
             //删除本地文件
@@ -103,8 +104,8 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
             @Override
             public List<CollBookBean> apply(Object[] objects) throws Exception {
                 List<CollBookBean> newCollBooks = new ArrayList<CollBookBean>(objects.length);
-                for (int i=0; i<collBookBeans.size(); ++i){
-                    CollBookBean oldCollBook = collBookBeans.get(i);
+                for (int i=0; i<collBooks.size(); ++i){
+                    CollBookBean oldCollBook = collBooks.get(i);
                     CollBookBean newCollBook = ((BookDetailBean)objects[i]).getCollBookBean();
                     //如果是oldBook是update状态，或者newCollBook与oldBook章节数不同
                     if (oldCollBook.isUpdate() ||

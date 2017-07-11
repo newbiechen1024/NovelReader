@@ -21,6 +21,7 @@ import java.util.List;
 
 /**
  * Created by newbiechen on 17-5-29.
+ * 网络页面加载器
  */
 
 public class NetPageLoader extends PageLoader{
@@ -252,7 +253,7 @@ public class NetPageLoader extends PageLoader{
     @Override
     public void saveRecord() {
         super.saveRecord();
-        if (mCollBook != null){
+        if (mCollBook != null && isBookOpen){
             //表示当前CollBook已经阅读
             mCollBook.setIsUpdate(false);
             mCollBook.setLastRead(StringUtils.

@@ -110,12 +110,17 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter<RecyclerV
         notifyDataSetChanged();
     }
 
+    public void removeItems(List<T> value){
+        mList.removeAll(value);
+        notifyDataSetChanged();
+    }
+
     public T getItem(int position){
         return mList.get(position);
     }
 
     public List<T> getItems(){
-        return mList;
+        return Collections.unmodifiableList(mList);
     }
 
     public int getItemSize(){
