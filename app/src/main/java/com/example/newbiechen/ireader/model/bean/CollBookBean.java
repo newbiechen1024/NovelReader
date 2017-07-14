@@ -1,6 +1,9 @@
 package com.example.newbiechen.ireader.model.bean;
 
 import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -11,6 +14,7 @@ import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.ToMany;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.greendao.DaoException;
 import com.example.newbiechen.ireader.model.gen.DaoSession;
@@ -22,8 +26,7 @@ import com.example.newbiechen.ireader.model.gen.CollBookBeanDao;
  * 收藏的书籍
  */
 @Entity
-public class CollBookBean implements Serializable{
-    private static final long serialVersionUID = 64412123L;
+public class CollBookBean implements Parcelable{
 
     public static final int STATUS_UNCACHE = 0; //未缓存
     public static final int STATUS_CACHING = 1; //正在缓存
@@ -63,7 +66,7 @@ public class CollBookBean implements Serializable{
     private boolean isLocal = false;
 
     @ToMany(referencedJoinProperty = "bookId")
-    private  List<BookChapterBean> bookChapterList;
+    private List<BookChapterBean> bookChapterList;
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
@@ -318,4 +321,56 @@ public class CollBookBean implements Serializable{
     public void setIsLocal(boolean isLocal) {
         this.isLocal = isLocal;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this._id);
+        dest.writeString(this.title);
+        dest.writeString(this.author);
+        dest.writeString(this.shortIntro);
+        dest.writeString(this.cover);
+        dest.writeByte(this.hasCp ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.latelyFollower);
+        dest.writeDouble(this.retentionRatio);
+        dest.writeString(this.updated);
+        dest.writeString(this.lastRead);
+        dest.writeInt(this.chaptersCount);
+        dest.writeString(this.lastChapter);
+        dest.writeByte(this.isUpdate ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isLocal ? (byte) 1 : (byte) 0);
+    }
+
+    protected CollBookBean(Parcel in) {
+        this._id = in.readString();
+        this.title = in.readString();
+        this.author = in.readString();
+        this.shortIntro = in.readString();
+        this.cover = in.readString();
+        this.hasCp = in.readByte() != 0;
+        this.latelyFollower = in.readInt();
+        this.retentionRatio = in.readDouble();
+        this.updated = in.readString();
+        this.lastRead = in.readString();
+        this.chaptersCount = in.readInt();
+        this.lastChapter = in.readString();
+        this.isUpdate = in.readByte() != 0;
+        this.isLocal = in.readByte() != 0;
+    }
+
+    public static final Creator<CollBookBean> CREATOR = new Creator<CollBookBean>() {
+        @Override
+        public CollBookBean createFromParcel(Parcel source) {
+            return new CollBookBean(source);
+        }
+
+        @Override
+        public CollBookBean[] newArray(int size) {
+            return new CollBookBean[size];
+        }
+    };
 }

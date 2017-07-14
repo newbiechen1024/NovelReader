@@ -20,15 +20,15 @@ import com.example.newbiechen.ireader.widget.transform.CircleTransform;
 
 public class DiscCommentHolder extends ViewHolderImpl<BookCommentBean>{
 
-    ImageView mIvPortrait;
-    TextView mTvName;
-    TextView mTvLv;
-    TextView mTvTime;
-    TextView mTvBrief;
-    TextView mTvLabelDistillate;
-    TextView mTvLabelHot;
-    TextView mTvResponseCount;
-    TextView mTvLikeCount;
+    private ImageView mIvPortrait;
+    private TextView mTvName;
+    private TextView mTvLv;
+    private TextView mTvTime;
+    private TextView mTvBrief;
+    private TextView mTvLabelDistillate;
+    private TextView mTvLabelHot;
+    private TextView mTvResponseCount;
+    private TextView mTvLikeCount;
 
     @Override
     public void initView() {

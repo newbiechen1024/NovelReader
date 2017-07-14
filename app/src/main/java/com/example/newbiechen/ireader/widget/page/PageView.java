@@ -181,8 +181,6 @@ public class PageView extends View {
         this.postInvalidate();
     }
 
-    public void openBook(CollBookBean cookBook,boolean isLocal){}
-
     public void setBgColor(int color){
         mBgColor = color;
     }

@@ -3,13 +3,11 @@ package com.example.newbiechen.ireader.widget.page;
 import android.support.annotation.Nullable;
 
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
-import com.example.newbiechen.ireader.model.bean.BookRecordBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.FileUtils;
 import com.example.newbiechen.ireader.utils.StringUtils;
-import com.example.newbiechen.ireader.utils.ToastUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -58,25 +56,19 @@ public class NetPageLoader extends PageLoader{
         return txtChapters;
     }
 
-    //章节加载错误
-    public void chapterError(){
-        //加载错误
-        mStatus = STATUS_ERROR;
-        //显示加载错误
-        onDraw(mPageView.getNextPage(),false);
-    }
-
     @Nullable
     @Override
     protected List<TxtPage> loadPageList(int chapter) {
         if (mChapterList == null){
-            throw new IllegalArgumentException("Chapter list must not null");
+            throw new IllegalArgumentException("chapter list must not null");
         }
 
+        //获取要加载的文件
         TxtChapter txtChapter = mChapterList.get(chapter);
         File file = new File(Constant.BOOK_CACHE_PATH + mCollBook.get_id()
                 + File.separator + mChapterList.get(chapter).title + FileUtils.SUFFIX_NB);
         if (!file.exists()) return null;
+
         Reader reader = null;
         try {
             reader = new FileReader(file);
@@ -84,97 +76,55 @@ public class NetPageLoader extends PageLoader{
             e.printStackTrace();
         }
         BufferedReader br = new BufferedReader(reader);
+
         return loadPages(txtChapter,br);
     }
 
     //装载上一章节的内容
     @Override
-    protected boolean prevChapter(){
-        if (mCurChapterPos - 1 < 0){
-            ToastUtils.show("已经没有上一章了");
+    boolean prevChapter(){
+
+        boolean hasPrev = super.prevChapter();
+        if (!hasPrev) return false;
+
+        if (mStatus == STATUS_FINISH){
+            loadCurrentChapter();
+            return true;
+        }
+        else if (mStatus == STATUS_LOADING){
+            loadCurrentChapter();
             return false;
         }
-        else {
-            int prevChapter = mCurChapterPos - 1;
-            List<TxtPage> pages = loadPageList(prevChapter);
-            mLastChapter = mCurChapterPos;
-            mCurChapterPos = prevChapter;
-
-            if (mPageChangeListener != null){
-                mPageChangeListener.onChapterChange(mCurChapterPos);
-            }
-
-            if (pages != null){
-                mStatus = STATUS_FINISH;
-                mPageList = pages;
-                //提示章节改变，缓冲接下来的章节
-                loadPrevChapter();
-                return true;
-            }
-            else {
-                mStatus = STATUS_LOADING;
-                //重置position的位置，防止正在加载的时候退出时候存储的位置为上一章的页码
-                mCurPage.position = 0;
-                onDraw(mPageView.getNextPage(),false);
-                loadCurrentChapter();
-                return false;
-            }
-        }
+        return false;
     }
 
     //装载下一章节的内容
     @Override
-    protected boolean nextChapter(){
-        if (mCurChapterPos + 1 >= mChapterList.size()){
-            ToastUtils.show("已经没有下一章了");
+    boolean nextChapter(){
+        boolean hasNext = super.nextChapter();
+        if (!hasNext) return false;
+
+        if (mStatus == STATUS_FINISH){
+            loadNextChapter();
+            return true;
+        }
+        else if (mStatus == STATUS_LOADING){
+            loadCurrentChapter();
             return false;
         }
-        else {
-            int nextChapter = mCurChapterPos + 1;
-            //装载下一章
-            List<TxtPage> tPages = loadPageList(nextChapter);
-            mLastChapter = mCurChapterPos;
-            mCurChapterPos = nextChapter;
-
-            if (mPageChangeListener != null){
-                mPageChangeListener.onChapterChange(mCurChapterPos);
-            }
-
-            if (tPages != null){
-                mPageList = tPages;
-                mStatus = STATUS_FINISH;
-                loadNextChapter();
-                return true;
-            }
-            else {
-                mStatus = STATUS_LOADING;
-                //重置position的位置，防止正在加载的时候退出时候存储的位置为上一章的页码
-                mCurPage.position = 0;
-                onDraw(mPageView.getNextPage(),false);
-                loadCurrentChapter();
-                return false;
-            }
-        }
+        return false;
     }
 
     //跳转到指定章节
     public void skipToChapter(int pos){
-        //正在加载
-        mStatus = STATUS_LOADING;
+        super.skipToChapter(pos);
 
-        //绘制当前的状态
-        mCurChapterPos = pos;
         if (mCurPage != null){
             //重置position的位置，防止正在加载的时候退出时候存储的位置为上一章的页码
             mCurPage.position = 0;
         }
-
-        if (mPageChangeListener != null){
-            mPageChangeListener.onChapterChange(mCurChapterPos);
-        }
-
+        //绘制当前提示状态
         onDraw(mPageView.getNextPage(),false);
-
         //提示章节改变，需要下载
         loadCurrentChapter();
     }
