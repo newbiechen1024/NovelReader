@@ -309,7 +309,7 @@ public class LocalPageLoader extends PageLoader {
             }
 
             //当添加的block太多的时候，执行GC
-            if (blockPos % 10 == 0){
+            if (blockPos % 15 == 0){
                 System.gc();
                 System.runFinalization();
             }

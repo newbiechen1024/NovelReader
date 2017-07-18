@@ -594,9 +594,7 @@ public abstract class PageLoader{
                 canvas.drawText(tip,pivotX,pivotY, mTextPaint);
             }
             else {
-
                 float top = mMarginHeight - mTextPaint.getFontMetrics().top;
-
                 int interval = mIntervalSize + (int) mTextPaint.getTextSize();
 
                 for (int i=0; i<mCurPage.lines.size(); ++i){

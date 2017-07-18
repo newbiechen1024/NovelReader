@@ -233,7 +233,6 @@ public class PageView extends View {
             //初始化动画
             mAnimationProvider.setStartPoint(downX,downY);
             abortAnimation();
-            Log.e(TAG,"ACTION_DOWN");
         }else if (event.getAction() == MotionEvent.ACTION_MOVE){
 
             final int slop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
@@ -274,7 +273,6 @@ public class PageView extends View {
                             return true;
                         }
                     }
-                    Log.e(TAG,"isNext:" + isNext);
                 }else{
                     //判断是否取消翻页
                     if (isNext){
@@ -294,7 +292,6 @@ public class PageView extends View {
                             cancelPage = false;
                         }
                     }
-                    Log.e(TAG,"cancelPage:" + cancelPage);
                 }
 
                 moveX = x;
@@ -303,7 +300,6 @@ public class PageView extends View {
                 this.postInvalidate();
             }
         }else if (event.getAction() == MotionEvent.ACTION_UP){
-            Log.e(TAG,"ACTION_UP");
             if (!isMove){
                 cancelPage = false;
                 //是否点击了中间
@@ -340,7 +336,6 @@ public class PageView extends View {
                 mPageLoader.pageCancel();
             }
 
-            Log.e(TAG,"isNext:" + isNext);
             if (!noNext) {
                 isRunning = true;
                 mAnimationProvider.startAnimation(mScroller);
