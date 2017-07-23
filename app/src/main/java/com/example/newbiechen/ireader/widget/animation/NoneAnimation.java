@@ -9,8 +9,8 @@ import android.widget.Scroller;
  */
 public class NoneAnimation extends AnimationProvider {
 
-    public NoneAnimation(Bitmap mCurrentBitmap, Bitmap mNextBitmap, int width, int height) {
-        super(mCurrentBitmap, mNextBitmap, width, height);
+    public NoneAnimation(int width, int height) {
+        super(width, height);
     }
 
     @Override
@@ -35,5 +35,4 @@ public class NoneAnimation extends AnimationProvider {
     public void startAnimation(Scroller scroller) {
 
     }
-
 }

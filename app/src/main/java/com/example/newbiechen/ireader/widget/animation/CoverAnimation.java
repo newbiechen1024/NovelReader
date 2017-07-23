@@ -15,8 +15,8 @@ public class CoverAnimation extends AnimationProvider {
     private Rect mSrcRect, mDestRect;
     private GradientDrawable mBackShadowDrawableLR;
 
-    public CoverAnimation(Bitmap mCurrentBitmap, Bitmap mNextBitmap, int width, int height) {
-        super(mCurrentBitmap, mNextBitmap, width, height);
+    public CoverAnimation(int width, int height) {
+        super(width, height);
         mSrcRect = new Rect(0, 0, mScreenWidth, mScreenHeight);
         mDestRect = new Rect(0, 0, mScreenWidth, mScreenHeight);
         int[] mBackShadowColors = new int[] { 0x66000000,0x00000000};
@@ -53,6 +53,7 @@ public class CoverAnimation extends AnimationProvider {
     @Override
     public void drawStatic(Canvas canvas) {
         if (getCancel()){
+            mNextPageBitmap = mCurPageBitmap.copy(Bitmap.Config.RGB_565, true);
             canvas.drawBitmap(mCurPageBitmap, 0, 0, null);
         }else {
             canvas.drawBitmap(mNextPageBitmap, 0, 0, null);

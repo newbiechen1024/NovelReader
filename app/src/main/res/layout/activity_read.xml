@@ -49,7 +49,6 @@
 		    </android.support.v7.widget.Toolbar>
 	    </android.support.design.widget.AppBarLayout>
 	    
-	    
         <!--阅读页面-->
 		<com.example.newbiechen.ireader.widget.page.PageView
 			android:id="@+id/read_pv_page"

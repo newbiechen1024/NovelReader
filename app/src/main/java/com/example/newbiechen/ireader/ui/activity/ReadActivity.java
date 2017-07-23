@@ -39,7 +39,6 @@ import com.example.newbiechen.ireader.ui.dialog.ReadSettingDialog;
 import com.example.newbiechen.ireader.utils.BrightnessUtils;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.LogUtils;
-import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.ScreenUtils;
 import com.example.newbiechen.ireader.widget.page.NetPageLoader;
@@ -166,6 +165,8 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @Override
     protected void setUpToolbar(Toolbar toolbar) {
         super.setUpToolbar(toolbar);
+        //设置标题
+        toolbar.setTitle(mCollBook.getTitle());
         //半透明化StatusBar
         SystemBarUtils.transparentStatusBar(this);
     }
@@ -550,8 +551,10 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
     @Override
     public void finishChapter() {
-        if (mPageLoader.getPageStatus() == PageFactory.STATUS_LOADING){
-            mPageLoader.openChapter();
+        if (mPageLoader.getPageStatus() == PageLoader.STATUS_LOADING){
+            mPvPage.post(
+                    () -> mPageLoader.openChapter()
+            );
         }
         //当完成章节的时候，刷新列表
         mCategoryAdapter.notifyDataSetChanged();
@@ -559,7 +562,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
     @Override
     public void errorChapter() {
-        if (mPageLoader.getPageStatus() == PageFactory.STATUS_LOADING){
+        if (mPageLoader.getPageStatus() == PageLoader.STATUS_LOADING){
             mPageLoader.chapterError();
         }
     }

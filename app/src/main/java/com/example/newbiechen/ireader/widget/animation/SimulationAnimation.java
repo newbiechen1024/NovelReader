@@ -55,8 +55,8 @@ public class SimulationAnimation extends AnimationProvider {
 
     Paint mPaint;
 
-    public SimulationAnimation(Bitmap mCurrentBitmap, Bitmap mNextBitmap, int width, int height) {
-        super(mCurrentBitmap, mNextBitmap, width, height);
+    public SimulationAnimation( int width, int height) {
+        super(width, height);
 
         mPath0 = new Path();
         mPath1 = new Path();
@@ -99,6 +99,7 @@ public class SimulationAnimation extends AnimationProvider {
     @Override
     public void drawStatic(Canvas canvas) {
         if (getCancel()){
+            mNextPageBitmap = mCurPageBitmap.copy(Bitmap.Config.RGB_565, true);
             canvas.drawBitmap(mCurPageBitmap, 0, 0, null);
         }else {
             canvas.drawBitmap(mNextPageBitmap, 0, 0, null);

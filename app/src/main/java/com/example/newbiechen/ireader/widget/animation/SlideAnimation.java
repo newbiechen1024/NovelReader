@@ -12,8 +12,8 @@ import android.widget.Scroller;
 public class SlideAnimation extends AnimationProvider {
     private Rect mSrcRect, mDestRect,mNextSrcRect,mNextDestRect;
 
-    public SlideAnimation(Bitmap mCurrentBitmap, Bitmap mNextBitmap, int width, int height) {
-        super(mCurrentBitmap, mNextBitmap, width, height);
+    public SlideAnimation(int width, int height) {
+        super(width, height);
         mSrcRect = new Rect(0, 0, mScreenWidth, mScreenHeight);
         mDestRect = new Rect(0, 0, mScreenWidth, mScreenHeight);
         mNextSrcRect = new Rect(0, 0, mScreenWidth, mScreenHeight);
@@ -23,8 +23,7 @@ public class SlideAnimation extends AnimationProvider {
     @Override
     public void drawMove(Canvas canvas) {
         if (getDirection().equals(AnimationProvider.Direction.next)){
-//            mSrcRect.left = (int) ( - (mScreenWidth - mTouch.x));
-//            mSrcRect.right =  mSrcRect.left + mScreenWidth;
+            //左半边的剩余区域
             int dis = (int) (mScreenWidth - myStartX + mTouch.x);
             if (dis > mScreenWidth){
                 dis = mScreenWidth;
@@ -33,7 +32,6 @@ public class SlideAnimation extends AnimationProvider {
             mSrcRect.left = mScreenWidth - dis;
             //计算bitmap在canvas显示的区域
             mDestRect.right = dis;
-
             //计算下一页截取的区域
             mNextSrcRect.right = mScreenWidth - dis;
             //计算下一页在canvas显示的区域
@@ -63,6 +61,7 @@ public class SlideAnimation extends AnimationProvider {
     @Override
     public void drawStatic(Canvas canvas) {
         if (getCancel()){
+            mNextPageBitmap = mCurPageBitmap.copy(Bitmap.Config.RGB_565, true);
             canvas.drawBitmap(mCurPageBitmap, 0, 0, null);
         }else {
             canvas.drawBitmap(mNextPageBitmap, 0, 0, null);
@@ -93,8 +92,6 @@ public class SlideAnimation extends AnimationProvider {
         }
         //滑动速度保持一致
          int duration =  (400 * Math.abs(dx)) / mScreenWidth;
-        Log.e("duration",duration + "");
         scroller.startScroll((int) mTouch.x, 0, dx, 0, duration);
     }
-
 }

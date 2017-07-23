@@ -119,12 +119,6 @@ public class NetPageLoader extends PageLoader{
     public void skipToChapter(int pos){
         super.skipToChapter(pos);
 
-        if (mCurPage != null){
-            //重置position的位置，防止正在加载的时候退出时候存储的位置为上一章的页码
-            mCurPage.position = 0;
-        }
-        //绘制当前提示状态
-        onDraw(mPageView.getNextPage(),false);
         //提示章节改变，需要下载
         loadCurrentChapter();
     }
@@ -182,11 +176,6 @@ public class NetPageLoader extends PageLoader{
             }
             mPageChangeListener.onLoadChapter(mChapterList.subList(current,next),mCurChapterPos);
         }
-    }
-
-    public void skipToPage(int pos){
-        mCurPage = getCurPage(pos);
-        onDraw(mPageView.getNextPage(),false);
     }
 
     @Override
