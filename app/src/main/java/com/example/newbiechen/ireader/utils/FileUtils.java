@@ -162,7 +162,7 @@ public class FileUtils {
         //获取文件夹
         File[] dirs = file.listFiles(
                 pathname -> {
-                    if (pathname.isDirectory()) {
+                    if (pathname.isDirectory() && !pathname.getName().startsWith(".")) {
                         return true;
                     }
                     //获取txt文件

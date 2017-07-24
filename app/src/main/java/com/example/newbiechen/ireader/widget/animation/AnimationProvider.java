@@ -11,7 +11,7 @@ import android.widget.Scroller;
 public abstract class AnimationProvider {
 
     public enum Direction {
-        none(true),next(true), pre(true), up(false), down(false);
+        NONE(true),NEXT(true), PRE(true), UP(false), DOWN(false);
 
         public final boolean isHorizontal;
 
@@ -31,7 +31,7 @@ public abstract class AnimationProvider {
     protected int mScreenHeight;
 
     protected PointF mTouch = new PointF(); // 拖拽点
-    private Direction direction = Direction.none;
+    private Direction direction = Direction.NONE;
     private boolean isCancel = false;
 
     public AnimationProvider(int width,int height) {

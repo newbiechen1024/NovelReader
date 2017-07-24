@@ -261,15 +261,14 @@ public abstract class PageLoader{
     }
 
     //自动翻到上一章
-    public void autoPrevPage(){
-        if (!isBookOpen) return;
-
-        mPageView.autoPrevPage();
+    public boolean autoPrevPage(){
+        if (!isBookOpen) return false;
+        return mPageView.autoPrevPage();
     }
     //自动翻到下一章
-    public void autoNextPage(){
-        if (!isBookOpen) return;
-        mPageView.autoNextPage();
+    public boolean autoNextPage(){
+        if (!isBookOpen) return false;
+        return mPageView.autoNextPage();
     }
     //更新时间
     public void updateTime(){
@@ -812,7 +811,6 @@ public abstract class PageLoader{
 
     //翻阅下一页
     boolean next(){
-
         if (!checkStatus()) return false;
         //判断是否到最后一页了
         TxtPage nextPage = getNextPage();

@@ -341,13 +341,18 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             }
 
             @Override
-            public boolean prePage(){
+            public boolean onTouch() {
                 return !hideReadMenu();
             }
 
             @Override
+            public boolean prePage(){
+                return true;
+            }
+
+            @Override
             public boolean nextPage() {
-                return !hideReadMenu();
+                return true;
             }
 
             @Override
@@ -652,14 +657,12 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (isVolumeTurnPage){
-                    mPageLoader.autoPrevPage();
-                    return true;
+                    return mPageLoader.autoPrevPage();
                 }
                 break;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (isVolumeTurnPage){
-                    mPageLoader.autoNextPage();
-                    return true;
+                    return mPageLoader.autoNextPage();
                 }
                 break;
         }
