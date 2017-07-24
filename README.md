@@ -28,11 +28,11 @@
 * [AndroidTagGroup](https://github.com/2dxgujun/AndroidTagGroup)    ==>    标签效果
 # 应用展示
 
-![](https://github.com/newbiechen1024/NovelReader/blob/master/screenshot/download.gif)
-
 ![](https://github.com/newbiechen1024/NovelReader/blob/master/screenshot/reader.gif)
 
 ![](https://github.com/newbiechen1024/NovelReader/blob/master/screenshot/load_local_file.gif)
+
+![](https://github.com/newbiechen1024/NovelReader/blob/master/screenshot/download.gif)
 
 # 更新记录
 
