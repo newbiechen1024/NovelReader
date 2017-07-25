@@ -80,12 +80,6 @@ public class PageView extends View {
 
     public PageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        DisplayMetrics metric = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(metric);
-        int screenWidth = metric.widthPixels;
-        int screenHeight = metric.heightPixels;
-        mPageAnim = new SimulationPageAnim(screenWidth, screenHeight, this, mPageAnimListener);
     }
 
     @Override
@@ -129,10 +123,12 @@ public class PageView extends View {
     }
 
     public Bitmap getNextPage(){
+        if (mPageAnim == null) return null;
         return mPageAnim.getNextBitmap();
     }
 
     public Bitmap getBgBitmap(){
+        if (mPageAnim == null) return null;
         return mPageAnim.getBgBitmap();
     }
 
