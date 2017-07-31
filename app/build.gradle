@@ -54,7 +54,7 @@ dependencies {
     compile "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofitVersion"
     //ImageLoader
     compile "com.github.bumptech.glide:glide:$rootProject.glideVersion"
-    //ORM Databae
+    //ORM Database
     compile "org.greenrobot:greendao:$rootProject.greendaoVersion"
     testCompile "junit:junit:$rootProject.junitVersion"
 

@@ -167,6 +167,20 @@
             android:layout_marginRight="18dp"
             android:button="@null"
             android:background="@drawable/selector_btn_read_setting"
+            android:visibility="gone"
+            style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
+    
+        <RadioButton
+            android:id="@+id/read_setting_rb_scroll"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/nb.read_setting.btn_height"
+            android:layout_weight="1"
+            android:text="滚动"
+            android:textSize="14dp"
+            android:gravity="center"
+            android:layout_marginRight="18dp"
+            android:button="@null"
+            android:background="@drawable/selector_btn_read_setting"
             style="@style/NB.Theme.TextAppearance.Read.BottomMenu"/>
     
         <RadioButton

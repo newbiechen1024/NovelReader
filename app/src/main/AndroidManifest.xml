@@ -40,9 +40,6 @@
         <activity android:name=".ui.activity.FileSystemActivity"/>
         <activity android:name=".ui.activity.CommunityActivity" />
         <activity android:name=".ui.activity.MoreSettingActivity" />
-        <!--调试用的-->
-        <activity android:name=".ui.test.TestActivity">
-        </activity>
     
         <service android:name=".service.DownloadService" />
     </application>

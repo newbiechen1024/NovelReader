@@ -10,12 +10,14 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
+import android.view.View;
 import android.widget.Scroller;
 
 /**
- * Created by Administrator on 2016/8/26 0026.
+ * Created by newbiechen on 17-7-24.
  */
-public class SimulationAnimation extends AnimationProvider {
+
+public class SimulationPageAnim extends HorizonPageAnim{
     private int mCornerX = 1; // 拖拽点对应的页脚
     private int mCornerY = 1;
     private Path mPath0;
@@ -55,9 +57,8 @@ public class SimulationAnimation extends AnimationProvider {
 
     Paint mPaint;
 
-    public SimulationAnimation(Bitmap mCurrentBitmap, Bitmap mNextBitmap, int width, int height) {
-        super(mCurrentBitmap, mNextBitmap, width, height);
-
+    public SimulationPageAnim(int w, int h, View view, OnPageChangeListener listener) {
+        super(w, h, view, listener);
         mPath0 = new Path();
         mPath1 = new Path();
         mMaxLength = (float) Math.hypot(mScreenWidth, mScreenHeight);
@@ -75,93 +76,93 @@ public class SimulationAnimation extends AnimationProvider {
         mColorMatrixFilter = new ColorMatrixColorFilter(cm);
         mMatrix = new Matrix();
 
-        mTouch.x = 0.01f; // 不让x,y为0,否则在点计算时会有问题
-        mTouch.y = 0.01f;
+        mTouchX = 0.01f; // 不让x,y为0,否则在点计算时会有问题
+        mTouchY = 0.01f;
     }
 
     @Override
     public void drawMove(Canvas canvas) {
-        if (getDirection().equals(Direction.next)) {
-            calcPoints();
-            drawCurrentPageArea(canvas, mCurPageBitmap, mPath0);
-            drawNextPageAreaAndShadow(canvas, mNextPageBitmap);
-            drawCurrentPageShadow(canvas);
-            drawCurrentBackArea(canvas, mCurPageBitmap);
-        }else{
-            calcPoints();
-            drawCurrentPageArea(canvas, mNextPageBitmap, mPath0);
-            drawNextPageAreaAndShadow(canvas, mCurPageBitmap);
-            drawCurrentPageShadow(canvas);
-            drawCurrentBackArea(canvas, mNextPageBitmap);
+        switch (mDirection){
+            case NEXT:
+                calcPoints();
+                drawCurrentPageArea(canvas, mCurBitmap, mPath0);
+                drawNextPageAreaAndShadow(canvas, mNextBitmap);
+                drawCurrentPageShadow(canvas);
+                drawCurrentBackArea(canvas, mCurBitmap);
+                break;
+            default:
+                calcPoints();
+                drawCurrentPageArea(canvas, mNextBitmap, mPath0);
+                drawNextPageAreaAndShadow(canvas, mCurBitmap);
+                drawCurrentPageShadow(canvas);
+                drawCurrentBackArea(canvas, mNextBitmap);
+                break;
         }
     }
 
     @Override
     public void drawStatic(Canvas canvas) {
-        if (getCancel()){
-            canvas.drawBitmap(mCurPageBitmap, 0, 0, null);
+        if (isCancel){
+            mNextBitmap = mCurBitmap.copy(Bitmap.Config.RGB_565, true);
+            canvas.drawBitmap(mCurBitmap, 0, 0, null);
         }else {
-            canvas.drawBitmap(mNextPageBitmap, 0, 0, null);
+            canvas.drawBitmap(mNextBitmap, 0, 0, null);
         }
     }
 
     @Override
-    public void setCancel(boolean isCancel) {
-        super.setCancel(isCancel);
-    }
-
-    @Override
-    public void startAnimation(Scroller scroller) {
+    public void startAnim() {
         int dx, dy;
         // dx 水平方向滑动的距离，负值会使滚动向左滚动
         // dy 垂直方向滑动的距离，负值会使滚动向上滚动
-        if (getCancel()){
-            if (mCornerX > 0 && getDirection().equals(Direction.next)) {
-                dx = (int) (mScreenWidth - mTouch.x);
+        if (isCancel){
+
+            if (mCornerX > 0 && mDirection.equals(Direction.NEXT)) {
+                dx = (int) (mScreenWidth - mTouchX);
             } else {
-                dx = -(int) mTouch.x;
+                dx = -(int) mTouchX;
             }
 
-            if (!getDirection().equals(Direction.next)){
-                dx = (int) - (mScreenWidth + mTouch.x);
+            if (!mDirection.equals(Direction.NEXT)){
+                dx = (int) - (mScreenWidth + mTouchX);
             }
 
             if (mCornerY > 0) {
-                dy = (int) (mScreenHeight - mTouch.y);
+                dy = (int) (mScreenHeight - mTouchY);
             } else {
-                dy = - (int) mTouch.y; // 防止mTouch.y最终变为0
+                dy = - (int) mTouchY; // 防止mTouchY最终变为0
             }
         }else {
-            if (mCornerX > 0 && getDirection().equals(Direction.next)) {
-                dx = -(int) (mScreenWidth + mTouch.x);
+            if (mCornerX > 0 && mDirection.equals(Direction.NEXT)) {
+                dx = -(int) (mScreenWidth + mTouchX);
             } else {
-                dx = (int) (mScreenWidth - mTouch.x + mScreenWidth);
+                dx = (int) (mScreenWidth - mTouchX + mScreenWidth);
             }
             if (mCornerY > 0) {
-                dy = (int) (mScreenHeight - mTouch.y);
+                dy = (int) (mScreenHeight - mTouchY);
             } else {
-                dy = (int) (1 - mTouch.y); // 防止mTouch.y最终变为0
+                dy = (int) (1 - mTouchY); // 防止mTouchY最终变为0
             }
         }
-        scroller.startScroll((int) mTouch.x, (int) mTouch.y, dx, dy, 400);
+        mScroller.startScroll((int) mTouchX, (int) mTouchY, dx, dy, 400);
     }
-
 
     @Override
     public void setDirection(Direction direction) {
         super.setDirection(direction);
+
         switch (direction){
-            case pre:
+            case PRE:
                 //上一页滑动不出现对角
-                if (myStartX > mScreenWidth / 2){
-                    calcCornerXY(myStartX,mScreenHeight);
+                if (mStartX > mScreenWidth / 2){
+                    calcCornerXY(mStartX,mScreenHeight);
                 }else{
-                    calcCornerXY(mScreenWidth - myStartX,mScreenHeight);
+                    calcCornerXY(mScreenWidth - mStartX,mScreenHeight);
                 }
                 break;
-            case next:
-                if (mScreenWidth / 2 > myStartX){
-                    calcCornerXY(mScreenWidth - myStartX,myStartY);
+            case NEXT:
+                if (mScreenWidth / 2 > mStartX){
+                    calcCornerXY(mScreenWidth - mStartX,mStartY);
                 }
                 break;
         }
@@ -177,12 +178,12 @@ public class SimulationAnimation extends AnimationProvider {
     public void setTouchPoint(float x, float y) {
         super.setTouchPoint(x, y);
         //触摸y中间位置吧y变成屏幕高度
-        if ((myStartY > mScreenHeight / 3 && myStartY < mScreenHeight * 2 / 3) ||  getDirection().equals(Direction.pre)){
-            mTouch.y = mScreenHeight;
+        if ((mStartY > mScreenHeight / 3 && mStartY < mScreenHeight * 2 / 3) ||  mDirection.equals(Direction.PRE)){
+            mTouchY = mScreenHeight;
         }
 
-        if (myStartY > mScreenHeight / 3 && myStartY < mScreenHeight / 2 && getDirection().equals(Direction.next)){
-            mTouch.y = 1;
+        if (mStartY > mScreenHeight / 3 && mStartY < mScreenHeight / 2 && mDirection.equals(Direction.NEXT)){
+            mTouchY = 1;
         }
     }
 
@@ -264,7 +265,7 @@ public class SimulationAnimation extends AnimationProvider {
         mPath1.moveTo(mBeziervertex2.x, mBeziervertex2.y);
         mPath1.lineTo(mBeziervertex1.x, mBeziervertex1.y);
         mPath1.lineTo(mBezierEnd1.x, mBezierEnd1.y);
-        mPath1.lineTo(mTouch.x, mTouch.y);
+        mPath1.lineTo(mTouchX, mTouchY);
         mPath1.lineTo(mBezierEnd2.x, mBezierEnd2.y);
         mPath1.close();
         GradientDrawable mFolderShadowDrawable;
@@ -322,27 +323,27 @@ public class SimulationAnimation extends AnimationProvider {
         if (mIsRTandLB) {
             degree = Math.PI
                     / 4
-                    - Math.atan2(mBezierControl1.y - mTouch.y, mTouch.x
+                    - Math.atan2(mBezierControl1.y - mTouchY, mTouchX
                     - mBezierControl1.x);
         } else {
             degree = Math.PI
                     / 4
-                    - Math.atan2(mTouch.y - mBezierControl1.y, mTouch.x
+                    - Math.atan2(mTouchY - mBezierControl1.y, mTouchX
                     - mBezierControl1.x);
         }
         // 翻起页阴影顶点与touch点的距离
         double d1 = (float) 25 * 1.414 * Math.cos(degree);
         double d2 = (float) 25 * 1.414 * Math.sin(degree);
-        float x = (float) (mTouch.x + d1);
+        float x = (float) (mTouchX + d1);
         float y;
         if (mIsRTandLB) {
-            y = (float) (mTouch.y + d2);
+            y = (float) (mTouchY + d2);
         } else {
-            y = (float) (mTouch.y - d2);
+            y = (float) (mTouchY - d2);
         }
         mPath1.reset();
         mPath1.moveTo(x, y);
-        mPath1.lineTo(mTouch.x, mTouch.y);
+        mPath1.lineTo(mTouchX, mTouchY);
         mPath1.lineTo(mBezierControl1.x, mBezierControl1.y);
         mPath1.lineTo(mBezierStart1.x, mBezierStart1.y);
         mPath1.close();
@@ -368,8 +369,8 @@ public class SimulationAnimation extends AnimationProvider {
             mCurrentPageShadow = mFrontShadowDrawableVRL;
         }
 
-        rotateDegrees = (float) Math.toDegrees(Math.atan2(mTouch.x
-                - mBezierControl1.x, mBezierControl1.y - mTouch.y));
+        rotateDegrees = (float) Math.toDegrees(Math.atan2(mTouchX
+                - mBezierControl1.x, mBezierControl1.y - mTouchY));
         canvas.rotate(rotateDegrees, mBezierControl1.x, mBezierControl1.y);
         mCurrentPageShadow.setBounds(leftx,
                 (int) (mBezierControl1.y - mMaxLength), rightx,
@@ -379,7 +380,7 @@ public class SimulationAnimation extends AnimationProvider {
 
         mPath1.reset();
         mPath1.moveTo(x, y);
-        mPath1.lineTo(mTouch.x, mTouch.y);
+        mPath1.lineTo(mTouchX, mTouchY);
         mPath1.lineTo(mBezierControl2.x, mBezierControl2.y);
         mPath1.lineTo(mBezierStart2.x, mBezierStart2.y);
         mPath1.close();
@@ -400,7 +401,7 @@ public class SimulationAnimation extends AnimationProvider {
             mCurrentPageShadow = mFrontShadowDrawableHBT;
         }
         rotateDegrees = (float) Math.toDegrees(Math.atan2(mBezierControl2.y
-                - mTouch.y, mBezierControl2.x - mTouch.x));
+                - mTouchY, mBezierControl2.x - mTouchX));
         canvas.rotate(rotateDegrees, mBezierControl2.x, mBezierControl2.y);
         float temp;
         if (mBezierControl2.y < 0)
@@ -467,7 +468,7 @@ public class SimulationAnimation extends AnimationProvider {
         mPath0.moveTo(mBezierStart1.x, mBezierStart1.y);
         mPath0.quadTo(mBezierControl1.x, mBezierControl1.y, mBezierEnd1.x,
                 mBezierEnd1.y);
-        mPath0.lineTo(mTouch.x, mTouch.y);
+        mPath0.lineTo(mTouchX, mTouchY);
         mPath0.lineTo(mBezierEnd2.x, mBezierEnd2.y);
         mPath0.quadTo(mBezierControl2.x, mBezierControl2.y, mBezierStart2.x,
                 mBezierStart2.y);
@@ -513,8 +514,8 @@ public class SimulationAnimation extends AnimationProvider {
     }
 
     private void calcPoints() {
-        mMiddleX = (mTouch.x + mCornerX) / 2;
-        mMiddleY = (mTouch.y + mCornerY) / 2;
+        mMiddleX = (mTouchX + mCornerX) / 2;
+        mMiddleY = (mTouchY + mCornerY) / 2;
         mBezierControl1.x = mMiddleX - (mCornerY - mMiddleY)
                 * (mCornerY - mMiddleY) / (mCornerX - mMiddleX);
         mBezierControl1.y = mCornerY;
@@ -535,21 +536,21 @@ public class SimulationAnimation extends AnimationProvider {
 
         // 当mBezierStart1.x < 0或者mBezierStart1.x > 480时
         // 如果继续翻页，会出现BUG故在此限制
-        if (mTouch.x > 0 && mTouch.x < mScreenWidth) {
+        if (mTouchX > 0 && mTouchX < mScreenWidth) {
             if (mBezierStart1.x < 0 || mBezierStart1.x > mScreenWidth) {
                 if (mBezierStart1.x < 0)
                     mBezierStart1.x = mScreenWidth - mBezierStart1.x;
 
-                float f1 = Math.abs(mCornerX - mTouch.x);
+                float f1 = Math.abs(mCornerX - mTouchX);
                 float f2 = mScreenWidth * f1 / mBezierStart1.x;
-                mTouch.x = Math.abs(mCornerX - f2);
+                mTouchX = Math.abs(mCornerX - f2);
 
-                float f3 = Math.abs(mCornerX - mTouch.x)
-                        * Math.abs(mCornerY - mTouch.y) / f1;
-                mTouch.y = Math.abs(mCornerY - f3);
+                float f3 = Math.abs(mCornerX - mTouchX)
+                        * Math.abs(mCornerY - mTouchY) / f1;
+                mTouchY = Math.abs(mCornerY - f3);
 
-                mMiddleX = (mTouch.x + mCornerX) / 2;
-                mMiddleY = (mTouch.y + mCornerY) / 2;
+                mMiddleX = (mTouchX + mCornerX) / 2;
+                mMiddleY = (mTouchY + mCornerY) / 2;
 
                 mBezierControl1.x = mMiddleX - (mCornerY - mMiddleY)
                         * (mCornerY - mMiddleY) / (mCornerX - mMiddleX);
@@ -574,12 +575,12 @@ public class SimulationAnimation extends AnimationProvider {
         mBezierStart2.y = mBezierControl2.y - (mCornerY - mBezierControl2.y)
                 / 2;
 
-        mTouchToCornerDis = (float) Math.hypot((mTouch.x - mCornerX),
-                (mTouch.y - mCornerY));
+        mTouchToCornerDis = (float) Math.hypot((mTouchX - mCornerX),
+                (mTouchY - mCornerY));
 
-        mBezierEnd1 = getCross(mTouch, mBezierControl1, mBezierStart1,
+        mBezierEnd1 = getCross(new PointF(mTouchX,mTouchY), mBezierControl1, mBezierStart1,
                 mBezierStart2);
-        mBezierEnd2 = getCross(mTouch, mBezierControl2, mBezierStart1,
+        mBezierEnd2 = getCross(new PointF(mTouchX,mTouchY), mBezierControl2, mBezierStart1,
                 mBezierStart2);
 
         mBeziervertex1.x = (mBezierStart1.x + 2 * mBezierControl1.x + mBezierEnd1.x) / 4;
@@ -609,5 +610,4 @@ public class SimulationAnimation extends AnimationProvider {
         CrossP.y = a1 * CrossP.x + b1;
         return CrossP;
     }
-
 }

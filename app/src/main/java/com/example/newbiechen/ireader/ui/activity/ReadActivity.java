@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -38,7 +39,6 @@ import com.example.newbiechen.ireader.ui.dialog.ReadSettingDialog;
 import com.example.newbiechen.ireader.utils.BrightnessUtils;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.LogUtils;
-import com.example.newbiechen.ireader.utils.PageFactory;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.ScreenUtils;
 import com.example.newbiechen.ireader.widget.page.NetPageLoader;
@@ -130,7 +130,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         }
     };
     /***************params*****************/
-    private boolean isCollected = false; //isFromSd
+    private boolean isCollected = false; //isFromSDCard
     private boolean isNightMode = false;
     private boolean isFullScreen = false;
     private String mBookId;
@@ -154,7 +154,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @Override
     protected void initData(Bundle savedInstanceState) {
         super.initData(savedInstanceState);
-        mCollBook = (CollBookBean) getIntent().getSerializableExtra(EXTRA_COLL_BOOK);
+        mCollBook = getIntent().getParcelableExtra(EXTRA_COLL_BOOK);
         isCollected = getIntent().getBooleanExtra(EXTRA_IS_COLLECTED,false);
         isNightMode = ReadSettingManager.getInstance().isNightMode();
         isFullScreen = ReadSettingManager.getInstance().isFullScreen();
@@ -165,28 +165,33 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     @Override
     protected void setUpToolbar(Toolbar toolbar) {
         super.setUpToolbar(toolbar);
+        //设置标题
+        toolbar.setTitle(mCollBook.getTitle());
         //半透明化StatusBar
         SystemBarUtils.transparentStatusBar(this);
-        getSupportActionBar().setTitle("");
     }
 
     @Override
     protected void initWidget() {
         super.initWidget();
+
         //获取页面加载器
         mPageLoader = mPvPage.getPageLoader(mCollBook.isLocal());
         //禁止滑动展示DrawerLayout
         mDlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         mSettingDialog = new ReadSettingDialog(this, mPageLoader);
+
         setUpAdapter();
+
         //夜间模式按钮的状态
         toggleNightMode();
 
+        //注册广播
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
         intentFilter.addAction(Intent.ACTION_TIME_TICK);
-        //注册广播
         registerReceiver(mReceiver, intentFilter);
+
         //设置当前Activity的Bright
         if (ReadSettingManager.getInstance().isBrightnessAuto()){
             BrightnessUtils.setBrightness(this,BrightnessUtils.getScreenBrightness(this));
@@ -194,15 +199,19 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         else {
             BrightnessUtils.setBrightness(this,ReadSettingManager.getInstance().getBrightness());
         }
+
         //初始化屏幕常亮类
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "keep bright");
+
         //隐藏StatusBar
         mPvPage.post(
                 () -> hideSystemBar()
         );
+
         //初始化TopMenu
         initTopMenu();
+
         //初始化BottomMenu
         initBottomMenu();
     }
@@ -332,13 +341,18 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             }
 
             @Override
-            public boolean prePage(){
+            public boolean onTouch() {
                 return !hideReadMenu();
             }
 
             @Override
+            public boolean prePage(){
+                return true;
+            }
+
+            @Override
             public boolean nextPage() {
-                return !hideReadMenu();
+                return true;
             }
 
             @Override
@@ -348,8 +362,8 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
         mLvCategory.setOnItemClickListener(
                 (parent, view, position, id) -> {
-                    mPageLoader.skipToChapter(position);
                     mDlSlide.closeDrawer(Gravity.START);
+                    mPageLoader.skipToChapter(position);
                 }
         );
 
@@ -542,8 +556,10 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
     @Override
     public void finishChapter() {
-        if (mPageLoader.getPageStatus() == PageFactory.STATUS_LOADING){
-            mPageLoader.openChapter();
+        if (mPageLoader.getPageStatus() == PageLoader.STATUS_LOADING){
+            mPvPage.post(
+                    () -> mPageLoader.openChapter()
+            );
         }
         //当完成章节的时候，刷新列表
         mCategoryAdapter.notifyDataSetChanged();
@@ -551,7 +567,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
 
     @Override
     public void errorChapter() {
-        if (mPageLoader.getPageStatus() == PageFactory.STATUS_LOADING){
+        if (mPageLoader.getPageStatus() == PageLoader.STATUS_LOADING){
             mPageLoader.chapterError();
         }
     }
@@ -641,14 +657,12 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (isVolumeTurnPage){
-                    mPageLoader.autoPrevPage();
-                    return true;
+                    return mPageLoader.autoPrevPage();
                 }
                 break;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (isVolumeTurnPage){
-                    mPageLoader.autoNextPage();
-                    return true;
+                    return mPageLoader.autoNextPage();
                 }
                 break;
         }

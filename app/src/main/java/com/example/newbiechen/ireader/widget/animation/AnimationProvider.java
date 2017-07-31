@@ -10,15 +10,15 @@ import android.widget.Scroller;
  */
 public abstract class AnimationProvider {
 
-    public static enum Direction {
-        none(true),next(true), pre(true), up(false), down(false);
+    public enum Direction {
+        NONE(true),NEXT(true), PRE(true), UP(false), DOWN(false);
 
-        public final boolean IsHorizontal;
+        public final boolean isHorizontal;
 
         Direction(boolean isHorizontal) {
-            IsHorizontal = isHorizontal;
+            this.isHorizontal = isHorizontal;
         }
-    };
+    }
 
     protected Bitmap mCurPageBitmap,mNextPageBitmap;
     protected float myStartX;
@@ -26,18 +26,18 @@ public abstract class AnimationProvider {
     protected int myEndX;
     protected int myEndY;
     protected Direction myDirection;
-    protected float mySpeed;
 
     protected int mScreenWidth;
     protected int mScreenHeight;
 
     protected PointF mTouch = new PointF(); // 拖拽点
-    private Direction direction = Direction.none;
+    private Direction direction = Direction.NONE;
     private boolean isCancel = false;
 
-    public AnimationProvider(Bitmap mCurrentBitmap,Bitmap mNextBitmap,int width,int height) {
-        this.mCurPageBitmap = mCurrentBitmap;
-        this.mNextPageBitmap = mNextBitmap;
+    public AnimationProvider(int width,int height) {
+        mCurPageBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        mNextPageBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+
         this.mScreenWidth = width;
         this.mScreenHeight = height;
     }
@@ -75,15 +75,24 @@ public abstract class AnimationProvider {
 
     public abstract void startAnimation(Scroller scroller);
 
+    /**
+     * 转换页面，在显示下一章的时候，必须首先调用此方法
+     */
+    public void changePage(){
+        Bitmap bitmap = mCurPageBitmap;
+        mCurPageBitmap = mNextPageBitmap;
+        mNextPageBitmap = bitmap;
+    }
+
+    public Bitmap getNextBitmap(){
+        return mNextPageBitmap;
+    }
+
+    public Bitmap getBgBitmap(){
+        return mNextPageBitmap;
+    }
+
     public boolean getCancel(){
         return isCancel;
     }
-
-    public void setParams(Bitmap mCurrentBitmap,Bitmap mNextBitmap,int width,int height){
-        this.mCurPageBitmap = mCurrentBitmap;
-        this.mNextPageBitmap = mNextBitmap;
-        this.mScreenWidth = width;
-        this.mScreenHeight = height;
-    }
-
 }

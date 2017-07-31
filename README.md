@@ -28,13 +28,33 @@
 * [AndroidTagGroup](https://github.com/2dxgujun/AndroidTagGroup)    ==>    标签效果
 # 应用展示
 
-![](https://github.com/newbiechen1024/NovelReader/blob/master/screenshot/download.gif)
-
 ![](https://github.com/newbiechen1024/NovelReader/blob/master/screenshot/reader.gif)
 
 ![](https://github.com/newbiechen1024/NovelReader/blob/master/screenshot/load_local_file.gif)
 
+![](https://github.com/newbiechen1024/NovelReader/blob/master/screenshot/download.gif)
+
 # 更新记录
+
+**update 2017-07-24**
+
+实现上下滚动翻页效果，但是问题还是比较多，主要如下:
+1. 上下滚动不支持音量键翻页
+2. 未修复，当上下滚动的时候，发生正在加载的情况的问题。
+3. 未修复当发生加载情况，又进行效果切换的问题。
+4. 文字的显示没有做好，当下滑的时候，会丢失MarginHeight高度的文字
+5. 类封装的比较乱，逻辑不够清晰。
+
+**注:**更新移除了左右滑动翻页效果，但保留了代码，如果有需要的话，可以删除注释使用。
+
+上面的问题之后会慢慢修复。还有本人只实现了功能，没有进行仔细的测试，可能BUG比较多，如果各位发现BUG希望能够及时提交issue，谢谢。
+
+**update 2017-07-14**
+* 提供阅读器预加载功能(防止阅读下一章卡顿)
+* 优化阅读器文字显示，提供段落间隔。
+* 重新设计了加载本地章节的算法(之前的本地加载算法太慢了)
+* 优化了PageLoader类的设计
+* 修复一些BUG
 
 **update 2017-07-06**
 

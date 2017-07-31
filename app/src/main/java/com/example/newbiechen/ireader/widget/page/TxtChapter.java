@@ -61,4 +61,13 @@ public class TxtChapter{
     public void setEnd(long end) {
         this.end = end;
     }
+
+    @Override
+    public String toString() {
+        return "TxtChapter{" +
+                "title='" + title + '\'' +
+                ", start=" + start +
+                ", end=" + end +
+                '}';
+    }
 }

@@ -67,6 +67,8 @@ public class ReadSettingDialog extends Dialog{
     RadioButton mRbCover;
     @BindView(R.id.read_setting_rb_slide)
     RadioButton mRbSlide;
+    @BindView(R.id.read_setting_rb_scroll)
+    RadioButton mRbScroll;
     @BindView(R.id.read_setting_rb_none)
     RadioButton mRbNone;
     @BindView(R.id.read_setting_rv_bg)
@@ -166,6 +168,9 @@ public class ReadSettingDialog extends Dialog{
                 break;
             case PageView.PAGE_MODE_NONE:
                 mRbNone.setChecked(true);
+                break;
+            case PageView.PAGE_MODE_SCROLL:
+                mRbScroll.setChecked(true);
                 break;
         }
     }
@@ -284,6 +289,9 @@ public class ReadSettingDialog extends Dialog{
                             break;
                         case R.id.read_setting_rb_slide:
                             pageMode = PageView.PAGE_MODE_SLIDE;
+                            break;
+                        case R.id.read_setting_rb_scroll:
+                            pageMode = PageView.PAGE_MODE_SCROLL;
                             break;
                         case R.id.read_setting_rb_none:
                             pageMode = PageView.PAGE_MODE_NONE;
