@@ -25,7 +25,7 @@ public abstract class HorizonPageAnim extends PageAnimation{
     private int mMoveY = 0;
     //是否移动了
     private boolean isMove = false;
-    //是否翻到下一页
+    //是否翻阅下一页。true表示翻到下一页，false表示上一页。
     private boolean isNext = false;
 
     //是否没下一页或者上一页
@@ -97,21 +97,23 @@ public abstract class HorizonPageAnim extends PageAnimation{
                     if (mMoveX == 0 && mMoveY ==0) {
                         //判断翻得是上一页还是下一页
                         if (x - mStartX > 0){
+                            //上一页的参数配置
                             isNext = false;
-                            boolean hasPrev = mListener.hasNext();
+                            boolean hasPrev = mListener.hasPrev();
                             setDirection(Direction.PRE);
-
+                            //如果上一页不存在
                             if (!hasPrev) {
                                 noNext = true;
                                 return true;
                             }
                         }else{
+                            //进行下一页的配置
                             isNext = true;
-
                             //判断是否下一页存在
                             boolean hasNext = mListener.hasNext();
                             //如果存在设置动画方向
                             setDirection(Direction.NEXT);
+
                             //如果不存在表示没有下一页了
                             if (!hasNext) {
                                 noNext = true;
@@ -127,13 +129,14 @@ public abstract class HorizonPageAnim extends PageAnimation{
                                 isCancel = false;
                             }
                         }else{
-                            if (x - mMoveY < 0){
+                            if (x - mMoveX < 0){
                                 isCancel = true;
                             }else {
                                 isCancel = false;
                             }
                         }
                     }
+
                     mMoveX = x;
                     mMoveY = y;
                     isRunning = true;
@@ -142,7 +145,6 @@ public abstract class HorizonPageAnim extends PageAnimation{
                 break;
             case MotionEvent.ACTION_UP:
                 if (!isMove){
-
                     if (x < mScreenWidth / 2){
                         isNext = false;
                     }else{
@@ -166,15 +168,12 @@ public abstract class HorizonPageAnim extends PageAnimation{
                     }
                 }
 
-                /**
-                 * 是否取消翻页
-                 */
+                // 是否取消翻页
                 if (isCancel){
                     mListener.pageCancel();
                 }
-                /**
-                 * 开始自动翻页
-                 */
+
+                // 开启翻页效果
                 if (!noNext) {
                     isRunning = true;
                     startAnim();

@@ -45,6 +45,14 @@ import io.reactivex.disposables.Disposable;
 public abstract class PageLoader{
     private static final String TAG = "PageLoader";
 
+    //当前页面的状态
+    public static final int STATUS_LOADING = 1;  //正在加载
+    public static final int STATUS_FINISH = 2;   //加载完成
+    public static final int STATUS_ERROR = 3;    //加载错误 (一般是网络加载情况)
+    public static final int STATUS_EMPTY = 4;    //空数据
+    public static final int STATUS_PARSE = 5;    //正在解析 (一般用于本地数据加载)
+    public static final int STATUS_PARSE_ERROR = 6; //本地文件解析错误(暂未被使用)
+
     static final int DEFAULT_MARGIN_HEIGHT = 30;
     static final int DEFAULT_MARGIN_WIDTH = 14;
 
@@ -54,28 +62,24 @@ public abstract class PageLoader{
 
     private static final int DEFAULT_TIP_SIZE = 12;
 
-    //当前页面的状态
-    public static final int STATUS_LOADING = 1;  //正在加载
-    public static final int STATUS_FINISH = 2;   //加载完成
-    public static final int STATUS_ERROR = 3;    //加载错误 (一般是网络加载情况)
-    public static final int STATUS_EMPTY = 4;    //空数据
-    public static final int STATUS_PARSE = 5;    //正在解析 (一般用于本地数据加载)
-    public static final int STATUS_PARSE_ERROR = 6; //本地文件解析错误(暂未被使用)
-
-    //页面显示类
-    protected PageView mPageView;
-
-    protected TxtPage mCurPage;
+    //当前章节列表
     protected List<TxtChapter> mChapterList;
-    protected List<TxtPage> mCurPageList;
+    //书本对象
     protected CollBookBean mCollBook;
     //监听器
     protected OnPageChangeListener mPageChangeListener;
 
-    //上一章的页缓存
+    //页面显示类
+    private PageView mPageView;
+    //当前显示的页
+    private TxtPage mCurPage;
+    //上一章的页面列表缓存
     private WeakReference<List<TxtPage>> mWeakPrePageList;
-    //下一章的缓存
+    //当前章节的页面列表
+    private List<TxtPage> mCurPageList;
+    //下一章的页面列表缓存
     private List<TxtPage> mNextPageList;
+
     //绘制电池的画笔
     private Paint mBatteryPaint;
     //绘制提示的画笔
@@ -211,6 +215,7 @@ public abstract class PageLoader{
         }
         return mCurChapterPos;
     }
+
     //跳转到下一章
     public int skipNextChapter(){
         if (!isBookOpen){
@@ -249,8 +254,8 @@ public abstract class PageLoader{
             //重置position的位置，防止正在加载的时候退出时候存储的位置为上一章的页码
             mCurPage.position = 0;
         }
-        //需要对ScrollAnimation进行重新布局
 
+        //需要对ScrollAnimation进行重新布局
         mPageView.refreshPage();
     }
 
@@ -597,6 +602,7 @@ public abstract class PageLoader{
             else {
                 canvas.drawText(mCurPage.title, mMarginWidth, tipTop, mTipPaint);
             }
+
             /******绘制页码********/
             //底部的字显示的位置Y
             float y = mDisplayHeight - mTipPaint.getFontMetrics().bottom - tipMarginHeight;
@@ -667,7 +673,6 @@ public abstract class PageLoader{
         }
 
         /******绘制内容****/
-        //内容比标题先绘制的原因是，内容的字体大小和标题还有底部的字体大小不相同
         if (mStatus != STATUS_FINISH){
             //绘制字体
             String tip = "";

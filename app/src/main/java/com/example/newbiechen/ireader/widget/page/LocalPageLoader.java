@@ -46,7 +46,7 @@ import io.reactivex.disposables.Disposable;
 public class LocalPageLoader extends PageLoader {
     private static final String TAG = "LocalPageLoader";
     //默认从文件中获取数据的长度
-    private final static int BUFFER_SIZE = 128 * 1024;
+    private final static int BUFFER_SIZE = 512 * 1024;
     //没有标题的时候，每个章节的最大长度
     private final static int MAX_LENGTH_WITH_NO_CHAPTER = 10 * 1024;
 
@@ -143,8 +143,7 @@ public class LocalPageLoader extends PageLoader {
     /**
      * 未完成的部分:
      * 1. 序章的添加
-     * 2. 需要对分章进行大量的优化
-     * 3. 存在的章节的虚拟分章效果
+     * 2. 章节存在的书本的虚拟分章效果
      * @throws IOException
      */
     private void loadChapters() throws IOException{
@@ -322,13 +321,10 @@ public class LocalPageLoader extends PageLoader {
         System.runFinalization();
     }
 
-    /**
-     * 耗时操作，需要修改。
-     */
     @Override
     protected List<TxtPage> loadPageList(int chapterPos){
         if (mChapterList == null){
-            throw new IllegalArgumentException("Chapter List must not null");
+            throw new IllegalArgumentException("Chapter list must not null");
         }
 
         TxtChapter chapter = mChapterList.get(chapterPos);
