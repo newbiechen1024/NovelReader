@@ -277,14 +277,14 @@ public abstract class PageLoader{
     }
     //更新时间
     public void updateTime(){
-        if (!mPageView.isRunning() && mPageView.getNextPage() != null){
+        if (mPageView.isPrepare() && !mPageView.isRunning()){
             mPageView.drawCurPage(true);
         }
     }
     //更新电量
     public void updateBattery(int level){
         mBatteryLevel = level;
-        if (!mPageView.isRunning() && mPageView.getNextPage() != null){
+        if (mPageView.isPrepare() && !mPageView.isRunning()){
             mPageView.drawCurPage(true);
         }
     }
