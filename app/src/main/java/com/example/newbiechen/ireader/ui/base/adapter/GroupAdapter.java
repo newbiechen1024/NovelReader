@@ -182,6 +182,7 @@ public abstract class GroupAdapter<T,R> extends RecyclerView.Adapter{
         }
         return position;
     }
+
     //child转换成position
     public int getChildToPosition(int groupPos, int childPos){
         int position = 0;

@@ -1,23 +1,32 @@
 package com.example.newbiechen.ireader.widget.animation;
 
+import android.animation.ArgbEvaluator;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Scroller;
+
+import com.example.newbiechen.ireader.R;
 
 /**
  * Created by newbiechen on 17-7-24.
  */
 
 public class SimulationPageAnim extends HorizonPageAnim{
+    private static final String TAG = "SimulationPageAnim";
+
     private int mCornerX = 1; // 拖拽点对应的页脚
     private int mCornerY = 1;
     private Path mPath0;
@@ -56,13 +65,13 @@ public class SimulationPageAnim extends HorizonPageAnim{
     GradientDrawable mFrontShadowDrawableVRL;
 
     Paint mPaint;
-
     public SimulationPageAnim(int w, int h, View view, OnPageChangeListener listener) {
         super(w, h, view, listener);
         mPath0 = new Path();
         mPath1 = new Path();
         mMaxLength = (float) Math.hypot(mScreenWidth, mScreenHeight);
         mPaint = new Paint();
+
         mPaint.setStyle(Paint.Style.FILL);
 
         createDrawable();
@@ -287,8 +296,16 @@ public class SimulationPageAnim extends HorizonPageAnim{
         } catch (Exception e) {
         }
 
-
         mPaint.setColorFilter(mColorMatrixFilter);
+        //对Bitmap进行取色
+        int color = bitmap.getPixel(1, 1);
+        //获取对应的三色
+        int red = (color & 0xff0000) >> 16;
+        int green = (color & 0x00ff00) >> 8;
+        int blue = (color & 0x0000ff);
+        //转换成含有透明度的颜色
+        int tempColor = Color.argb(200, red, green, blue);
+
 
         float dis = (float) Math.hypot(mCornerX - mBezierControl1.x,
                 mBezierControl2.y - mCornerY);
@@ -303,7 +320,9 @@ public class SimulationPageAnim extends HorizonPageAnim{
         mMatrix.preTranslate(-mBezierControl1.x, -mBezierControl1.y);
         mMatrix.postTranslate(mBezierControl1.x, mBezierControl1.y);
         canvas.drawBitmap(bitmap, mMatrix, mPaint);
-        // canvas.drawBitmap(bitmap, mMatrix, null);
+        //背景叠加
+        canvas.drawColor(tempColor);
+
         mPaint.setColorFilter(null);
 
         canvas.rotate(mDegrees, mBezierStart1.x, mBezierStart1.y);

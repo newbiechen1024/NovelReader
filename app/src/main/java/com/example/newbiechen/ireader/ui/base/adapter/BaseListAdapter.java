@@ -71,9 +71,6 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter<RecyclerV
         return mList.size();
     }
 
-
-
-
     protected void onItemClick(View v,int pos){
     }
 

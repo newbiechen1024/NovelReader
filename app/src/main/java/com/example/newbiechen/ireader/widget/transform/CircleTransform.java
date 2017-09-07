@@ -21,6 +21,14 @@ public class CircleTransform extends BitmapTransformation {
         super(context);
     }
 
+    /**
+     *
+     * @param pool : 图片池，这个之后会谈到。
+     * @param toTransform:需要进行处理的图片
+     * @param outWidth:图片的宽
+     * @param outHeight:图片的高
+     * @return 返回处理完的图片
+     */
     @Override
     protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
         Paint paint = new Paint();

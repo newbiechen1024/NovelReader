@@ -572,7 +572,6 @@ public abstract class PageLoader{
     }
 
     void onDraw(Bitmap bitmap,boolean isUpdate){
-        //如果是上下滑动
         drawBackground(mPageView.getBgBitmap(), isUpdate);
 
         if (!isUpdate){

@@ -3,16 +3,12 @@ package com.example.newbiechen.ireader.widget.page;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.RectF;
-import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewConfiguration;
 
-import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.utils.ScreenUtils;
 import com.example.newbiechen.ireader.widget.animation.CoverPageAnim;
 import com.example.newbiechen.ireader.widget.animation.HorizonPageAnim;
@@ -41,8 +37,9 @@ public class PageView extends View {
     private int mViewWidth = 0; // 当前View的宽
     private int mViewHeight = 0; // 当前View的高
 
-    private int moveX = 0;
-    private int moveY = 0;
+    private int mStartX = 0;
+    private int mStartY = 0;
+    private boolean isMove = false;
     //初始化参数
     private int mBgColor = 0xFFCEC29C;
     private int mPageMode = PAGE_MODE_SIMULATION;
@@ -224,26 +221,34 @@ public class PageView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
+
         if (!canTouch && event.getAction() != MotionEvent.ACTION_DOWN) return true;
 
         int x = (int) event.getX();
         int y = (int) event.getY();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                moveX = 0;
-                moveY = 0;
+                mStartX = x;
+                mStartY = y;
+                isMove = false;
                 canTouch = mTouchListener.onTouch();
                 mPageAnim.onTouchEvent(event);
                 break;
             case MotionEvent.ACTION_MOVE:
-                moveX = x;
-                moveY = y;
-                mPageAnim.onTouchEvent(event);
+                //判断是否大于最小滑动值。
+                int slop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+                if (!isMove){
+                    isMove = Math.abs(mStartX - event.getX()) > slop || Math.abs(mStartY - event.getY()) > slop;
+                }
+
+                //如果滑动了，则进行翻页。
+                if(isMove){
+                    mPageAnim.onTouchEvent(event);
+                }
                 break;
             case MotionEvent.ACTION_UP:
 
-                if (moveX == 0 && moveY == 0){
-
+                if (!isMove){
                     //设置中间区域范围
                     if (mCenterRect == null){
                         mCenterRect = new RectF(mViewWidth/5,mViewHeight/3,
@@ -258,9 +263,6 @@ public class PageView extends View {
                         return true;
                     }
                 }
-                mPageAnim.onTouchEvent(event);
-                break;
-            default:
                 mPageAnim.onTouchEvent(event);
                 break;
         }

@@ -100,6 +100,7 @@ public class BookShelfPresenter extends RxPresenter<BookShelfContract.View>
                         .getBookDetail(collBook.get_id()));
             }
         }
+        //zip可能不是一个好方法。
         Single.zip(observables, new Function<Object[], List<CollBookBean>>() {
             @Override
             public List<CollBookBean> apply(Object[] objects) throws Exception {
