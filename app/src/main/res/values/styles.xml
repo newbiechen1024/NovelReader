@@ -6,7 +6,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowAnimationStyle">@style/anim_slide_right_in_left_out</item>
         <item name="android:actionOverflowMenuStyle">@style/ActionButton.Overflow.Menu</item>
     </style>
     

@@ -228,14 +228,15 @@ public class ReadSettingDialog extends Dialog{
                 ReadSettingManager.getInstance().setBrightness(progress);
             }
         });
+
         mCbBrightnessAuto.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> {
                     if (isChecked){
-                        BrightnessUtils.startAutoBrightness(mActivity);
+ /*                       BrightnessUtils.startAutoBrightness(mActivity);*/
                         BrightnessUtils.setBrightness(mActivity,BrightnessUtils.getScreenBrightness(mActivity));
                     }
                     else {
-                        BrightnessUtils.stopAutoBrightness(mActivity);
+/*                        BrightnessUtils.stopAutoBrightness(mActivity);*/
                         BrightnessUtils.setBrightness(mActivity,mSbBrightness.getProgress());
                     }
                     ReadSettingManager.getInstance().setAutoBrightness(isChecked);

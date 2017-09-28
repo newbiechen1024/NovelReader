@@ -99,10 +99,7 @@ public class LocalPageLoader extends PageLoader {
         Single.create(new SingleOnSubscribe<Void>() {
             @Override
             public void subscribe(SingleEmitter<Void> e) throws Exception {
-                long time = System.currentTimeMillis();
                 loadBook(mBookFile);
-                float distance = (System.currentTimeMillis() - time) / 1000.0f;
-                Log.d(TAG, "subscribe: "+distance);
                 e.onSuccess(new Void());
             }
         }).compose(RxUtils::toSimpleSingle)

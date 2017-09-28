@@ -1,12 +1,19 @@
 package com.example.newbiechen.ireader.ui.activity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
+import android.view.LayoutInflater;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.newbiechen.ireader.R;
+import com.example.newbiechen.ireader.model.local.Void;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

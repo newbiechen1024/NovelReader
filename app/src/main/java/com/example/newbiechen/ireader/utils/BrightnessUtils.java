@@ -2,6 +2,9 @@ package com.example.newbiechen.ireader.utils;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
 import android.view.Window;
 import android.view.WindowManager;
@@ -66,9 +69,25 @@ public class BrightnessUtils {
      * @param activity
      */
     public static void stopAutoBrightness(Activity activity) {
-        Settings.System.putInt(activity.getContentResolver(),
-                Settings.System.SCREEN_BRIGHTNESS_MODE,
-                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.System.canWrite(activity)) {
+                Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                intent.setData(Uri.parse("package:" + activity.getPackageName()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(intent);
+            } else {
+                Settings.System.putInt(activity.getContentResolver(),
+                        Settings.System.SCREEN_BRIGHTNESS_MODE,
+                        Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            }
+        }
+        else {
+            Settings.System.putInt(activity.getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+        }
+
     }
 
     /**
@@ -77,9 +96,24 @@ public class BrightnessUtils {
      * @param activity
      */
     public static void startAutoBrightness(Activity activity) {
-        Settings.System.putInt(activity.getContentResolver(),
-                Settings.System.SCREEN_BRIGHTNESS_MODE,
-                Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.System.canWrite(activity)) {
+                Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                intent.setData(Uri.parse("package:" + activity.getPackageName()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(intent);
+            } else {
+                //有了权限，具体的动作
+                Settings.System.putInt(activity.getContentResolver(),
+                        Settings.System.SCREEN_BRIGHTNESS, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+            }
+        }
+        else {
+            //有了权限，具体的动作
+            Settings.System.putInt(activity.getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
+        }
     }
 
 }
