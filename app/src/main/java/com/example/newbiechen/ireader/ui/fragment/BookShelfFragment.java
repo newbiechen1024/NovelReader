@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +23,11 @@ import com.example.newbiechen.ireader.presenter.BookShelfPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookShelfContract;
 import com.example.newbiechen.ireader.ui.activity.ReadActivity;
 import com.example.newbiechen.ireader.ui.adapter.CollBookAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
+import com.example.newbiechen.ireader.ui.base.BaseMVPFragment;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.ToastUtils;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 import com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView;
 
 import java.io.File;
@@ -41,7 +41,7 @@ import io.reactivex.disposables.Disposable;
  * Created by newbiechen on 17-4-15.
  */
 
-public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presenter>
+public class BookShelfFragment extends BaseMVPFragment<BookShelfContract.Presenter>
         implements BookShelfContract.View{
     private static final String TAG = "BookShelfFragment";
     @BindView(R.id.book_shelf_rv_content)
@@ -74,6 +74,7 @@ public class BookShelfFragment extends BaseRxFragment<BookShelfContract.Presente
         //添加Footer
         mCollBookAdapter = new CollBookAdapter();
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mRvContent.setAdapter(mCollBookAdapter);
     }
 

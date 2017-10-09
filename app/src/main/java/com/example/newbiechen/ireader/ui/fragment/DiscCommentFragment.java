@@ -15,9 +15,9 @@ import com.example.newbiechen.ireader.presenter.DiscCommentPresenter;
 import com.example.newbiechen.ireader.presenter.contract.DiscCommentContact;
 import com.example.newbiechen.ireader.ui.activity.DiscDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.DiscCommentAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
+import com.example.newbiechen.ireader.ui.base.BaseMVPFragment;
 import com.example.newbiechen.ireader.utils.Constant;
-import com.example.newbiechen.ireader.widget.itemdecoration.DashItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 import com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 
@@ -34,7 +34,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  * 2. 初始化视图和逻辑的交互
  */
 
-public class DiscCommentFragment extends BaseRxFragment<DiscCommentContact.Presenter> implements DiscCommentContact.View{
+public class DiscCommentFragment extends BaseMVPFragment<DiscCommentContact.Presenter> implements DiscCommentContact.View{
     private static final String TAG = "DiscCommentFragment";
     private static final String EXTRA_BLOCK = "extra_block";
     private static final String BUNDLE_BLOCK = "bundle_block";
@@ -89,7 +89,7 @@ public class DiscCommentFragment extends BaseRxFragment<DiscCommentContact.Prese
 
     private void setUpAdapter(){
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DashItemDecoration());
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mDiscCommentAdapter = new DiscCommentAdapter(getContext(),new WholeAdapter.Options());
         mRvContent.setAdapter(mDiscCommentAdapter);
     }

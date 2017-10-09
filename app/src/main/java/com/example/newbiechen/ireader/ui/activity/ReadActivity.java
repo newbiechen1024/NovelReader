@@ -2,13 +2,18 @@ package com.example.newbiechen.ireader.ui.activity;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -34,7 +39,7 @@ import com.example.newbiechen.ireader.model.local.ReadSettingManager;
 import com.example.newbiechen.ireader.presenter.ReadPresenter;
 import com.example.newbiechen.ireader.presenter.contract.ReadContract;
 import com.example.newbiechen.ireader.ui.adapter.CategoryAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
+import com.example.newbiechen.ireader.ui.base.BaseMVPActivity;
 import com.example.newbiechen.ireader.ui.dialog.ReadSettingDialog;
 import com.example.newbiechen.ireader.utils.BrightnessUtils;
 import com.example.newbiechen.ireader.utils.Constant;
@@ -60,12 +65,22 @@ import static android.view.View.VISIBLE;
  * Created by newbiechen on 17-5-16.
  */
 
-public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
+public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
  implements ReadContract.View{
     private static final String TAG = "ReadActivity";
     public static final int REQUEST_MORE_SETTING = 1;
     public static final String EXTRA_COLL_BOOK = "extra_coll_book";
     public static final String EXTRA_IS_COLLECTED = "extra_is_collected";
+
+    //注册 Brightness 的 uri
+    private final Uri BRIGHTNESS_MODE_URI =
+            Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS_MODE);
+    private final Uri BRIGHTNESS_URI =
+            Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS);
+    private final Uri BRIGHTNESS_ADJ_URI =
+            Settings.System.getUriFor("screen_auto_brightness_adj");
+
+    private boolean isRegistered = false;
 
     @BindView(R.id.read_dl_slide)
     DrawerLayout mDlSlide;
@@ -129,6 +144,37 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
             }
         }
     };
+
+    //亮度调节监听
+    //由于亮度调节没有 Broadcast 而是直接修改 ContentProvider 的。所以需要创建一个 Observer 来监听 ContentProvider 的变化情况。
+    private ContentObserver mBrightObserver = new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange) {
+            onChange(selfChange, null);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            super.onChange(selfChange);
+
+            //判断当前是否跟随屏幕亮度，如果不是则返回
+            if (selfChange || !mSettingDialog.isBrightFollowSystem()) return;
+
+            //如果系统亮度改变，则修改当前 Activity 亮度
+            if (BRIGHTNESS_MODE_URI.equals(uri)) {
+                Log.d(TAG, "亮度模式改变");
+            } else if (BRIGHTNESS_URI.equals(uri) && !BrightnessUtils.isAutoBrightness(ReadActivity.this)) {
+                Log.d(TAG, "亮度模式为手动模式 值改变");
+                BrightnessUtils.setBrightness(ReadActivity.this,BrightnessUtils.getScreenBrightness(ReadActivity.this));
+            } else if (BRIGHTNESS_ADJ_URI.equals(uri) && BrightnessUtils.isAutoBrightness(ReadActivity.this)) {
+                Log.d(TAG, "亮度模式为自动模式 值改变");
+                BrightnessUtils.setBrightness(ReadActivity.this,BrightnessUtils.getScreenBrightness(ReadActivity.this));
+            } else {
+                Log.d(TAG, "亮度调整 其他");
+            }
+        }
+    };
+
     /***************params*****************/
     private boolean isCollected = false; //isFromSDCard
     private boolean isNightMode = false;
@@ -192,7 +238,7 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         intentFilter.addAction(Intent.ACTION_TIME_TICK);
         registerReceiver(mReceiver, intentFilter);
 
-        //设置当前Activity的Bright
+        //设置当前Activity的Brightness
         if (ReadSettingManager.getInstance().isBrightnessAuto()){
             BrightnessUtils.setBrightness(this,BrightnessUtils.getScreenBrightness(this));
         }
@@ -255,6 +301,38 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         mCategoryAdapter = new CategoryAdapter();
         mLvCategory.setAdapter(mCategoryAdapter);
         mLvCategory.setFastScrollEnabled(true);
+    }
+
+    //注册亮度观察者
+    private void registerBrightObserver() {
+        try {
+            if (mBrightObserver != null) {
+                if (!isRegistered) {
+                    final ContentResolver cr = getContentResolver();
+                    cr.unregisterContentObserver(mBrightObserver);
+                    cr.registerContentObserver(BRIGHTNESS_MODE_URI, false, mBrightObserver);
+                    cr.registerContentObserver(BRIGHTNESS_URI, false, mBrightObserver);
+                    cr.registerContentObserver(BRIGHTNESS_ADJ_URI, false, mBrightObserver);
+                    isRegistered = true;
+                }
+            }
+        } catch (Throwable throwable) {
+            Log.e(TAG, "[ouyangyj] register mBrightObserver error! " + throwable);
+        }
+    }
+
+    //解注册
+    private void unregisterBrightObserver() {
+        try {
+            if (mBrightObserver != null) {
+                if (isRegistered) {
+                    getContentResolver().unregisterContentObserver(mBrightObserver);
+                    isRegistered = false;
+                }
+            }
+        } catch (Throwable throwable) {
+            Log.e(TAG, "unregister BrightnessObserver error! " + throwable);
+        }
     }
 
     @Override
@@ -629,6 +707,12 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        registerBrightObserver();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         mWakeLock.acquire();
@@ -641,6 +725,12 @@ public class ReadActivity extends BaseRxActivity<ReadContract.Presenter>
         if (isCollected){
             mPageLoader.saveRecord();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterBrightObserver();
     }
 
     @Override

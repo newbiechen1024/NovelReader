@@ -10,18 +10,31 @@ import android.view.ViewGroup;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by newbiechen on 17-3-31.
  */
 
 public abstract class BaseFragment extends Fragment{
+
+    protected CompositeDisposable mDisposable;
+
     private View root = null;
     private Unbinder unbinder;
+
     @LayoutRes
     protected abstract int getContentId();
 
     /*******************************init area*********************************/
+    protected void addDisposable(Disposable d){
+        if (mDisposable == null){
+            mDisposable = new CompositeDisposable();
+        }
+        mDisposable.add(d);
+    }
+
 
     protected void initData(Bundle savedInstanceState){
     }
@@ -66,7 +79,12 @@ public abstract class BaseFragment extends Fragment{
     @Override
     public void onDetach() {
         super.onDetach();
+
         unbinder.unbind();
+
+        if (mDisposable != null){
+            mDisposable.clear();
+        }
     }
 
     /**************************公共类*******************************************/

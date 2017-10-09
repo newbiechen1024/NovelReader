@@ -11,9 +11,9 @@ import com.example.newbiechen.ireader.model.bean.packages.BookSubSortPackage;
 import com.example.newbiechen.ireader.presenter.BookSortPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookSortContract;
 import com.example.newbiechen.ireader.ui.adapter.BookSortAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
+import com.example.newbiechen.ireader.ui.base.BaseMVPActivity;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerGridItemDecoration;
 
 import butterknife.BindView;
 
@@ -23,7 +23,7 @@ import butterknife.BindView;
  *
  */
 
-public class BookSortActivity extends BaseRxActivity<BookSortContract.Presenter> implements BookSortContract.View{
+public class BookSortActivity extends BaseMVPActivity<BookSortContract.Presenter> implements BookSortContract.View{
     /*******************Constant*********************/
     private static final String TAG = "SortActivity";
     private static final int SPAN_COUNT = 3;
@@ -62,7 +62,7 @@ public class BookSortActivity extends BaseRxActivity<BookSortContract.Presenter>
         mBoyAdapter = new BookSortAdapter();
         mGirlAdapter = new BookSortAdapter();
 
-        RecyclerView.ItemDecoration itemDecoration = new DefaultItemDecoration(this);
+        RecyclerView.ItemDecoration itemDecoration = new DividerGridItemDecoration(this,R.drawable.shape_divider_row,R.drawable.shape_divider_col);
 
         mRvBoy.setLayoutManager(new GridLayoutManager(this,SPAN_COUNT));
         mRvBoy.addItemDecoration(itemDecoration);

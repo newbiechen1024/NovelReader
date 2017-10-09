@@ -14,10 +14,10 @@ import com.example.newbiechen.ireader.presenter.BookSortListPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookSortListContract;
 import com.example.newbiechen.ireader.ui.activity.BookDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.BookSortListAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
+import com.example.newbiechen.ireader.ui.base.BaseMVPFragment;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ import io.reactivex.disposables.Disposable;
  * Created by newbiechen on 17-5-3.
  */
 
-public class BookSortListFragment extends BaseRxFragment<BookSortListContract.Presenter>
+public class BookSortListFragment extends BaseMVPFragment<BookSortListContract.Presenter>
         implements BookSortListContract.View{
     private static final String EXTRA_GENDER = "extra_gender";
     private static final String EXTRA_TYPE = "extra_type";
@@ -124,7 +124,7 @@ public class BookSortListFragment extends BaseRxFragment<BookSortListContract.Pr
         mBookSortListAdapter = new BookSortListAdapter(getContext(),new WholeAdapter.Options());
 
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DefaultItemDecoration(getContext()));
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mRvContent.setAdapter(mBookSortListAdapter);
     }
 

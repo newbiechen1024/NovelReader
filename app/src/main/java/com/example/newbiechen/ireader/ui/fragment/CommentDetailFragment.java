@@ -19,13 +19,13 @@ import com.example.newbiechen.ireader.presenter.CommentDetailPresenter;
 import com.example.newbiechen.ireader.presenter.contract.CommentDetailContract;
 import com.example.newbiechen.ireader.ui.adapter.CommentAdapter;
 import com.example.newbiechen.ireader.ui.adapter.GodCommentAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
+import com.example.newbiechen.ireader.ui.base.BaseMVPFragment;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.widget.BookTextView;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 import com.example.newbiechen.ireader.widget.transform.CircleTransform;
 
 import java.util.List;
@@ -39,7 +39,7 @@ import butterknife.Unbinder;
  * 综合评论区 + 书荒互助区详情
  */
 
-public class CommentDetailFragment extends BaseRxFragment<CommentDetailContract.Presenter>
+public class CommentDetailFragment extends BaseMVPFragment<CommentDetailContract.Presenter>
         implements CommentDetailContract.View{
     private static final String TAG = "CommentDetailFragment";
     private static final String EXTRA_DETAIL_ID = "extra_detail_id";
@@ -96,7 +96,7 @@ public class CommentDetailFragment extends BaseRxFragment<CommentDetailContract.
         mCommentAdapter.addHeaderView(mDetailHeader);
 
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DefaultItemDecoration(getContext()));
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mRvContent.setAdapter(mCommentAdapter);
     }
 
@@ -242,7 +242,7 @@ public class CommentDetailFragment extends BaseRxFragment<CommentDetailContract.
             if (godCommentAdapter != null) return;
             godCommentAdapter = new GodCommentAdapter();
             rvBestComments.setLayoutManager(new LinearLayoutManager(getContext()));
-            rvBestComments.addItemDecoration(new DefaultItemDecoration(getContext()));
+            rvBestComments.addItemDecoration(new DividerItemDecoration(getContext()));
             rvBestComments.setAdapter(godCommentAdapter);
         }
 

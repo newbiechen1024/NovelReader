@@ -15,9 +15,9 @@ import com.example.newbiechen.ireader.presenter.DiscReviewPresenter;
 import com.example.newbiechen.ireader.presenter.contract.DiscReviewContract;
 import com.example.newbiechen.ireader.ui.activity.DiscDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.DiscReviewAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
+import com.example.newbiechen.ireader.ui.base.BaseMVPFragment;
 import com.example.newbiechen.ireader.utils.Constant;
-import com.example.newbiechen.ireader.widget.itemdecoration.DashItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 import com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 
@@ -30,7 +30,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  * Created by newbiechen on 17-4-21.
  */
 
-public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presenter> implements DiscReviewContract.View{
+public class DiscReviewFragment extends BaseMVPFragment<DiscReviewContract.Presenter> implements DiscReviewContract.View{
     private static final String BUNDLE_BOOK = "bundle_book";
     private static final String BUNDLE_SORT = "bundle_sort";
     private static final String BUNDLE_DISTILLATE = "bundle_distillate";
@@ -70,7 +70,7 @@ public class DiscReviewFragment extends BaseRxFragment<DiscReviewContract.Presen
 
     private void setUpAdapter(){
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DashItemDecoration());
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mDiscReviewAdapter = new DiscReviewAdapter(getContext(),new WholeAdapter.Options());
         mRvContent.setAdapter(mDiscReviewAdapter);
     }

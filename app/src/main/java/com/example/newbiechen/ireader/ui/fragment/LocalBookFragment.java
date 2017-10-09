@@ -7,16 +7,13 @@ import android.support.v7.widget.RecyclerView;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.adapter.FileSystemAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.utils.FileUtils;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
-
-import java.io.File;
-import java.util.List;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 
 import butterknife.BindView;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by newbiechen on 17-5-27.
@@ -42,7 +39,7 @@ public class LocalBookFragment extends BaseFileFragment{
     private void setUpAdapter(){
         mAdapter = new FileSystemAdapter();
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DefaultItemDecoration(getContext()));
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mRvContent.setAdapter(mAdapter);
     }
 
@@ -72,7 +69,7 @@ public class LocalBookFragment extends BaseFileFragment{
     protected void processLogic() {
         super.processLogic();
         //显示数据
-        FileUtils.getSDTxtFile()
+        Disposable disposable = FileUtils.getSDTxtFile()
                 .compose(RxUtils::toSimpleSingle)
                 .subscribe(
                         files -> {
@@ -90,5 +87,6 @@ public class LocalBookFragment extends BaseFileFragment{
                             }
                         }
                 );
+        addDisposable(disposable);
     }
 }

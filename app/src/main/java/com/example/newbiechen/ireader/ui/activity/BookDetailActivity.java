@@ -25,12 +25,12 @@ import com.example.newbiechen.ireader.presenter.BookDetailPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookDetailContract;
 import com.example.newbiechen.ireader.ui.adapter.BookListAdapter;
 import com.example.newbiechen.ireader.ui.adapter.HotCommentAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
+import com.example.newbiechen.ireader.ui.base.BaseMVPActivity;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.ToastUtils;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ import butterknife.BindView;
  * Created by newbiechen on 17-5-4.
  */
 
-public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presenter>
+public class BookDetailActivity extends BaseMVPActivity<BookDetailContract.Presenter>
         implements BookDetailContract.View {
     public static final String RESULT_IS_COLLECTED = "result_is_collected";
 
@@ -259,7 +259,7 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
         if (beans.isEmpty()) return;
         mHotCommentAdapter = new HotCommentAdapter();
         mRvHotComment.setLayoutManager(new LinearLayoutManager(this));
-        mRvHotComment.addItemDecoration(new DefaultItemDecoration(this));
+        mRvHotComment.addItemDecoration(new DividerItemDecoration(this));
         mRvHotComment.setAdapter(mHotCommentAdapter);
         mHotCommentAdapter.addItems(beans);
     }
@@ -273,7 +273,7 @@ public class BookDetailActivity extends BaseRxActivity<BookDetailContract.Presen
         //推荐书单列表
         mBookListAdapter = new BookListAdapter();
         mRvRecommendBookList.setLayoutManager(new LinearLayoutManager(this));
-        mRvRecommendBookList.addItemDecoration(new DefaultItemDecoration(this));
+        mRvRecommendBookList.addItemDecoration(new DividerItemDecoration(this));
         mRvRecommendBookList.setAdapter(mBookListAdapter);
         mBookListAdapter.addItems(beans);
     }

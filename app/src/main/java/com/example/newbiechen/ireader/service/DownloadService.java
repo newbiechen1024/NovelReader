@@ -18,7 +18,7 @@ import com.example.newbiechen.ireader.utils.BookManager;
 import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.model.local.LocalRepository;
 import com.example.newbiechen.ireader.model.remote.RemoteRepository;
-import com.example.newbiechen.ireader.ui.base.BaseRxService;
+import com.example.newbiechen.ireader.ui.base.BaseService;
 import com.example.newbiechen.ireader.utils.LogUtils;
 import com.example.newbiechen.ireader.utils.NetworkUtils;
 
@@ -36,7 +36,7 @@ import io.reactivex.disposables.Disposable;
  * Created by newbiechen on 17-5-10.
  */
 
-public class DownloadService extends BaseRxService{
+public class DownloadService extends BaseService {
     private static final String TAG = "DownloadService";
     //加载状态
     private static final int LOAD_ERROR= -1;

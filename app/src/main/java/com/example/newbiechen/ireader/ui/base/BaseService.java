@@ -12,7 +12,7 @@ import io.reactivex.disposables.Disposable;
  * Created by newbiechen on 17-5-13.
  */
 
-public abstract class BaseRxService extends Service {
+public abstract class BaseService extends Service {
 
     private CompositeDisposable mDisposable;
 

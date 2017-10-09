@@ -10,8 +10,8 @@ import io.reactivex.disposables.Disposable;
  * Created by newbiechen on 17-4-25.
  */
 
-public abstract class BaseRxActivity<T extends BaseContract.BasePresenter> extends BaseActivity{
-    protected CompositeDisposable mDisposable;
+public abstract class BaseMVPActivity<T extends BaseContract.BasePresenter> extends BaseActivity{
+
     protected T mPresenter;
 
     protected abstract T bindPresenter();
@@ -19,13 +19,6 @@ public abstract class BaseRxActivity<T extends BaseContract.BasePresenter> exten
     @Override
     protected void processLogic() {
         attachView(bindPresenter());
-    }
-
-    protected void addDisposable(Disposable d){
-        if (mDisposable == null){
-            mDisposable = new CompositeDisposable();
-        }
-        mDisposable.add(d);
     }
 
     private void attachView(T presenter){
@@ -37,8 +30,5 @@ public abstract class BaseRxActivity<T extends BaseContract.BasePresenter> exten
     protected void onDestroy() {
         super.onDestroy();
         mPresenter.detachView();
-        if (mDisposable != null){
-            mDisposable.dispose();
-        }
     }
 }

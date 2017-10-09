@@ -9,10 +9,9 @@ import android.widget.TextView;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.adapter.FileSystemAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseFragment;
 import com.example.newbiechen.ireader.utils.FileStack;
 import com.example.newbiechen.ireader.utils.FileUtils;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -55,7 +54,7 @@ public class FileCategoryFragment extends BaseFileFragment {
     private void setUpAdapter(){
         mAdapter = new FileSystemAdapter();
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DefaultItemDecoration(getContext()));
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mRvContent.setAdapter(mAdapter);
     }
 

@@ -11,11 +11,13 @@ import android.view.ViewConfiguration;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
  * Created by newbiechen on 17-7-23.
  * 原理:仿照ListView源码实现的上下滑动效果
+ * Alter by: zeroAngus
  */
 public class ScrollPageAnim extends PageAnimation {
     private static final String TAG = "ScrollAnimation";
@@ -332,7 +334,6 @@ public class ScrollPageAnim extends PageAnimation {
     @Override
     public synchronized void startAnim() {
         isRunning = true;
-        //
         //倒数第二个参数0修改 解决上滑问题
         //mScroller.fling(0, (int) mTouchY, 0, (int) mVelocity.getYVelocity(), 0, 0, 0, Integer.MAX_VALUE);
         mScroller.fling(0, (int) mTouchY, 0, (int) mVelocity.getYVelocity(), 0, 0, Integer.MAX_VALUE*-1, Integer.MAX_VALUE);

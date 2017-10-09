@@ -18,9 +18,9 @@ import com.example.newbiechen.ireader.presenter.SearchPresenter;
 import com.example.newbiechen.ireader.presenter.contract.SearchContract;
 import com.example.newbiechen.ireader.ui.adapter.KeyWordAdapter;
 import com.example.newbiechen.ireader.ui.adapter.SearchBookAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
+import com.example.newbiechen.ireader.ui.base.BaseMVPActivity;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ import me.gujun.android.taggroup.TagGroup;
  * Created by newbiechen on 17-4-24.
  */
 
-public class SearchActivity extends BaseRxActivity<SearchContract.Presenter>
+public class SearchActivity extends BaseMVPActivity<SearchContract.Presenter>
         implements SearchContract.View{
     private static final String TAG = "SearchActivity";
     private static final int TAG_LIMIT = 8;
@@ -76,7 +76,6 @@ public class SearchActivity extends BaseRxActivity<SearchContract.Presenter>
     protected void initWidget() {
         super.initWidget();
         setUpAdapter();
-        setStatusBarColor(R.color.white);
         mRlRefresh.setBackground(getDrawable(R.color.white));
     }
 
@@ -85,7 +84,7 @@ public class SearchActivity extends BaseRxActivity<SearchContract.Presenter>
         mSearchAdapter = new SearchBookAdapter();
 
         mRvSearch.setLayoutManager(new LinearLayoutManager(this));
-        mRvSearch.addItemDecoration(new DefaultItemDecoration(this));
+        mRvSearch.addItemDecoration(new DividerItemDecoration(this));
     }
 
     @Override
