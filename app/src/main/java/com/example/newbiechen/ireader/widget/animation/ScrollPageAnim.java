@@ -18,6 +18,11 @@ import java.util.Iterator;
  * Created by newbiechen on 17-7-23.
  * 原理:仿照ListView源码实现的上下滑动效果
  * Alter by: zeroAngus
+ *
+ * 问题:
+ * 1. 向上翻页，重复的问题
+ * 2. 滑动卡顿的问题
+ * 3. 弱网环境下，显示的问题
  */
 public class ScrollPageAnim extends PageAnimation {
     private static final String TAG = "ScrollAnimation";
@@ -27,6 +32,8 @@ public class ScrollPageAnim extends PageAnimation {
 
     //整个Bitmap的背景显示
     private Bitmap mBgBitmap;
+
+    //滑动到的下一张图片
     private Bitmap mNextBitmap;
 
     //被废弃的图片
@@ -72,6 +79,7 @@ public class ScrollPageAnim extends PageAnimation {
             //判断是下滑还是上拉 (下滑)
             if (offset > 0) {
                 int topEdge = mActiveViews.get(0).top;
+                Log.d(TAG, "onLayout: "+topEdge);
                 fillUp(topEdge, offset);
             }
             //上拉
@@ -112,16 +120,17 @@ public class ScrollPageAnim extends PageAnimation {
             }
         }
 
-        //再进行布局的添加
-        int realEdge = bottomEdge + offset;
+        //底部产生的待填充空间
+        int fillSpace = bottomEdge + offset;
 
-        while (realEdge < mViewHeight && mActiveViews.size() < 2) {
+        //进行填充
+        while (fillSpace < mViewHeight && mActiveViews.size() < 2) {
             //从废弃的Views中获取一个
             view = mScrapViews.getFirst();
 /*          //擦除其Bitmap(重新创建会不会更好一点)
             eraseBitmap(view.bitmap,view.bitmap.getWidth(),view.bitmap.getHeight(),0,0);*/
             if (view == null) return;
-            //判断是否存在上一章节
+
             Bitmap cancelBitmap = mNextBitmap;
             mNextBitmap = view.bitmap;
             if (!isRefresh) {
@@ -145,13 +154,13 @@ public class ScrollPageAnim extends PageAnimation {
             //添加到存活的Bitmap中
             mActiveViews.add(view);
             //设置Bitmap的范围
-            view.top = realEdge;
-            view.bottom = realEdge + view.bitmap.getHeight();
+            view.top = fillSpace;
+            view.bottom = fillSpace + view.bitmap.getHeight();
             //设置允许显示的范围
             view.destRect.top = view.top;
             view.destRect.bottom = view.bottom;
 
-            realEdge += view.bitmap.getHeight();
+            fillSpace += view.bitmap.getHeight();
         }
     }
 
@@ -183,10 +192,11 @@ public class ScrollPageAnim extends PageAnimation {
             }
         }
 
-        int realEdge = topEdge + offset;
+        //滑动之后，顶部产生的待填充空间
+        int fillSpace = topEdge + offset;
 
         //对布局进行View填充
-        while (realEdge > 0 && mActiveViews.size() < 2) {
+        while (fillSpace > 0 && mActiveViews.size() < 2) {
             //从废弃的Views中获取一个
             view = mScrapViews.getFirst();
             if (view == null) return;
@@ -215,13 +225,13 @@ public class ScrollPageAnim extends PageAnimation {
             //加入到存活的对象中
             mActiveViews.add(0, view);
             //设置Bitmap的范围
-            view.top = realEdge - view.bitmap.getHeight();
-            view.bottom = realEdge;
+            view.top = fillSpace - view.bitmap.getHeight();
+            view.bottom = fillSpace;
 
             //设置允许显示的范围
             view.destRect.top = view.top;
             view.destRect.bottom = view.bottom;
-            realEdge -= view.bitmap.getHeight();
+            fillSpace -= view.bitmap.getHeight();
         }
     }
 
@@ -265,7 +275,6 @@ public class ScrollPageAnim extends PageAnimation {
         }
 
         mVelocity.addMovement(event);
-
         //设置触碰点
         setTouchPoint(x, y);
 
@@ -278,10 +287,6 @@ public class ScrollPageAnim extends PageAnimation {
                 abortAnim();
                 break;
             case MotionEvent.ACTION_MOVE:
-                //判断是否大于最小滑动距离
-                final int slop = ViewConfiguration.get(mView.getContext()).getScaledTouchSlop();
-                int deltaY = (int) Math.abs(mTouchY - mLastY);
-                if (slop > deltaY) return true;
 
                 mVelocity.computeCurrentVelocity(VELOCITY_DURATION);
                 isRunning = true;
@@ -292,6 +297,10 @@ public class ScrollPageAnim extends PageAnimation {
                 isRunning = false;
                 //开启动画
                 startAnim();
+
+                //删除检测器
+                mVelocity.recycle();
+                mVelocity = null;
                 break;
 
             case MotionEvent.ACTION_CANCEL:

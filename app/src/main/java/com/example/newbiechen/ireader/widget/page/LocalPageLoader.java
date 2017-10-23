@@ -37,10 +37,6 @@ import io.reactivex.disposables.Disposable;
  * Created by newbiechen on 17-7-1.
  * 问题:
  * 1. 异常处理没有做好
- * 2. 加载的性能优化有待改进
- * 3. 预加载没有做
- * 4. 模板模式用的不太好，还需要修改1
- * 8. 如果本地加载下一章节的速度，太慢会发生什么事情
  */
 
 public class LocalPageLoader extends PageLoader {

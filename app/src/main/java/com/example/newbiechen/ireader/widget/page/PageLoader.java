@@ -670,7 +670,6 @@ public abstract class PageLoader{
         if (mPageMode == PageView.PAGE_MODE_SCROLL){
             canvas.drawColor(mPageBg);
         }
-
         /******绘制内容****/
         if (mStatus != STATUS_FINISH){
             //绘制字体
@@ -710,6 +709,7 @@ public abstract class PageLoader{
                 top = mMarginHeight - mTextPaint.getFontMetrics().top;
             }
 
+            canvas.drawLine(0,0,mDisplayWidth,0,mTextPaint);
             int interval = mIntervalSize + (int) mTextPaint.getTextSize();
             for (int i=0; i<mCurPage.lines.size(); ++i){
                 String str = mCurPage.lines.get(i);
