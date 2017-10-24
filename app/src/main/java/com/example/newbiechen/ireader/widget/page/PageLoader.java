@@ -80,6 +80,9 @@ public abstract class PageLoader{
     //下一章的页面列表缓存
     private List<TxtPage> mNextPageList;
 
+    //下一页绘制缓冲区，用户缓解卡顿问题。
+    private Bitmap mNextBitmap;
+
     //绘制电池的画笔
     private Paint mBatteryPaint;
     //绘制提示的画笔
@@ -450,7 +453,7 @@ public abstract class PageLoader{
                 position = mCurPageList.size() - 1;
             }
             mCurPage = getCurPage(position);
-
+            mCancelPage = mCurPage;
             if (mPageChangeListener != null){
                 mPageChangeListener.onChapterChange(mCurChapterPos);
             }
@@ -573,7 +576,6 @@ public abstract class PageLoader{
 
     void onDraw(Bitmap bitmap,boolean isUpdate){
         drawBackground(mPageView.getBgBitmap(), isUpdate);
-
         if (!isUpdate){
             drawContent(bitmap);
         }
@@ -833,7 +835,10 @@ public abstract class PageLoader{
 
         mCancelPage = mCurPage;
         mCurPage = nextPage;
+        long curTime = System.currentTimeMillis();
         mPageView.drawNextPage();
+        curTime = System.currentTimeMillis() - curTime;
+        Log.d(TAG, "fillDown: "+curTime);
         return true;
     }
 

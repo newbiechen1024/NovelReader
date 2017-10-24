@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -20,8 +21,8 @@ import java.util.Iterator;
  * Alter by: zeroAngus
  *
  * 问题:
- * 1. 向上翻页，重复的问题
- * 2. 滑动卡顿的问题
+ * 1. 向上翻页，重复的问题 (完成)
+ * 2. 滑动卡顿的问题。原因:由于绘制的数据过多造成的卡顿问题。
  * 3. 弱网环境下，显示的问题
  */
 public class ScrollPageAnim extends PageAnimation {
@@ -43,6 +44,9 @@ public class ScrollPageAnim extends PageAnimation {
 
     //是否处于刷新阶段
     private boolean isRefresh = true;
+
+    //页面加载的方向
+    private boolean isNext = true;
 
     public ScrollPageAnim(int w, int h, int marginWidth, int marginHeight,
                           View view, OnPageChangeListener listener) {
@@ -79,7 +83,6 @@ public class ScrollPageAnim extends PageAnimation {
             //判断是下滑还是上拉 (下滑)
             if (offset > 0) {
                 int topEdge = mActiveViews.get(0).top;
-                Log.d(TAG, "onLayout: "+topEdge);
                 fillUp(topEdge, offset);
             }
             //上拉
@@ -97,7 +100,8 @@ public class ScrollPageAnim extends PageAnimation {
     /**
      * 创建View填充底部空白部分
      *
-     * @param bottomEdge :当前最后一个View到底部的距离
+     * @param bottomEdge :当前最后一个View的底部，在整个屏幕上的位置,即相对于屏幕顶部的距离
+     * @param offset :滑动的偏移量
      */
     private void fillDown(int bottomEdge, int offset) {
         //首先进行布局的调整
@@ -117,14 +121,29 @@ public class ScrollPageAnim extends PageAnimation {
                 mScrapViews.add(view);
                 //从Active中移除
                 downIt.remove();
+                //如果原先是从上加载，现在变成从下加载，则表示取消
+                /**
+                 * 滑动造成页面重复的问题：
+                 * 这个问题产生的原因是这样的，个人将下一个显示的页面，设置为 curPage ，即当前页。
+                 * 那么如果上下滑动的时候，当前显示的是两个页面，那么第二个页面就是当前页。
+                 * 如果这个时候回滚到上一页，我们认为的上一页是第一页的上一页。但是实际上上一页是第二页的上一页，也就是第一页
+                 * 所以就造成了，我们滚动到的上一页，实际上是第一页的内容，所以就造成了重复。
+                 *
+                 * 解决方法就是:
+                 * 如果原先是向下滑动的，形成了两个页面的状态。此时又变成向上滑动了，那么第二页就消失了。也就认为是取消显示下一页了
+                 * 所以就调用 pageCancel()。
+                 */
+                if (!isNext){
+                    mListener.pageCancel();
+                    isNext = true;
+                }
             }
         }
 
-        //底部产生的待填充空间
-        int fillSpace = bottomEdge + offset;
-
+        //滑动之后的最后一个 View 的距离屏幕顶部上的实际位置
+        int realEdge = bottomEdge + offset;
         //进行填充
-        while (fillSpace < mViewHeight && mActiveViews.size() < 2) {
+        while (realEdge < mViewHeight && mActiveViews.size() < 2) {
             //从废弃的Views中获取一个
             view = mScrapViews.getFirst();
 /*          //擦除其Bitmap(重新创建会不会更好一点)
@@ -135,6 +154,7 @@ public class ScrollPageAnim extends PageAnimation {
             mNextBitmap = view.bitmap;
             if (!isRefresh) {
                 boolean hasNext = mListener.hasNext(); //如果不成功则无法滑动
+
                 //如果不存在next,则进行还原
                 if (!hasNext) {
                     mNextBitmap = cancelBitmap;
@@ -149,18 +169,19 @@ public class ScrollPageAnim extends PageAnimation {
                     return;
                 }
             }
+
             //如果加载成功，那么就将View从ScrapViews中移除
             mScrapViews.removeFirst();
             //添加到存活的Bitmap中
             mActiveViews.add(view);
             //设置Bitmap的范围
-            view.top = fillSpace;
-            view.bottom = fillSpace + view.bitmap.getHeight();
+            view.top = realEdge;
+            view.bottom = realEdge + view.bitmap.getHeight();
             //设置允许显示的范围
             view.destRect.top = view.top;
             view.destRect.bottom = view.bottom;
 
-            fillSpace += view.bitmap.getHeight();
+            realEdge += view.bitmap.getHeight();
         }
     }
 
@@ -168,8 +189,8 @@ public class ScrollPageAnim extends PageAnimation {
     /**
      * 创建View填充顶部空白部分
      *
-     * @param topEdge
-     * @param offset
+     * @param topEdge : 当前第一个View的顶部，到屏幕顶部的距离
+     * @param offset : 滑动的偏移量
      */
     private void fillUp(int topEdge, int offset) {
         //首先进行布局的调整
@@ -189,14 +210,22 @@ public class ScrollPageAnim extends PageAnimation {
                 mScrapViews.add(view);
                 //从Active中移除
                 upIt.remove();
+
+                //如果原先是下，现在变成从上加载了，则表示取消加载
+
+
+                if (isNext){
+                    mListener.pageCancel();
+                    isNext = false;
+                }
             }
         }
 
-        //滑动之后，顶部产生的待填充空间
-        int fillSpace = topEdge + offset;
+        //滑动之后，第一个 View 的顶部距离屏幕顶部的实际位置。
+        int realEdge = topEdge + offset;
 
         //对布局进行View填充
-        while (fillSpace > 0 && mActiveViews.size() < 2) {
+        while (realEdge > 0 && mActiveViews.size() < 2) {
             //从废弃的Views中获取一个
             view = mScrapViews.getFirst();
             if (view == null) return;
@@ -225,13 +254,13 @@ public class ScrollPageAnim extends PageAnimation {
             //加入到存活的对象中
             mActiveViews.add(0, view);
             //设置Bitmap的范围
-            view.top = fillSpace - view.bitmap.getHeight();
-            view.bottom = fillSpace;
+            view.top = realEdge - view.bitmap.getHeight();
+            view.bottom = realEdge;
 
             //设置允许显示的范围
             view.destRect.top = view.top;
             view.destRect.bottom = view.bottom;
-            fillSpace -= view.bitmap.getHeight();
+            realEdge -= view.bitmap.getHeight();
         }
     }
 
@@ -322,6 +351,7 @@ public class ScrollPageAnim extends PageAnimation {
     public void draw(Canvas canvas) {
         //进行布局
         onLayout();
+
         //绘制背景
         canvas.drawBitmap(mBgBitmap, 0, 0, null);
         //绘制内容
