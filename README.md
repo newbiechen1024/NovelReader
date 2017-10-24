@@ -36,6 +36,11 @@
 
 # 更新记录
 
+**update 2017-10-24**
+
+* 修复上下滑动，手指只能移动一小段距离的 bug。
+* 修复上下滑动，页面重复的问题。
+
 **update 2017-10-09**
 
 * 重写 ItemDecoration，更好的方式设置 RecyclerView 的 divider
