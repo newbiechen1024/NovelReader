@@ -711,7 +711,6 @@ public abstract class PageLoader{
                 top = mMarginHeight - mTextPaint.getFontMetrics().top;
             }
 
-            canvas.drawLine(0,0,mDisplayWidth,0,mTextPaint);
             int interval = mIntervalSize + (int) mTextPaint.getTextSize();
             for (int i=0; i<mCurPage.lines.size(); ++i){
                 String str = mCurPage.lines.get(i);
