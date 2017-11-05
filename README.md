@@ -49,6 +49,15 @@
 * 添加每章标题显示
 * 修改每页的排版
 
+注:由于现在 IDEA 升级到了 AS 3.0 了。没有升级的同学，可能造成编译错误。或者 lambda 表达式不能使用的问题。解决方法是：
+
+```gradle
+# lambda 错误的解决办法。
+# 在项目的 build.gradle 顶部添加
+
+apply plugin: 'me.tatarka.retrolambda'
+```
+
 **update 2017-10-24**
 
 * 修复上下滑动，手指只能移动一小段距离的 bug。

@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka:gradle-retrolambda'
 apply plugin: 'org.greenrobot.greendao'
 
 android {
