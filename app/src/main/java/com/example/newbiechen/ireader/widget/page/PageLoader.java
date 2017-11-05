@@ -6,10 +6,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
-import android.util.Log;
 
 import com.example.newbiechen.ireader.App;
 import com.example.newbiechen.ireader.R;
@@ -53,15 +53,12 @@ public abstract class PageLoader{
     public static final int STATUS_PARSE = 5;    //正在解析 (一般用于本地数据加载)
     public static final int STATUS_PARSE_ERROR = 6; //本地文件解析错误(暂未被使用)
 
-    static final int DEFAULT_MARGIN_HEIGHT = 30;
-    static final int DEFAULT_MARGIN_WIDTH = 14;
+    static final int DEFAULT_MARGIN_HEIGHT = 28;
+    static final int DEFAULT_MARGIN_WIDTH = 12;
 
     //默认的显示参数配置
-    private static final int DEFAULT_INTERVAL = 8;
-    private static final int DEFAULT_PARAGRAPH_INTERVAL = 6;
-
     private static final int DEFAULT_TIP_SIZE = 12;
-
+    private static final int EXTRA_TITLE_SIZE = 4;
     //当前章节列表
     protected List<TxtChapter> mChapterList;
     //书本对象
@@ -87,6 +84,8 @@ public abstract class PageLoader{
     private Paint mBatteryPaint;
     //绘制提示的画笔
     private Paint mTipPaint;
+    //绘制标题的画笔
+    private Paint mTitlePaint;
     //绘制背景颜色的画笔(用来擦除需要重绘的部分)
     private Paint mBgPaint;
     //绘制小说内容的画笔
@@ -119,12 +118,17 @@ public abstract class PageLoader{
     private int mMarginHeight;
     //字体的颜色
     private int mTextColor;
+    //标题的大小
+    private int mTitleSize;
     //字体的大小
     private int mTextSize;
     //行间距
-    private int mIntervalSize;
+    private int mTextInterval;
+    //标题的行间距
+    private int mTitleInterval;
     //段落距离(基于行间距的额外距离)
-    private int mParagraphSize;
+    private int mTextPara;
+    private int mTitlePara;
     //电池的百分比
     private int mBatteryLevel;
     //页面的翻页效果模式
@@ -151,6 +155,7 @@ public abstract class PageLoader{
     private void initData(){
         mSettingManager = ReadSettingManager.getInstance();
         mTextSize = mSettingManager.getTextSize();
+        mTitleSize = mTextSize + ScreenUtils.spToPx(EXTRA_TITLE_SIZE);
         mPageMode = mSettingManager.getPageMode();
         isNightMode = mSettingManager.isNightMode();
         mBgTheme = mSettingManager.getReadBgTheme();
@@ -165,8 +170,10 @@ public abstract class PageLoader{
         //初始化参数
         mMarginWidth = ScreenUtils.dpToPx(DEFAULT_MARGIN_WIDTH);
         mMarginHeight = ScreenUtils.dpToPx(DEFAULT_MARGIN_HEIGHT);
-        mIntervalSize = ScreenUtils.dpToPx(DEFAULT_INTERVAL);
-        mParagraphSize = ScreenUtils.dpToPx(DEFAULT_PARAGRAPH_INTERVAL);
+        mTextInterval = mTextSize/2;
+        mTitleInterval = mTitleSize/2;
+        mTextPara = mTextSize; //段落间距由 text 的高度决定。
+        mTitlePara = mTitleSize;
     }
 
     private void initPaint(){
@@ -184,6 +191,15 @@ public abstract class PageLoader{
         mTextPaint.setTextSize(mTextSize);
         mTextPaint.setAntiAlias(true);
 
+        //绘制标题的画笔
+        mTitlePaint = new TextPaint();
+        mTitlePaint.setColor(mTextColor);
+        mTitlePaint.setTextSize(mTitleSize);
+        mTitlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        mTitlePaint.setTypeface(Typeface.DEFAULT_BOLD);
+        mTitlePaint.setAntiAlias(true);
+
+        //绘制背景的画笔
         mBgPaint = new Paint();
         mBgPaint.setColor(mPageBg);
 
@@ -298,8 +314,17 @@ public abstract class PageLoader{
 
         //设置textSize
         mTextSize = textSize;
+        mTextInterval = mTextSize/2;
+        mTextPara = mTextSize;
+
+        mTitleSize = mTextSize + ScreenUtils.spToPx(EXTRA_TITLE_SIZE);
+        mTitleInterval = mTitleInterval / 2;
+        mTitlePara = mTitleSize;
+
         //设置画笔的字体大小
         mTextPaint.setTextSize(mTextSize);
+        //设置标题的字体大小
+        mTitlePaint.setTextSize(mTitleSize);
         //存储状态
         mSettingManager.setTextSize(mTextSize);
         //取消缓存
@@ -490,52 +515,90 @@ public abstract class PageLoader{
     /***********************************default method***********************************************/
     //通过流获取Page的方法
     List<TxtPage> loadPages(TxtChapter chapter, BufferedReader br){
-        //读取数据段
+        //生成的页面
         List<TxtPage> pages = new ArrayList<>();
         //使用流的方式加载
         List<String> lines = new ArrayList<>();
-        //剩余高度
-        int rHeight = mVisibleHeight + mIntervalSize + mParagraphSize;
-
-        String paragraph = null;
+        int rHeight = mVisibleHeight; //由于匹配到最后，会多删除行间距，所以在这里多加个行间距
+        int titleLinesCount = 0;
+        boolean isTitle = true; //不存在没有 Title 的情况，所以默认设置为 true。
+        String paragraph = chapter.getTitle();//默认展示标题
         try {
-            while ((paragraph = br.readLine()) != null){
-                paragraph = paragraph.replaceAll("\\s", "");
-                //如果只有换行符，那么就不执行
-                if (paragraph.equals("")) continue;
+            while (isTitle || (paragraph = br.readLine()) != null){
+
                 //重置段落
-                paragraph = StringUtils.halfToFull("  "+paragraph+"\n");
+                if (!isTitle){
+                    paragraph = paragraph.replaceAll("\\s", "");
+                    //如果只有换行符，那么就不执行
+                    if (paragraph.equals("")) continue;
+                    paragraph = StringUtils.halfToFull("  "+paragraph+"\n");
+                }
+                else {
+                    //设置 title 的顶部间距
+                    rHeight -= mTitlePara;
+                }
 
+                int wordCount = 0;
+                String subStr = null;
                 while (paragraph.length() > 0){
-                    //重置剩余距离
-                    rHeight -= (mTextPaint.getTextSize() + mIntervalSize);
+                    //当前空间，是否容得下一行文字
+                    if (isTitle){
+                        rHeight -= mTitlePaint.getTextSize();
+                    }
+                    else{
+                        rHeight -= mTextPaint.getTextSize();
+                    }
 
-                    //达到行数要求,创建Page
-                    if (rHeight <= 0){
+                    //一页已经填充满了，创建 TextPage
+                    if (rHeight < 0){
                         //创建Page
                         TxtPage page = new TxtPage();
                         page.position = pages.size();
                         page.title = chapter.getTitle();
                         page.lines = new ArrayList<>(lines);
+                        page.titleLines = titleLinesCount;
                         pages.add(page);
                         //重置Lines
                         lines.clear();
                         rHeight = mVisibleHeight;
+                        titleLinesCount = 0;
                         continue;
                     }
+
                     //测量一行占用的字节数
-                    int count = mTextPaint.breakText(paragraph, true, mVisibleWidth, null);
-                    String subStr = paragraph.substring(0, count);
+                    if (isTitle){
+                        wordCount = mTitlePaint.breakText(paragraph, true, mVisibleWidth, null);
+                    }
+                    else {
+                        wordCount = mTextPaint.breakText(paragraph, true, mVisibleWidth, null);
+                    }
+
+                    subStr = paragraph.substring(0, wordCount);
                     if (!subStr.equals("\n")){
                         //将一行字节，存储到lines中
-                        lines.add(paragraph.substring(0, count));
+                        lines.add(subStr);
+
+                        //设置段落间距
+                        if (isTitle){
+                            titleLinesCount += 1;
+                            rHeight -= mTitleInterval;
+                        }
+                        else {
+                            rHeight -= mTextInterval;
+                        }
                     }
                     //裁剪
-                    paragraph = paragraph.substring(count);
+                    paragraph = paragraph.substring(wordCount);
                 }
 
-                if (lines.size() != 0){
-                    rHeight -= mParagraphSize;
+                //增加段落的间距
+                if (!isTitle && lines.size() != 0){
+                    rHeight = rHeight - mTextPara + mTextInterval;
+                }
+
+                if (isTitle){
+                    rHeight = rHeight - mTitlePara + mTitleInterval;
+                    isTitle = false;
                 }
             }
 
@@ -545,11 +608,11 @@ public abstract class PageLoader{
                 page.position = pages.size();
                 page.title = chapter.getTitle();
                 page.lines = new ArrayList<>(lines);
+                page.titleLines = titleLinesCount;
                 pages.add(page);
                 //重置Lines
                 lines.clear();
             }
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -704,6 +767,7 @@ public abstract class PageLoader{
         }
         else {
             float top;
+
             if (mPageMode == PageView.PAGE_MODE_SCROLL){
                 top = -mTextPaint.getFontMetrics().top;
             }
@@ -711,12 +775,44 @@ public abstract class PageLoader{
                 top = mMarginHeight - mTextPaint.getFontMetrics().top;
             }
 
-            int interval = mIntervalSize + (int) mTextPaint.getTextSize();
-            for (int i=0; i<mCurPage.lines.size(); ++i){
-                String str = mCurPage.lines.get(i);
+            //设置总距离
+            int interval = mTextInterval + (int) mTextPaint.getTextSize();
+            int para = mTextPara + (int) mTextPaint.getTextSize();
+            int titleInterval = mTitleInterval + (int) mTitlePaint.getTextSize();
+            int titlePara = mTitlePara + (int) mTextPaint.getTextSize();
+            String str = null;
+
+            //对标题进行绘制
+            for(int i=0; i<mCurPage.titleLines; ++i){
+                str = mCurPage.lines.get(i);
+
+                //设置顶部间距
+                if (i == 0){
+                    top += mTitlePara;
+                }
+
+                //计算文字显示的起始点
+                int start = (int) (mDisplayWidth - mTitlePaint.measureText(str))/2;
+                //进行绘制
+                canvas.drawText(str, start, top, mTitlePaint);
+
+                //设置尾部间距
+                if (i == mCurPage.titleLines - 1){
+                    top += titlePara;
+                }
+                else {
+                    //行间距
+                    top += titleInterval;
+                }
+            }
+
+            //对内容进行绘制
+            for (int i=mCurPage.titleLines; i<mCurPage.lines.size(); ++i){
+                str = mCurPage.lines.get(i);
+
                 canvas.drawText(str,mMarginWidth,top, mTextPaint);
                 if (str.endsWith("\n")){
-                    top += (interval + mParagraphSize);
+                    top += para;
                 }
                 else {
                     top += interval;
@@ -729,9 +825,13 @@ public abstract class PageLoader{
         //获取PageView的宽高
         mDisplayWidth = w;
         mDisplayHeight = h;
+
         //获取内容显示位置的大小
         mVisibleWidth = mDisplayWidth - mMarginWidth * 2;
         mVisibleHeight = mDisplayHeight - mMarginHeight * 2;
+
+        //创建用来缓冲的 Bitmap
+        mNextBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
 
         //如果章节已显示，那么就重新计算页面
         if (mStatus == STATUS_FINISH){
@@ -834,11 +934,19 @@ public abstract class PageLoader{
 
         mCancelPage = mCurPage;
         mCurPage = nextPage;
-        long curTime = System.currentTimeMillis();
         mPageView.drawNextPage();
-        curTime = System.currentTimeMillis() - curTime;
-        Log.d(TAG, "fillDown: "+curTime);
+
+        //为下一页做缓冲
+
+        //加载下一页的文章
+
         return true;
+    }
+
+    //缓存下一个要显示的页面
+    //TODO:解决上下滑动卡顿问题
+    private void cacheNextBitmap(){
+
     }
 
     boolean nextChapter(){
