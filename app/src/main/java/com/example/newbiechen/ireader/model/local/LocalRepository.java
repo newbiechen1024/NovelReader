@@ -11,7 +11,7 @@ import com.example.newbiechen.ireader.model.bean.BookReviewBean;
 import com.example.newbiechen.ireader.model.bean.packages.BookSortPackage;
 import com.example.newbiechen.ireader.model.flag.BookSort;
 import com.example.newbiechen.ireader.model.gen.AuthorBeanDao;
-import com.example.newbiechen.ireader.model.gen.BookBeanDao;
+
 import com.example.newbiechen.ireader.model.gen.BookCommentBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookHelpfulBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookHelpsBeanDao;
@@ -256,7 +256,7 @@ public class LocalRepository implements SaveDbHelper,GetDbHelper,DeleteDbHelper{
     public ReviewBookBean getReviewBook(String id){
         return mSession.getReviewBookBeanDao()
                 .queryBuilder()
-                .where(BookBeanDao.Properties._id.eq(id))
+                .where(ReviewBookBeanDao.Properties._id.eq(id))
                 .unique();
     }
 

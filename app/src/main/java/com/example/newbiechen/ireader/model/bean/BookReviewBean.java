@@ -10,7 +10,6 @@ import org.greenrobot.greendao.DaoException;
 import com.example.newbiechen.ireader.model.gen.DaoSession;
 import com.example.newbiechen.ireader.model.gen.BookHelpfulBeanDao;
 import com.example.newbiechen.ireader.model.gen.BookReviewBeanDao;
-import com.example.newbiechen.ireader.model.gen.BookBeanDao;
 import com.example.newbiechen.ireader.model.gen.ReviewBookBeanDao;
 
 /**
