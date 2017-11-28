@@ -170,10 +170,10 @@ public class PageView extends View {
         if (direction == PageAnimation.Direction.NEXT){
             int x = mViewWidth;
             int y = mViewHeight;
-            //设置点击点
-            mPageAnim.setTouchPoint(x,y);
             //初始化动画
             mPageAnim.setStartPoint(x,y);
+            //设置点击点
+            mPageAnim.setTouchPoint(x,y);
             //设置方向
             Boolean hasNext = hasNext();
 
