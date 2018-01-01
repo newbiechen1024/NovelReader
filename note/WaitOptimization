@@ -1,8 +1,0 @@
-# 待优化问题
-
-1. BookShelf中CollBookBean默认加载BookChapterBean，导致占用内存过多，与刷新缓慢的问题(完成)
-2. ReadActivity中分页的逻辑卡顿问题。(完成)
-3. 重构PageView与SimplePageFactory的关系。由于功能的增加，发现之前的设计有很多大的问题，导致代码混乱还有耦合度太高的问题。
-   (完成,改成了PageLoader类)
-4. 优化时间、电池回调，导致Page页重绘的问题。 (完成)
-5. 获取本地文件的速度太慢了，需要换一种算法。
