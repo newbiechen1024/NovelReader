@@ -46,11 +46,11 @@ public class CollBookBean implements Parcelable{
      * lastChapter : 第1659章 朱长老
      */
     @Id
-    private String _id;//如果是本地文件，那么id为所在的地址
+    private String _id;
     private String title;
     private String author;
     private String shortIntro;
-    private String cover;
+    private String cover; // 在本地书籍中，该字段作为本地文件的路径
     private boolean hasCp;
     private int latelyFollower;
     private double retentionRatio;

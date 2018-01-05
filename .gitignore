@@ -57,3 +57,6 @@ freeline_project_description.json
 
 # note
 app/daily
+
+# ssh
+.ssh

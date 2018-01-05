@@ -2,6 +2,7 @@ package com.example.newbiechen.ireader.presenter;
 
 import android.util.Log;
 
+import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.BookDetailBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.local.BookRepository;
@@ -9,6 +10,7 @@ import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.BookDetailContract;
 import com.example.newbiechen.ireader.ui.base.RxPresenter;
 import com.example.newbiechen.ireader.utils.LogUtils;
+import com.example.newbiechen.ireader.utils.MD5Utils;
 
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -45,6 +47,12 @@ public class BookDetailPresenter extends RxPresenter<BookDetailContract.View>
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         beans -> {
+
+                            //设置 id
+                            for(BookChapterBean bean :beans){
+                                bean.setId(MD5Utils.strToMd5By16(bean.getLink()));
+                            }
+
                             //设置目录
                             collBookBean.setBookChapters(beans);
                             //存储收藏

@@ -17,6 +17,7 @@ import com.example.newbiechen.ireader.ui.fragment.BaseFileFragment;
 import com.example.newbiechen.ireader.ui.fragment.FileCategoryFragment;
 import com.example.newbiechen.ireader.ui.fragment.LocalBookFragment;
 import com.example.newbiechen.ireader.utils.Constant;
+import com.example.newbiechen.ireader.utils.MD5Utils;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.ToastUtils;
 
@@ -184,10 +185,14 @@ public class FileSystemActivity extends BaseTabActivity {
             if (!file.exists()) continue;
 
             CollBookBean collBook = new CollBookBean();
-            collBook.setLocal(true);
-            collBook.set_id(file.getAbsolutePath());
+            collBook.set_id(MD5Utils.strToMd5By16(file.getAbsolutePath()));
             collBook.setTitle(file.getName().replace(".txt",""));
+            collBook.setAuthor("");
+            collBook.setShortIntro("无");
+            collBook.setCover(file.getAbsolutePath());
+            collBook.setLocal(true);
             collBook.setLastChapter("开始阅读");
+            collBook.setUpdated(StringUtils.dateConvert(file.lastModified(), Constant.FORMAT_BOOK_DATE));
             collBook.setLastRead(StringUtils.
                     dateConvert(System.currentTimeMillis(), Constant.FORMAT_BOOK_DATE));
             collBooks.add(collBook);

@@ -577,34 +577,27 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
     @Override
     protected void processLogic() {
         super.processLogic();
-        //如果是本地文件
-        if (mCollBook.isLocal()){
-            mPageLoader.openBook(mCollBook);
-        }
-        else {
-            //如果是网络文件
-            //如果是已经收藏的，那么就从数据库中获取目录
-            if (isCollected){
-                Disposable disposable = BookRepository.getInstance()
-                        .getBookChaptersInRx(mBookId)
-                        .compose(RxUtils::toSimpleSingle)
-                        .subscribe(
-                                (bookChapterBeen, throwable) -> {
-                                    mCollBook.setBookChapters(bookChapterBeen);
-                                    mPageLoader.openBook(mCollBook);
-                                    //如果是被标记更新的,重新从网络中获取目录
-                                    if (mCollBook.isUpdate()){
-                                        mPresenter.loadCategory(mBookId);
-                                    }
-                                    LogUtils.e(throwable);
+        //如果是已经收藏的，那么就从数据库中获取目录
+        if (isCollected){
+            Disposable disposable = BookRepository.getInstance()
+                    .getBookChaptersInRx(mBookId)
+                    .compose(RxUtils::toSimpleSingle)
+                    .subscribe(
+                            (bookChapterBeen, throwable) -> {
+                                mCollBook.setBookChapters(bookChapterBeen);
+                                mPageLoader.openBook(mCollBook);
+                                //如果是网络小说并被标记更新的，则从网络下载目录
+                                if (mCollBook.isUpdate() && !mCollBook.isLocal()){
+                                    mPresenter.loadCategory(mBookId);
                                 }
-                        );
-                addDisposable(disposable);
-            }
-            else{
-                //从网络中获取目录
-                mPresenter.loadCategory(mBookId);
-            }
+                                LogUtils.e(throwable);
+                            }
+                    );
+            addDisposable(disposable);
+        }
+        else{
+            //从网络中获取目录
+            mPresenter.loadCategory(mBookId);
         }
     }
 /***************************view************************************/

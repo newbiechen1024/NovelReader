@@ -10,6 +10,7 @@ import com.example.newbiechen.ireader.model.remote.RemoteRepository;
 import com.example.newbiechen.ireader.presenter.contract.ReadContract;
 import com.example.newbiechen.ireader.ui.base.RxPresenter;
 import com.example.newbiechen.ireader.utils.LogUtils;
+import com.example.newbiechen.ireader.utils.MD5Utils;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.widget.page.TxtChapter;
 
@@ -48,6 +49,7 @@ public class ReadPresenter extends RxPresenter<ReadContract.View>
                     public void accept(List<BookChapterBean> bookChapterBeen) throws Exception {
                         //进行设定BookChapter所属的书的id。
                         for (BookChapterBean bookChapter : bookChapterBeen){
+                            bookChapter.setId(MD5Utils.strToMd5By16(bookChapter.getLink()));
                             bookChapter.setBookId(bookId);
                         }
                     }

@@ -23,6 +23,7 @@ import com.example.newbiechen.ireader.model.bean.SortBookBean;
 import com.example.newbiechen.ireader.model.bean.packages.ChapterInfoPackage;
 import com.example.newbiechen.ireader.model.bean.packages.SearchBookPackage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Single;
@@ -64,7 +65,14 @@ public class RemoteRepository {
 
     public Single<List<BookChapterBean>> getBookChapters(String bookId){
         return mBookApi.getBookChapterPackage(bookId, "chapter")
-                .map(bean -> bean.getMixToc().getChapters());
+                .map(bean -> {
+                    if (bean.getMixToc() == null){
+                        return new ArrayList<BookChapterBean>(1);
+                    }
+                    else {
+                        return bean.getMixToc().getChapters();
+                    }
+                });
     }
 
     /**
