@@ -163,7 +163,6 @@ public class FileUtils {
         File file = new File(filePath);
 
         //如果层级为 3，则直接返回
-
         if (layer == 3){
             return txtFiles;
         }

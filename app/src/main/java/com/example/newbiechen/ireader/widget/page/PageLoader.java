@@ -501,9 +501,16 @@ public abstract class PageLoader{
     public void closeBook(){
         isBookOpen = false;
         mPageView = null;
+        mChapterList = null;
+        mCurPageList = null;
+        mNextPageList = null;
         if (mPreLoadDisp != null){
             mPreLoadDisp.dispose();
         }
+
+        // 清除 CollBookBean 的章节数据,并执行 GC，防止内存泄露。
+        mCollBook.getBookChapters().clear();
+        System.gc();
     }
 
     /*******************************abstract method***************************************/

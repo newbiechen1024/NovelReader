@@ -146,7 +146,7 @@ public class BookShelfFragment extends BaseMVPFragment<BookShelfContract.Present
                     CollBookBean collBook = mCollBookAdapter.getItem(pos);
                     if (collBook.isLocal()){
                         //id表示本地文件的路径
-                        String path = collBook.get_id();
+                        String path = collBook.getCover();
                         File file = new File(path);
                         //判断这个本地文件是否存在
                         if (file.exists()){
@@ -261,7 +261,7 @@ public class BookShelfFragment extends BaseMVPFragment<BookShelfContract.Present
                                 progressDialog.setMessage("正在删除中");
                                 progressDialog.show();
                                 //删除
-                                File file = new File(collBook.get_id());
+                                File file = new File(collBook.getCover());
                                 if (file.exists()) file.delete();
                                 BookRepository.getInstance().deleteCollBook(collBook);
                                 BookRepository.getInstance().deleteBookRecord(collBook.get_id());

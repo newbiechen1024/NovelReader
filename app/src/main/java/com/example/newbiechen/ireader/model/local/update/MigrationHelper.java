@@ -1,21 +1,22 @@
-package com.example.newbiechen.ireader.model.local;
+package com.example.newbiechen.ireader.model.local.update;
 
 import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.example.newbiechen.ireader.model.gen.DaoMaster;
-
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.internal.DaoConfig;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by newbiechen on 2017/10/9.
+ * 数据库更新策略
  */
 
 public class MigrationHelper {
@@ -33,8 +34,8 @@ public class MigrationHelper {
     public void migrate(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
 
         generateTempTables(db, daoClasses);
-        DaoMaster.dropAllTables(db, true);
-        DaoMaster.createAllTables(db, false);
+        deleteOriginalTables(db, daoClasses);
+        createOrignalTables(db, daoClasses);
         restoreData(db, daoClasses);
     }
 
@@ -94,6 +95,43 @@ public class MigrationHelper {
 
             db.execSQL(insertTableStringBuilder.toString());
 
+        }
+    }
+
+
+    /**
+     * 通过反射，删除要更新的表
+     */
+    private void deleteOriginalTables(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+        for (Class<? extends AbstractDao<?, ?>> daoClass : daoClasses) {
+            try {
+                Method method = daoClass.getMethod("dropTable", Database.class, boolean.class);
+                method.invoke(null, db, true);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 通过反射，重新创建要更新的表
+     */
+    private void createOrignalTables(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+        for (Class<? extends AbstractDao<?, ?>> daoClass : daoClasses) {
+            try {
+                Method method = daoClass.getMethod("createTable", Database.class, boolean.class);
+                method.invoke(null, db, false);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
     }
 

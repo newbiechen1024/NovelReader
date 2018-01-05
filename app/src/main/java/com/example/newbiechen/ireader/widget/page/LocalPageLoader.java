@@ -5,11 +5,13 @@ import android.util.Log;
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.local.BookRepository;
+import com.example.newbiechen.ireader.model.local.LocalRepository;
 import com.example.newbiechen.ireader.model.local.Void;
 import com.example.newbiechen.ireader.utils.Charset;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.FileUtils;
 import com.example.newbiechen.ireader.utils.IOUtils;
+import com.example.newbiechen.ireader.utils.MD5Utils;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.StringUtils;
 import com.example.newbiechen.ireader.utils.ToastUtils;
@@ -75,12 +77,15 @@ public class LocalPageLoader extends PageLoader {
     @Override
     public void openBook(CollBookBean collBookBean) {
         super.openBook(collBookBean);
-        mBookFile = new File(collBookBean.get_id());
-        //这里id表示本地文件的路径
+        mBookFile = new File(collBookBean.getCover());
 
         //判断是否文件存在
-        if (!mBookFile.exists()) return;
+        if (!mBookFile.exists()) {
+            return;
+        }
 
+        //获取文件编码
+        mCharset = FileUtils.getCharset(mBookFile.getAbsolutePath());
         //获取文件的大小
         mBookSize = mBookFile.length();
 
@@ -91,11 +96,28 @@ public class LocalPageLoader extends PageLoader {
         }
 
         isBookOpen = false;
+
+        String lastModified = StringUtils.dateConvert(mBookFile.lastModified(), Constant.FORMAT_BOOK_DATE);
+
+        if (!collBookBean.isUpdate() && collBookBean.getUpdated() != null
+                && collBookBean.getUpdated().equals(lastModified)
+                && collBookBean.getBookChapters() != null) {
+            mChapterList = convertTxtChapter(collBookBean.getBookChapters());
+
+            //提示目录加载完成
+            if (mPageChangeListener != null) {
+                mPageChangeListener.onCategoryFinish(mChapterList);
+            }
+            //打开章节，并加载当前章节
+            openChapter();
+            return;
+        }
+
         //通过RxJava异步处理分章事件
         Single.create(new SingleOnSubscribe<Void>() {
             @Override
             public void subscribe(SingleEmitter<Void> e) throws Exception {
-                loadBook(mBookFile);
+                loadChapters();
                 e.onSuccess(new Void());
             }
         }).compose(RxUtils::toSimpleSingle)
@@ -112,6 +134,26 @@ public class LocalPageLoader extends PageLoader {
                         if (mPageChangeListener != null){
                             mPageChangeListener.onCategoryFinish(mChapterList);
                         }
+
+                        //存储章节到数据库
+
+                        List<BookChapterBean> bookChapterBeanList = new ArrayList<>();
+                        for(int i=0; i<mChapterList.size(); ++i){
+                            TxtChapter chapter = mChapterList.get(i);
+                            BookChapterBean bean = new BookChapterBean();
+                            bean.setId(MD5Utils.strToMd5By16(mBookFile.getAbsolutePath()+File.separator+chapter.title)); // 将路径+i 作为唯一值
+                            bean.setTitle(chapter.getTitle());
+                            bean.setStart(chapter.getStart());
+                            bean.setUnreadble(false);
+                            bean.setEnd(chapter.getEnd());
+                            bookChapterBeanList.add(bean);
+                        }
+                        collBookBean.setBookChapters(bookChapterBeanList);
+                        collBookBean.setUpdated(lastModified);
+
+                        BookRepository.getInstance().saveBookChaptersWithAsync(bookChapterBeanList);
+                        BookRepository.getInstance().saveCollBook(collBookBean);
+
                         //打开章节，并加载当前章节
                         openChapter();
                     }
@@ -125,12 +167,16 @@ public class LocalPageLoader extends PageLoader {
                 });
     }
 
-    //采用的是随机读取
-    private void loadBook(File bookFile) throws IOException{
-        //获取文件编码
-        mCharset = FileUtils.getCharset(bookFile.getAbsolutePath());
-        //查找章节，分配章节
-        loadChapters();
+    private List<TxtChapter> convertTxtChapter(List<BookChapterBean> bookChapters){
+        List<TxtChapter> txtChapters = new ArrayList<>(bookChapters.size());
+        for (BookChapterBean bean : bookChapters){
+            TxtChapter chapter = new TxtChapter();
+            chapter.title = bean.getTitle();
+            chapter.start = bean.getStart();
+            chapter.end = bean.getEnd();
+            txtChapters.add(chapter);
+        }
+        return txtChapters;
     }
 
     /**
