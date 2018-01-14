@@ -367,8 +367,10 @@ public class LocalPageLoader extends PageLoader {
         }
 
         TxtChapter chapter = mChapterList.get(chapterPos);
+        Log.d(TAG, "loadPageList: " + chapter.start + "  " + chapter.end);
         //从文件中获取数据
         byte[] content = getChapterContent(chapter);
+        Log.d(TAG, "loadPageList: size");
         ByteArrayInputStream bais = new ByteArrayInputStream(content);
         BufferedReader br = null;
         try {
