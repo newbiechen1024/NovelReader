@@ -46,7 +46,7 @@ public class CollBookBean implements Parcelable{
      * lastChapter : 第1659章 朱长老
      */
     @Id
-    private String _id;
+    private String _id; // 本地书籍中，path 的 md5 值作为本地书籍的 id
     private String title;
     private String author;
     private String shortIntro;
