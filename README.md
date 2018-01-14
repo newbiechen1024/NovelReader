@@ -44,6 +44,14 @@
 
 # 更新记录
 
+<<<<<<< HEAD
+=======
+**update 2018-01-04**
+
+* 修复：加载本地书籍导致的 OOM 问题：[原因比较坑爹](https://github.com/newbiechen1024/NovelReader/issues/26)
+* 修改：重新修改了智能搜索本地书籍的办法(采用 LoaderManager + Android 媒体库，不会只扫描三级目录了)
+
+>>>>>>> dev
 **update 2018-01-06**
 
 * 智能搜索书籍过慢的问题(采用 eric0815 建议，只扫描三级目录)
