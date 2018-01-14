@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
+import android.util.Log;
 
 import com.example.newbiechen.ireader.App;
 import com.example.newbiechen.ireader.R;
@@ -96,6 +97,8 @@ public abstract class PageLoader{
     private TxtPage mCancelPage;
     //存储阅读记录类
     private BookRecordBean mBookRecord;
+
+    private Disposable mPreLoadDisp;
     /*****************params**************************/
     //当前的状态
     protected int mStatus = STATUS_LOADING;
@@ -103,8 +106,8 @@ public abstract class PageLoader{
     protected int mCurChapterPos = 0;
     //书本是否打开
     protected boolean isBookOpen = false;
-
-    private Disposable mPreLoadDisp;
+    //当前是否是夜间模式
+    private boolean isNightMode;
     //上一章的记录
     private int mLastChapter = 0;
     //书籍绘制区域的宽高
@@ -137,8 +140,6 @@ public abstract class PageLoader{
     private int mBgTheme;
     //当前页面的背景
     private int mPageBg;
-    //当前是否是夜间模式
-    private boolean isNightMode;
 
     /*****************************init params*******************************/
     public PageLoader(PageView pageView){
@@ -464,6 +465,11 @@ public abstract class PageLoader{
 
     //打开具体章节
     public void openChapter(){
+        // View 没有准备好，禁止打开
+        if (!mPageView.isPrepare()){
+            return;
+        }
+
         mCurPageList = loadPageList(mCurChapterPos);
         //进行预加载
         preLoadNextChapter();
@@ -526,17 +532,16 @@ public abstract class PageLoader{
         List<TxtPage> pages = new ArrayList<>();
         //使用流的方式加载
         List<String> lines = new ArrayList<>();
-        int rHeight = mVisibleHeight; //由于匹配到最后，会多删除行间距，所以在这里多加个行间距
+        int rHeight = mVisibleHeight; // 由于匹配到最后，会多删除行间距，所以在这里多加个行间距
         int titleLinesCount = 0;
-        boolean isTitle = true; //不存在没有 Title 的情况，所以默认设置为 true。
+        boolean showTitle = true; // 是否展示标题
         String paragraph = chapter.getTitle();//默认展示标题
         try {
-            while (isTitle || (paragraph = br.readLine()) != null){
-
-                //重置段落
-                if (!isTitle){
+            while (showTitle || (paragraph = br.readLine()) != null){
+                // 重置段落
+                if (!showTitle){
                     paragraph = paragraph.replaceAll("\\s", "");
-                    //如果只有换行符，那么就不执行
+                    // 如果只有换行符，那么就不执行
                     if (paragraph.equals("")) continue;
                     paragraph = StringUtils.halfToFull("  "+paragraph+"\n");
                 }
@@ -544,20 +549,18 @@ public abstract class PageLoader{
                     //设置 title 的顶部间距
                     rHeight -= mTitlePara;
                 }
-
                 int wordCount = 0;
                 String subStr = null;
                 while (paragraph.length() > 0){
                     //当前空间，是否容得下一行文字
-                    if (isTitle){
+                    if (showTitle){
                         rHeight -= mTitlePaint.getTextSize();
                     }
                     else{
                         rHeight -= mTextPaint.getTextSize();
                     }
-
                     //一页已经填充满了，创建 TextPage
-                    if (rHeight < 0){
+                    if (rHeight <= 0){
                         //创建Page
                         TxtPage page = new TxtPage();
                         page.position = pages.size();
@@ -573,12 +576,13 @@ public abstract class PageLoader{
                     }
 
                     //测量一行占用的字节数
-                    if (isTitle){
+                    if (showTitle){
                         wordCount = mTitlePaint.breakText(paragraph, true, mVisibleWidth, null);
                     }
                     else {
                         wordCount = mTextPaint.breakText(paragraph, true, mVisibleWidth, null);
                     }
+                    Log.d(TAG, "loadPages: "+wordCount+" word");
 
                     subStr = paragraph.substring(0, wordCount);
                     if (!subStr.equals("\n")){
@@ -586,7 +590,7 @@ public abstract class PageLoader{
                         lines.add(subStr);
 
                         //设置段落间距
-                        if (isTitle){
+                        if (showTitle){
                             titleLinesCount += 1;
                             rHeight -= mTitleInterval;
                         }
@@ -599,13 +603,13 @@ public abstract class PageLoader{
                 }
 
                 //增加段落的间距
-                if (!isTitle && lines.size() != 0){
+                if (!showTitle && lines.size() != 0){
                     rHeight = rHeight - mTextPara + mTextInterval;
                 }
 
-                if (isTitle){
+                if (showTitle){
                     rHeight = rHeight - mTitlePara + mTitleInterval;
-                    isTitle = false;
+                    showTitle = false;
                 }
             }
 
@@ -845,6 +849,10 @@ public abstract class PageLoader{
             mCurPageList = loadPageList(mCurChapterPos);
             //重新设置文章指针的位置
             mCurPage = getCurPage(mCurPage.position);
+        }
+
+        if (!isBookOpen && mCollBook != null){
+            openChapter();
         }
 
         mPageView.drawCurPage(false);

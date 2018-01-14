@@ -7,11 +7,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.newbiechen.ireader.R;
-import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.base.adapter.ViewHolderImpl;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.FileUtils;
+import com.example.newbiechen.ireader.utils.MD5Utils;
 import com.example.newbiechen.ireader.utils.StringUtils;
 
 import java.io.File;
@@ -61,7 +61,7 @@ public class FileHolder extends ViewHolderImpl<File> {
 
     private void setFile(File file){
         //选择
-        String id = file.getAbsolutePath();
+        String id = MD5Utils.strToMd5By16(file.getAbsolutePath());
 
         if (BookRepository.getInstance().getCollBook(id) != null){
             mIvIcon.setImageResource(R.drawable.ic_file_loaded);
