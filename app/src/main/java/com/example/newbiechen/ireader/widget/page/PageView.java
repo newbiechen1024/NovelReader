@@ -94,13 +94,15 @@ public class PageView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         mViewWidth = w;
         mViewHeight = h;
+        //初始化完成
+        isPrepare = true;
+
         //重置图片的大小,由于w,h可能比原始的Bitmap更大，所以如果使用Bitmap.setWidth/Height()是会报错的。
         //所以最终还是创建Bitmap的方式。这种方式比较消耗性能，暂时没有找到更好的方法。
         setPageMode(mPageMode);
+
         //重置页面加载器的页面
         mPageLoader.setDisplaySize(w,h);
-        //初始化完成
-        isPrepare = true;
     }
 
     //设置翻页的模式
