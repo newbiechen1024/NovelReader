@@ -60,3 +60,5 @@ app/daily
 
 # ssh
 .ssh
+app/libs/
+gradle/.DS_Store
