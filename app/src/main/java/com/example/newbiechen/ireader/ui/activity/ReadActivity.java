@@ -740,12 +740,12 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if (isVolumeTurnPage){
-                    return mPageLoader.autoPrevPage();
+                    return mPageLoader.skipToPrePage();
                 }
                 break;
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 if (isVolumeTurnPage){
-                    return mPageLoader.autoNextPage();
+                    return mPageLoader.skipToNextPage();
                 }
                 break;
         }

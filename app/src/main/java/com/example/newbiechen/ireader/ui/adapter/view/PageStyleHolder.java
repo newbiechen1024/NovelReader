@@ -11,7 +11,7 @@ import com.example.newbiechen.ireader.ui.base.adapter.ViewHolderImpl;
  * Created by newbiechen on 17-5-19.
  */
 
-public class ReadBgHolder extends ViewHolderImpl<Drawable> {
+public class PageStyleHolder extends ViewHolderImpl<Drawable> {
 
     private View mReadBg;
     private ImageView mIvChecked;

@@ -25,13 +25,6 @@ import com.example.newbiechen.ireader.widget.animation.SlidePageAnim;
  */
 public class PageView extends View {
 
-    public final static int PAGE_MODE_SIMULATION = 0;
-    public final static int PAGE_MODE_COVER = 1;
-    public final static int PAGE_MODE_SLIDE = 2;
-    public final static int PAGE_MODE_NONE = 3;
-    //滚动效果
-    public final static int PAGE_MODE_SCROLL = 4;
-
     private final static String TAG = "BookPageWidget";
 
     private int mViewWidth = 0; // 当前View的宽
@@ -42,7 +35,7 @@ public class PageView extends View {
     private boolean isMove = false;
     //初始化参数
     private int mBgColor = 0xFFCEC29C;
-    private int mPageMode = PAGE_MODE_SIMULATION;
+    private PageMode mPageMode = PageMode.SIMULATION;
 
     //是否允许点击
     private boolean canTouch = true;
@@ -106,25 +99,25 @@ public class PageView extends View {
     }
 
     //设置翻页的模式
-    public void setPageMode(int pageMode){
+    public void setPageMode(PageMode pageMode){
         mPageMode = pageMode;
         //视图未初始化的时候，禁止调用
         if (mViewWidth == 0 || mViewHeight == 0) return;
 
         switch (pageMode){
-            case PAGE_MODE_SIMULATION:
+            case SIMULATION:
                 mPageAnim = new SimulationPageAnim(mViewWidth, mViewHeight,this,mPageAnimListener);
                 break;
-            case PAGE_MODE_COVER:
+            case COVER:
                 mPageAnim = new CoverPageAnim(mViewWidth, mViewHeight,this,mPageAnimListener);
                 break;
-            case PAGE_MODE_SLIDE:
+            case SLIDE:
                 mPageAnim = new SlidePageAnim(mViewWidth, mViewHeight,this,mPageAnimListener);
                 break;
-            case PAGE_MODE_NONE:
+            case NONE:
                 mPageAnim = new NonePageAnim(mViewWidth, mViewHeight,this,mPageAnimListener);
                 break;
-            case PAGE_MODE_SCROLL:
+            case SCROLL:
                 mPageAnim = new ScrollPageAnim(mViewWidth, mViewHeight, 0,
                         ScreenUtils.dpToPx(PageLoader.DEFAULT_MARGIN_HEIGHT),this,mPageAnimListener);
                 break;
