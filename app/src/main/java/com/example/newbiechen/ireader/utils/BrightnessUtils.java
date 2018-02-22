@@ -69,9 +69,8 @@ public class BrightnessUtils {
         //获取自动调节下的亮度范围在 0~1 之间
         ContentResolver resolver = activity.getContentResolver();
         try {
-            //TODO:获取到的值与实际的亮度有差异，没有找到能够获得真正亮度值的方法，希望大佬能够告知。
-
-            nowBrightnessValue = Settings.System.getFloat(resolver, "screen_auto_brightness_adj");
+            // TODO:获取到的值与实际的亮度有差异，没有找到能够获得真正亮度值的方法，希望大佬能够告知。
+            nowBrightnessValue = Settings.System.getFloat(resolver, Settings.System.SCREEN_BRIGHTNESS);
             Log.d(TAG, "getAutoScreenBrightness: " + nowBrightnessValue);
         } catch (Exception e) {
             e.printStackTrace();
@@ -162,4 +161,13 @@ public class BrightnessUtils {
         }
     }
 
+    public static void setDefaultBrightness(Activity activity) {
+        try {
+            WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+            lp.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+            activity.getWindow().setAttributes(lp);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }
