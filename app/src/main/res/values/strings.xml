@@ -182,4 +182,9 @@
     
     <!--search-->
     <string name="nb.search.book.brief">%1$d人在追 | %2$s读者留存 | %3$s著</string>
+
+    <!--BookShelf-->
+    <string name="nb.bookshelf.book_not_exist">文件不存在或者内容为空,是否删除?</string>
+
+
 </resources>

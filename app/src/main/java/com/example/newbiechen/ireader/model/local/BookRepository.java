@@ -1,6 +1,5 @@
 package com.example.newbiechen.ireader.model.local;
 
-import android.app.PendingIntent;
 import android.util.Log;
 
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
@@ -26,12 +25,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;

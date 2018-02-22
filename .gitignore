@@ -59,6 +59,7 @@ freeline_project_description.json
 app/daily
 
 # ssh
-.ssh
+.ssh/
 app/libs/
 gradle/.DS_Store
+/.ssh/

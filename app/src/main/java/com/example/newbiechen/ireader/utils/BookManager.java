@@ -1,6 +1,5 @@
 package com.example.newbiechen.ireader.utils;
 
-import android.util.Log;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
