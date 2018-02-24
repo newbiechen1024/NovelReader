@@ -146,8 +146,8 @@ public class NetPageLoader extends PageLoader {
             // 是否当前不是最后一章
             if (end < mChapterList.size()) {
                 end = end + 1;
-                if (end > mChapterList.size()) {
-                    end = mChapterList.size();
+                if (end >= mChapterList.size()) {
+                    end = mChapterList.size() - 1;
                 }
             }
 
@@ -168,6 +168,7 @@ public class NetPageLoader extends PageLoader {
      */
     private void loadNextChapter() {
         if (mPageChangeListener != null) {
+
             // 提示加载后两章
             int begin = mCurChapterPos + 1;
             int end = begin + 1;
@@ -179,7 +180,7 @@ public class NetPageLoader extends PageLoader {
             }
 
             if (end > mChapterList.size()) {
-                end = mChapterList.size();
+                end = mChapterList.size() - 1;
             }
 
             requestChapters(begin, end);

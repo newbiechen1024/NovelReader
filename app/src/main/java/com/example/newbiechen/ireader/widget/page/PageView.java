@@ -317,8 +317,10 @@ public class PageView extends View {
     public void drawCurPage(boolean isUpdate) {
         if (!isPrepare) return;
 
-        if (mPageAnim instanceof ScrollPageAnim) {
-            ((ScrollPageAnim) mPageAnim).refreshBitmap();
+        if (!isUpdate){
+            if (mPageAnim instanceof ScrollPageAnim) {
+                ((ScrollPageAnim) mPageAnim).resetBitmap();
+            }
         }
 
         mPageLoader.drawPage(getNextBitmap(), isUpdate);

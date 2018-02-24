@@ -3,23 +3,19 @@ package com.example.newbiechen.ireader.widget.animation;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.util.Log;
-import android.util.TimeUtils;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
-import android.view.ViewConfiguration;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 /**
  * Created by newbiechen on 17-7-23.
  * 原理:仿照ListView源码实现的上下滑动效果
  * Alter by: zeroAngus
- *
+ * <p>
  * 问题:
  * 1. 向上翻页，重复的问题 (完成)
  * 2. 滑动卡顿的问题。原因:由于绘制的数据过多造成的卡顿问题。 (主要是文字绘制需要的时长比较多) 解决办法：做文字缓冲
@@ -27,31 +23,31 @@ import java.util.Iterator;
  */
 public class ScrollPageAnim extends PageAnimation {
     private static final String TAG = "ScrollAnimation";
-    //滑动追踪的时间
+    // 滑动追踪的时间
     private static final int VELOCITY_DURATION = 1000;
     private VelocityTracker mVelocity;
 
-    //整个Bitmap的背景显示
+    // 整个Bitmap的背景显示
     private Bitmap mBgBitmap;
 
-    //滑动到的下一张图片
+    // 下一个展示的图片
     private Bitmap mNextBitmap;
 
-    //被废弃的图片
+    // 被废弃的图片列表
     private ArrayDeque<BitmapView> mScrapViews;
-    //正在被利用的图片
+    // 正在被利用的图片列表
     private ArrayList<BitmapView> mActiveViews = new ArrayList<>(2);
 
-    //是否处于刷新阶段
+    // 是否处于刷新阶段
     private boolean isRefresh = true;
 
-    //页面加载的方向
+    // 页面加载的方向
     private boolean isNext = true;
 
     public ScrollPageAnim(int w, int h, int marginWidth, int marginHeight,
                           View view, OnPageChangeListener listener) {
         super(w, h, marginWidth, marginHeight, view, listener);
-        //创建两个BitmapView
+        // 创建两个BitmapView
         initWidget();
     }
 
@@ -73,56 +69,58 @@ public class ScrollPageAnim extends PageAnimation {
         isRefresh = false;
     }
 
-    //修改布局,填充内容
+    // 修改布局,填充内容
     private void onLayout() {
-        //如果还没有开始加载，则从上到下进行绘制
+        // 如果还没有开始加载，则从上到下进行绘制
         if (mActiveViews.size() == 0) {
             fillDown(0, 0);
         } else {
             int offset = (int) (mTouchY - mLastY);
-            //判断是下滑还是上拉 (下滑)
+            // 判断是下滑还是上拉 (下滑)
             if (offset > 0) {
                 int topEdge = mActiveViews.get(0).top;
                 fillUp(topEdge, offset);
             }
-            //上拉
+            // 上拉
             else {
-                //底部的距离 = 当前底部的距离 + 滑动的距离 (因为上滑，得到的值肯定是负的)
+                // 底部的距离 = 当前底部的距离 + 滑动的距离 (因为上滑，得到的值肯定是负的)
                 int bottomEdge = mActiveViews.get(mActiveViews.size() - 1).bottom;
                 fillDown(bottomEdge, offset);
             }
         }
     }
 
-    //底部填充
+    // 底部填充
     private Iterator<BitmapView> downIt;
 
     /**
      * 创建View填充底部空白部分
      *
      * @param bottomEdge :当前最后一个View的底部，在整个屏幕上的位置,即相对于屏幕顶部的距离
-     * @param offset :滑动的偏移量
+     * @param offset     :滑动的偏移量
      */
     private void fillDown(int bottomEdge, int offset) {
-        //首先进行布局的调整
+
         downIt = mActiveViews.iterator();
         BitmapView view;
+
+        // 进行删除
         while (downIt.hasNext()) {
             view = downIt.next();
             view.top = view.top + offset;
             view.bottom = view.bottom + offset;
-            //设置允许显示的范围
+            // 设置允许显示的范围
             view.destRect.top = view.top;
             view.destRect.bottom = view.bottom;
 
-            //判断是否越界了
+            // 判断是否越界了
             if (view.bottom <= 0) {
-                //添加到废弃的View中
+                // 添加到废弃的View中
                 mScrapViews.add(view);
-                //从Active中移除
+                // 从Active中移除
                 downIt.remove();
-                //如果原先是从上加载，现在变成从下加载，则表示取消
-                /**
+/*                // 如果原先是从上加载，现在变成从下加载，则表示取消
+                *//**
                  * 滑动造成页面重复的问题：
                  * 这个问题产生的原因是这样的，代码是将下一个显示的页面，设置为 curPage ，即当前页。
                  * 那么如果上下滑动的时候，当前显示的是两个页面，那么第二个页面就是当前页。
@@ -132,19 +130,20 @@ public class ScrollPageAnim extends PageAnimation {
                  * 解决方法就是:
                  * 如果原先是向下滑动的，形成了两个页面的状态。此时又变成向上滑动了，那么第二页就消失了。也就认为是取消显示下一页了
                  * 所以就调用 pageCancel()。
-                 */
-                if (!isNext){
+                 *//*
+                if (!isNext) {
                     mListener.pageCancel();
                     isNext = true;
-                }
+                }*/
             }
         }
 
-        //滑动之后的最后一个 View 的距离屏幕顶部上的实际位置
+        // 滑动之后的最后一个 View 的距离屏幕顶部上的实际位置
         int realEdge = bottomEdge + offset;
-        //进行填充
+
+        // 进行填充
         while (realEdge < mViewHeight && mActiveViews.size() < 2) {
-            //从废弃的Views中获取一个
+            // 从废弃的Views中获取一个
             view = mScrapViews.getFirst();
 /*          //擦除其Bitmap(重新创建会不会更好一点)
             eraseBitmap(view.bitmap,view.bitmap.getWidth(),view.bitmap.getHeight(),0,0);*/
@@ -155,13 +154,13 @@ public class ScrollPageAnim extends PageAnimation {
             if (!isRefresh) {
                 boolean hasNext = mListener.hasNext(); //如果不成功则无法滑动
 
-                //如果不存在next,则进行还原
+                // 如果不存在next,则进行还原
                 if (!hasNext) {
                     mNextBitmap = cancelBitmap;
                     for (BitmapView activeView : mActiveViews) {
                         activeView.top = 0;
                         activeView.bottom = mViewHeight;
-                        //设置允许显示的范围
+                        // 设置允许显示的范围
                         activeView.destRect.top = activeView.top;
                         activeView.destRect.bottom = activeView.bottom;
                     }
@@ -170,14 +169,14 @@ public class ScrollPageAnim extends PageAnimation {
                 }
             }
 
-            //如果加载成功，那么就将View从ScrapViews中移除
+            // 如果加载成功，那么就将View从ScrapViews中移除
             mScrapViews.removeFirst();
-            //添加到存活的Bitmap中
+            // 添加到存活的Bitmap中
             mActiveViews.add(view);
-            //设置Bitmap的范围
+            // 设置Bitmap的范围
             view.top = realEdge;
             view.bottom = realEdge + view.bitmap.getHeight();
-            //设置允许显示的范围
+            // 设置允许显示的范围
             view.destRect.top = view.top;
             view.destRect.bottom = view.bottom;
 
@@ -186,14 +185,15 @@ public class ScrollPageAnim extends PageAnimation {
     }
 
     private Iterator<BitmapView> upIt;
+
     /**
      * 创建View填充顶部空白部分
      *
      * @param topEdge : 当前第一个View的顶部，到屏幕顶部的距离
-     * @param offset : 滑动的偏移量
+     * @param offset  : 滑动的偏移量
      */
     private void fillUp(int topEdge, int offset) {
-        //首先进行布局的调整
+        // 首先进行布局的调整
         upIt = mActiveViews.iterator();
         BitmapView view;
         while (upIt.hasNext()) {
@@ -204,44 +204,44 @@ public class ScrollPageAnim extends PageAnimation {
             view.destRect.top = view.top;
             view.destRect.bottom = view.bottom;
 
-            //判断是否越界了
+            // 判断是否越界了
             if (view.top >= mViewHeight) {
-                //添加到废弃的View中
+                // 添加到废弃的View中
                 mScrapViews.add(view);
-                //从Active中移除
+                // 从Active中移除
                 upIt.remove();
 
-                //如果原先是下，现在变成从上加载了，则表示取消加载
+/*                // 如果原先是下，现在变成从上加载了，则表示取消加载
 
 
-                if (isNext){
+                if (isNext) {
                     mListener.pageCancel();
                     isNext = false;
-                }
+                }*/
             }
         }
 
-        //滑动之后，第一个 View 的顶部距离屏幕顶部的实际位置。
+        // 滑动之后，第一个 View 的顶部距离屏幕顶部的实际位置。
         int realEdge = topEdge + offset;
 
-        //对布局进行View填充
+        // 对布局进行View填充
         while (realEdge > 0 && mActiveViews.size() < 2) {
-            //从废弃的Views中获取一个
+            // 从废弃的Views中获取一个
             view = mScrapViews.getFirst();
             if (view == null) return;
 
-            //判断是否存在上一章节
+            // 判断是否存在上一章节
             Bitmap cancelBitmap = mNextBitmap;
             mNextBitmap = view.bitmap;
             if (!isRefresh) {
                 boolean hasPrev = mListener.hasPrev(); //如果不成功则无法滑动
-                //如果不存在next,则进行还原
+                // 如果不存在next,则进行还原
                 if (!hasPrev) {
                     mNextBitmap = cancelBitmap;
                     for (BitmapView activeView : mActiveViews) {
                         activeView.top = 0;
                         activeView.bottom = mViewHeight;
-                        //设置允许显示的范围
+                        // 设置允许显示的范围
                         activeView.destRect.top = activeView.top;
                         activeView.destRect.bottom = activeView.bottom;
                     }
@@ -249,15 +249,15 @@ public class ScrollPageAnim extends PageAnimation {
                     return;
                 }
             }
-            //如果加载成功，那么就将View从ScrapViews中移除
+            // 如果加载成功，那么就将View从ScrapViews中移除
             mScrapViews.removeFirst();
-            //加入到存活的对象中
+            // 加入到存活的对象中
             mActiveViews.add(0, view);
-            //设置Bitmap的范围
+            // 设置Bitmap的范围
             view.top = realEdge - view.bitmap.getHeight();
             view.bottom = realEdge;
 
-            //设置允许显示的范围
+            // 设置允许显示的范围
             view.destRect.top = view.top;
             view.destRect.bottom = view.bottom;
             realEdge -= view.bitmap.getHeight();
@@ -279,16 +279,18 @@ public class ScrollPageAnim extends PageAnimation {
         b.setPixels(mInitBitmapPix, 0, width, paddingLeft, paddingTop, width, height);*/
     }
 
-    //重置当前位移状态 ==> 将ActiveViews全部删除，然后重新加载
-    public void refreshBitmap() {
+    /**
+     * 重置位移
+     */
+    public void resetBitmap() {
         isRefresh = true;
-        //将所有的Active加入到Scrap中
+        // 将所有的Active加入到Scrap中
         for (BitmapView view : mActiveViews) {
             mScrapViews.add(view);
         }
-        //清除所有的Active
+        // 清除所有的Active
         mActiveViews.clear();
-        //重新进行布局
+        // 重新进行布局
         onLayout();
         isRefresh = false;
     }
@@ -298,43 +300,41 @@ public class ScrollPageAnim extends PageAnimation {
         int x = (int) event.getX();
         int y = (int) event.getY();
 
-        //初始化速度追踪器
+        // 初始化速度追踪器
         if (mVelocity == null) {
             mVelocity = VelocityTracker.obtain();
         }
 
         mVelocity.addMovement(event);
-        //设置触碰点
+        // 设置触碰点
         setTouchPoint(x, y);
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 isRunning = false;
-                //设置起始点
+                // 设置起始点
                 setStartPoint(x, y);
-                //停止动画
+                // 停止动画
                 abortAnim();
                 break;
             case MotionEvent.ACTION_MOVE:
-
                 mVelocity.computeCurrentVelocity(VELOCITY_DURATION);
                 isRunning = true;
-                //进行刷新
+                // 进行刷新
                 mView.postInvalidate();
                 break;
             case MotionEvent.ACTION_UP:
                 isRunning = false;
-                //开启动画
+                // 开启动画
                 startAnim();
-
-                //删除检测器
+                // 删除检测器
                 mVelocity.recycle();
                 mVelocity = null;
                 break;
 
             case MotionEvent.ACTION_CANCEL:
                 try {
-                    mVelocity.recycle(); //if velocityTracker won't be used should be recycled
+                    mVelocity.recycle(); // if velocityTracker won't be used should be recycled
                     mVelocity = null;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -373,9 +373,8 @@ public class ScrollPageAnim extends PageAnimation {
     @Override
     public synchronized void startAnim() {
         isRunning = true;
-        //倒数第二个参数0修改 解决上滑问题
-        //mScroller.fling(0, (int) mTouchY, 0, (int) mVelocity.getYVelocity(), 0, 0, 0, Integer.MAX_VALUE);
-        mScroller.fling(0, (int) mTouchY, 0, (int) mVelocity.getYVelocity(), 0, 0, Integer.MAX_VALUE*-1, Integer.MAX_VALUE);
+        mScroller.fling(0, (int) mTouchY, 0, (int) mVelocity.getYVelocity()
+                , 0, 0, Integer.MAX_VALUE * -1, Integer.MAX_VALUE);
     }
 
     @Override

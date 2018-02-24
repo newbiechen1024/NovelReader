@@ -69,7 +69,6 @@ public class BrightnessUtils {
         //获取自动调节下的亮度范围在 0~1 之间
         ContentResolver resolver = activity.getContentResolver();
         try {
-            // TODO:获取到的值与实际的亮度有差异，没有找到能够获得真正亮度值的方法，希望大佬能够告知。
             nowBrightnessValue = Settings.System.getFloat(resolver, Settings.System.SCREEN_BRIGHTNESS);
             Log.d(TAG, "getAutoScreenBrightness: " + nowBrightnessValue);
         } catch (Exception e) {
@@ -98,69 +97,9 @@ public class BrightnessUtils {
     }
 
     /**
-     * 保存亮度设置状态
-     */
-    public static void saveBrightness(Activity activity, int brightness) {
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(activity)) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-            intent.setData(Uri.parse("package:" + activity.getPackageName()));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            activity.startActivity(intent);
-        }
-        else {
-            try{
-                Uri uri = Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS);
-                Settings.System.putInt(activity.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, brightness);
-                // resolver.registerContentObserver(uri, true, myContentObserver);
-                activity.getContentResolver().notifyChange(uri, null);
-            }catch(Exception ex){
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * 停止自动亮度调节
-     *
+     * 获取当前系统的亮度
      * @param activity
      */
-    public static void stopAutoBrightness(Activity activity) {
-        //动态申请权限
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(activity)) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-            intent.setData(Uri.parse("package:" + activity.getPackageName()));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            activity.startActivity(intent);
-        }
-        else {
-            Settings.System.putInt(activity.getContentResolver(),
-                    Settings.System.SCREEN_BRIGHTNESS_MODE,
-                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-        }
-
-    }
-
-    /**
-     * 开启亮度自动调节
-     *
-     * @param activity
-     */
-    public static void startAutoBrightness(Activity activity) {
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.System.canWrite(activity)) {
-            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-            intent.setData(Uri.parse("package:" + activity.getPackageName()));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            activity.startActivity(intent);
-        }
-        else {
-            //有了权限，具体的动作
-            Settings.System.putInt(activity.getContentResolver(),
-                    Settings.System.SCREEN_BRIGHTNESS, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
-        }
-    }
-
     public static void setDefaultBrightness(Activity activity) {
         try {
             WindowManager.LayoutParams lp = activity.getWindow().getAttributes();

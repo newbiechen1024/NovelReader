@@ -893,7 +893,6 @@ public abstract class PageLoader {
         // 重置 PageMode
         mPageView.setPageMode(mPageMode);
 
-        // TODO:这种做法不够优雅。
         if (!isChapterOpen) {
             // 展示加载界面
             mPageView.drawCurPage(false);
