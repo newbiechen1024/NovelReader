@@ -41,9 +41,6 @@ public class ScrollPageAnim extends PageAnimation {
     // 是否处于刷新阶段
     private boolean isRefresh = true;
 
-    // 页面加载的方向
-    private boolean isNext = true;
-
     public ScrollPageAnim(int w, int h, int marginWidth, int marginHeight,
                           View view, OnPageChangeListener listener) {
         super(w, h, marginWidth, marginHeight, view, listener);
@@ -74,6 +71,7 @@ public class ScrollPageAnim extends PageAnimation {
         // 如果还没有开始加载，则从上到下进行绘制
         if (mActiveViews.size() == 0) {
             fillDown(0, 0);
+            mDirection = Direction.NONE;
         } else {
             int offset = (int) (mTouchY - mLastY);
             // 判断是下滑还是上拉 (下滑)
@@ -119,22 +117,11 @@ public class ScrollPageAnim extends PageAnimation {
                 mScrapViews.add(view);
                 // 从Active中移除
                 downIt.remove();
-/*                // 如果原先是从上加载，现在变成从下加载，则表示取消
-                *//**
-                 * 滑动造成页面重复的问题：
-                 * 这个问题产生的原因是这样的，代码是将下一个显示的页面，设置为 curPage ，即当前页。
-                 * 那么如果上下滑动的时候，当前显示的是两个页面，那么第二个页面就是当前页。
-                 * 如果这个时候回滚到上一页，我们认为的上一页是第一页的上一页。但是实际上上一页是第二页的上一页，也就是第一页
-                 * 所以就造成了，我们滚动到的上一页，实际上是第一页的内容，所以就造成了重复。
-                 *
-                 * 解决方法就是:
-                 * 如果原先是向下滑动的，形成了两个页面的状态。此时又变成向上滑动了，那么第二页就消失了。也就认为是取消显示下一页了
-                 * 所以就调用 pageCancel()。
-                 *//*
-                if (!isNext) {
+                // 如果原先是从上加载，现在变成从下加载，则表示取消
+                if (mDirection == Direction.UP) {
                     mListener.pageCancel();
-                    isNext = true;
-                }*/
+                    mDirection = Direction.NONE;
+                }
             }
         }
 
@@ -151,6 +138,7 @@ public class ScrollPageAnim extends PageAnimation {
 
             Bitmap cancelBitmap = mNextBitmap;
             mNextBitmap = view.bitmap;
+
             if (!isRefresh) {
                 boolean hasNext = mListener.hasNext(); //如果不成功则无法滑动
 
@@ -173,6 +161,8 @@ public class ScrollPageAnim extends PageAnimation {
             mScrapViews.removeFirst();
             // 添加到存活的Bitmap中
             mActiveViews.add(view);
+            mDirection = Direction.DOWN;
+
             // 设置Bitmap的范围
             view.top = realEdge;
             view.bottom = realEdge + view.bitmap.getHeight();
@@ -211,13 +201,12 @@ public class ScrollPageAnim extends PageAnimation {
                 // 从Active中移除
                 upIt.remove();
 
-/*                // 如果原先是下，现在变成从上加载了，则表示取消加载
+                // 如果原先是下，现在变成从上加载了，则表示取消加载
 
-
-                if (isNext) {
+                if (mDirection == Direction.DOWN) {
                     mListener.pageCancel();
-                    isNext = false;
-                }*/
+                    mDirection = Direction.NONE;
+                }
             }
         }
 
@@ -234,7 +223,7 @@ public class ScrollPageAnim extends PageAnimation {
             Bitmap cancelBitmap = mNextBitmap;
             mNextBitmap = view.bitmap;
             if (!isRefresh) {
-                boolean hasPrev = mListener.hasPrev(); //如果不成功则无法滑动
+                boolean hasPrev = mListener.hasPrev(); // 如果不成功则无法滑动
                 // 如果不存在next,则进行还原
                 if (!hasPrev) {
                     mNextBitmap = cancelBitmap;
@@ -253,6 +242,7 @@ public class ScrollPageAnim extends PageAnimation {
             mScrapViews.removeFirst();
             // 加入到存活的对象中
             mActiveViews.add(0, view);
+            mDirection = Direction.UP;
             // 设置Bitmap的范围
             view.top = realEdge - view.bitmap.getHeight();
             view.bottom = realEdge;

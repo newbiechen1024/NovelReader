@@ -10,6 +10,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
+import android.util.Log;
 
 import com.example.newbiechen.ireader.model.bean.BookRecordBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
@@ -586,12 +587,17 @@ public abstract class PageLoader {
     public void openChapter() {
         isFirstOpen = false;
 
+        if (!mPageView.isPrepare()){
+            return;
+        }
+
         // 如果章节目录没有准备好
         if (!isChapterListPrepare) {
             mStatus = STATUS_LOADING;
             mPageView.drawCurPage(false);
             return;
         }
+
         // 如果获取到的章节目录为空
         if (mChapterList.isEmpty()){
             mStatus = STATUS_CATEGORY_EMPTY;
@@ -1156,6 +1162,7 @@ public abstract class PageLoader {
         }
         // 假设加载到下一页，又取消了。那么需要重新装载。
         mCurPage = mCancelPage;
+        Log.d(TAG, "pageCancel: " + mCurPage.position);
     }
 
 
@@ -1172,7 +1179,7 @@ public abstract class PageLoader {
         List<TxtPage> pages = new ArrayList<>();
         //使用流的方式加载
         List<String> lines = new ArrayList<>();
-        int rHeight = mVisibleHeight; // 由于匹配到最后，会多删除行间距，所以在这里多加个行间距
+        int rHeight = mVisibleHeight;
         int titleLinesCount = 0;
         boolean showTitle = true; // 是否展示标题
         String paragraph = chapter.getTitle();//默认展示标题
@@ -1197,19 +1204,21 @@ public abstract class PageLoader {
                     } else {
                         rHeight -= mTextPaint.getTextSize();
                     }
-                    //一页已经填充满了，创建 TextPage
+                    // 一页已经填充满了，创建 TextPage
                     if (rHeight <= 0) {
-                        //创建Page
+                        // 创建Page
                         TxtPage page = new TxtPage();
                         page.position = pages.size();
                         page.title = chapter.getTitle();
                         page.lines = new ArrayList<>(lines);
                         page.titleLines = titleLinesCount;
                         pages.add(page);
-                        //重置Lines
+                        // 重置Lines
                         lines.clear();
                         rHeight = mVisibleHeight;
                         titleLinesCount = 0;
+
+                        Log.d(TAG, "loadPages: rHeight  " + rHeight);
                         continue;
                     }
 
