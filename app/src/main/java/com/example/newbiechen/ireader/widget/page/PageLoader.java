@@ -10,6 +10,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
+import android.util.Log;
 
 import com.example.newbiechen.ireader.model.bean.BookRecordBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
@@ -1156,6 +1157,7 @@ public abstract class PageLoader {
         }
         // 假设加载到下一页，又取消了。那么需要重新装载。
         mCurPage = mCancelPage;
+        Log.d(TAG, "pageCancel: " + mCurPage.position);
     }
 
 
