@@ -673,15 +673,14 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
             return;
         }
 
-        if (!mCollBook.isLocal() && !isCollected) {
+        if (!mCollBook.isLocal() && !isCollected
+                && !mCollBook.getBookChapters().isEmpty()) {
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle("加入书架")
                     .setMessage("喜欢本书就加入书架吧")
                     .setPositiveButton("确定", (dialog, which) -> {
                         //设置为已收藏
                         isCollected = true;
-                        //设置BookChapter
-                        mCollBook.setBookChapters(mCollBook.getBookChapters());
                         //设置阅读时间
                         mCollBook.setLastRead(StringUtils.
                                 dateConvert(System.currentTimeMillis(), Constant.FORMAT_BOOK_DATE));

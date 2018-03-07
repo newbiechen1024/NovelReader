@@ -548,6 +548,11 @@ public abstract class PageLoader {
      * 保存阅读记录
      */
     public void saveRecord() {
+
+        if (mChapterList.isEmpty()){
+            return;
+        }
+
         mBookRecord.setBookId(mCollBook.get_id());
         mBookRecord.setChapter(mCurChapterPos);
 
@@ -720,26 +725,28 @@ public abstract class PageLoader {
             /****绘制背景****/
             canvas.drawColor(mBgColor);
 
-            /*****初始化标题的参数********/
-            //需要注意的是:绘制text的y的起始点是text的基准线的位置，而不是从text的头部的位置
-            float tipTop = tipMarginHeight - mTipPaint.getFontMetrics().top;
-            //根据状态不一样，数据不一样
-            if (mStatus != STATUS_FINISH) {
-                if (isChapterListPrepare) {
-                    canvas.drawText(mChapterList.get(mCurChapterPos).getTitle()
-                            , mMarginWidth, tipTop, mTipPaint);
+            if (!mChapterList.isEmpty()){
+                /*****初始化标题的参数********/
+                //需要注意的是:绘制text的y的起始点是text的基准线的位置，而不是从text的头部的位置
+                float tipTop = tipMarginHeight - mTipPaint.getFontMetrics().top;
+                //根据状态不一样，数据不一样
+                if (mStatus != STATUS_FINISH) {
+                    if (isChapterListPrepare) {
+                        canvas.drawText(mChapterList.get(mCurChapterPos).getTitle()
+                                , mMarginWidth, tipTop, mTipPaint);
+                    }
+                } else {
+                    canvas.drawText(mCurPage.title, mMarginWidth, tipTop, mTipPaint);
                 }
-            } else {
-                canvas.drawText(mCurPage.title, mMarginWidth, tipTop, mTipPaint);
-            }
 
-            /******绘制页码********/
-            // 底部的字显示的位置Y
-            float y = mDisplayHeight - mTipPaint.getFontMetrics().bottom - tipMarginHeight;
-            // 只有finish的时候采用页码
-            if (mStatus == STATUS_FINISH) {
-                String percent = (mCurPage.position + 1) + "/" + mCurPageList.size();
-                canvas.drawText(percent, mMarginWidth, y, mTipPaint);
+                /******绘制页码********/
+                // 底部的字显示的位置Y
+                float y = mDisplayHeight - mTipPaint.getFontMetrics().bottom - tipMarginHeight;
+                // 只有finish的时候采用页码
+                if (mStatus == STATUS_FINISH) {
+                    String percent = (mCurPage.position + 1) + "/" + mCurPageList.size();
+                    canvas.drawText(percent, mMarginWidth, y, mTipPaint);
+                }
             }
         } else {
             //擦除区域
