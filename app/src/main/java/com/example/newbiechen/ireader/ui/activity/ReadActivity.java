@@ -745,6 +745,7 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
         mHandler.removeMessages(WHAT_CHAPTER);
 
         mPageLoader.closeBook();
+        mPageLoader = null;
     }
 
     @Override

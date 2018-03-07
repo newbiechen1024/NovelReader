@@ -18,6 +18,7 @@ import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.model.local.ReadSettingManager;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.IOUtils;
+import com.example.newbiechen.ireader.utils.NetworkUtils;
 import com.example.newbiechen.ireader.utils.RxUtils;
 import com.example.newbiechen.ireader.utils.ScreenUtils;
 import com.example.newbiechen.ireader.utils.StringUtils;
@@ -648,13 +649,25 @@ public abstract class PageLoader {
     public void closeBook() {
         isChapterListPrepare = false;
         isClose = true;
-        mPageView = null;
-        mChapterList = null;
-        mCurPageList = null;
-        mNextPageList = null;
 
         if (mPreLoadDisp != null) {
             mPreLoadDisp.dispose();
+        }
+
+        clearList(mChapterList);
+        clearList(mCurPageList);
+        clearList(mNextPageList);
+
+        mChapterList = null;
+        mCurPageList = null;
+        mNextPageList = null;
+        mPageView = null;
+        mCurPage = null;
+    }
+
+    private void clearList(List list){
+        if (list != null){
+            list.clear();
         }
     }
 
@@ -679,8 +692,10 @@ public abstract class PageLoader {
         BufferedReader reader = getChapterReader(chapter);
         // 判断文本流是否存在
         if (reader != null) {
+            List<TxtPage> chapters = loadPages(chapter, reader);
+            IOUtils.close(reader);
             // 将章节数据解析成页面数据
-            return loadPages(chapter, reader);
+            return chapters;
         }
         return null;
     }
@@ -1225,7 +1240,6 @@ public abstract class PageLoader {
                         rHeight = mVisibleHeight;
                         titleLinesCount = 0;
 
-                        Log.d(TAG, "loadPages: rHeight  " + rHeight);
                         continue;
                     }
 
