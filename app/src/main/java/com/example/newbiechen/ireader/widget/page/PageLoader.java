@@ -239,7 +239,7 @@ public abstract class PageLoader {
      * @return
      */
     public boolean skipPreChapter() {
-        if (!hasNextChapter()) {
+        if (!hasPrevChapter()) {
             return false;
         }
 
