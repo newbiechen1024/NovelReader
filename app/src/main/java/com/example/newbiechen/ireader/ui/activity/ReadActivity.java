@@ -249,6 +249,8 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
         mPageLoader = mPvPage.getPageLoader(mCollBook);
         //禁止滑动展示DrawerLayout
         mDlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        //侧边打开后，返回键能够起作用
+        mDlSlide.setFocusableInTouchMode(true);
         mSettingDialog = new ReadSettingDialog(this, mPageLoader);
 
         setUpAdapter();
@@ -471,7 +473,9 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
         mTvCategory.setOnClickListener(
                 (v) -> {
                     //移动到指定位置
-                    mLvCategory.setSelection(mPageLoader.getChapterPos());
+                    if (mCategoryAdapter.getCount() > 0) {
+                        mLvCategory.setSelection(mPageLoader.getChapterPos());
+                    }
                     //切换菜单
                     toggleMenu(true);
                     //打开侧滑动栏
