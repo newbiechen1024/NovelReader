@@ -58,6 +58,7 @@ import java.util.List;
 import butterknife.BindView;
 import io.reactivex.disposables.Disposable;
 
+import static android.support.v4.view.ViewCompat.LAYER_TYPE_SOFTWARE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -238,6 +239,12 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
     protected void initWidget() {
         super.initWidget();
 
+        // 如果 API < 18 取消硬件加速
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mPvPage.setLayerType(LAYER_TYPE_SOFTWARE, null);
+        }
+
         //获取页面加载器
         mPageLoader = mPvPage.getPageLoader(mCollBook);
         //禁止滑动展示DrawerLayout
@@ -297,6 +304,12 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
             params.bottomMargin = 0;
             mLlBottomMenu.setLayoutParams(params);
         }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Log.d(TAG, "onWindowFocusChanged: " + mAblTopMenu.getMeasuredHeight());
     }
 
     private void toggleNightMode() {
@@ -383,7 +396,7 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
                     @Override
                     public void onPageCountChange(int count) {
                         mSbChapterProgress.setEnabled(true);
-                        mSbChapterProgress.setMax(count - 1);
+                        mSbChapterProgress.setMax(Math.max(0, count - 1));
                         mSbChapterProgress.setProgress(0);
                     }
 

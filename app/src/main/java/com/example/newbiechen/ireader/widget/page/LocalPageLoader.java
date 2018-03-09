@@ -317,13 +317,6 @@ public class LocalPageLoader extends PageLoader {
     }
 
     @Override
-    public void skipToChapter(int pos) {
-        super.skipToChapter(pos);
-        //加载章节
-        openChapter();
-    }
-
-    @Override
     public void saveRecord() {
         super.saveRecord();
         //修改当前COllBook记录
