@@ -378,14 +378,8 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
                     public void requestChapters(List<TxtChapter> requestChapters) {
                         mPresenter.loadChapter(mBookId, requestChapters);
                         mHandler.sendEmptyMessage(WHAT_CATEGORY);
-                        if (mPageLoader.getPageStatus() == PageLoader.STATUS_LOADING
-                                || mPageLoader.getPageStatus() == PageLoader.STATUS_ERROR) {
-                            //冻结使用
-                            mSbChapterProgress.setEnabled(false);
-                        }
                         //隐藏提示
                         mTvPageTip.setVisibility(GONE);
-                        mSbChapterProgress.setProgress(0);
                     }
 
                     @Override
@@ -395,9 +389,16 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
 
                     @Override
                     public void onPageCountChange(int count) {
-                        mSbChapterProgress.setEnabled(true);
                         mSbChapterProgress.setMax(Math.max(0, count - 1));
                         mSbChapterProgress.setProgress(0);
+                        // 如果处于错误状态，那么就冻结使用
+                        if (mPageLoader.getPageStatus() == PageLoader.STATUS_LOADING
+                                || mPageLoader.getPageStatus() == PageLoader.STATUS_ERROR) {
+                            mSbChapterProgress.setEnabled(false);
+                        }
+                        else {
+                            mSbChapterProgress.setEnabled(true);
+                        }
                     }
 
                     @Override

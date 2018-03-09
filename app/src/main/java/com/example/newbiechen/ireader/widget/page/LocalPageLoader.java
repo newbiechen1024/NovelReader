@@ -425,16 +425,11 @@ public class LocalPageLoader extends PageLoader {
     }
 
     @Override
-    protected BufferedReader getChapterReader(TxtChapter chapter) {
+    protected BufferedReader getChapterReader(TxtChapter chapter) throws Exception {
         //从文件中获取数据
         byte[] content = getChapterContent(chapter);
         ByteArrayInputStream bais = new ByteArrayInputStream(content);
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(bais, mCharset.getName()));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        BufferedReader br = new BufferedReader(new InputStreamReader(bais, mCharset.getName()));
         return br;
     }
 

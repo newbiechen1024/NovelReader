@@ -62,17 +62,12 @@ public class NetPageLoader extends PageLoader {
     }
 
     @Override
-    protected BufferedReader getChapterReader(TxtChapter chapter) {
+    protected BufferedReader getChapterReader(TxtChapter chapter) throws Exception {
         File file = new File(Constant.BOOK_CACHE_PATH + mCollBook.get_id()
                 + File.separator + chapter.title + FileUtils.SUFFIX_NB);
         if (!file.exists()) return null;
 
-        Reader reader = null;
-        try {
-            reader = new FileReader(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        Reader reader = new FileReader(file);
         BufferedReader br = new BufferedReader(reader);
         return br;
     }
@@ -187,12 +182,9 @@ public class NetPageLoader extends PageLoader {
         }
     }
 
-    /**
-     * 1. 过滤已缓存的章节
-     * 2. 请求未缓存的章节
-     */
     private void requestChapters(int start, int end) {
         List<TxtChapter> chapters = new ArrayList<>();
+        // 过滤，哪些数据已经加载了
         for (int i = start; i <= end; ++i) {
             TxtChapter txtChapter = mChapterList.get(i);
             if (!hasChapterData(txtChapter)) {
