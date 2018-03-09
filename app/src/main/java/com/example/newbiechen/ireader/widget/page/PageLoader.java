@@ -982,14 +982,13 @@ public abstract class PageLoader {
         mNextPageList = mCurPageList;
 
         // 判断是否具有上一章缓存
-        if (mPrePageList != null){
+        if (mPrePageList != null) {
             mCurPageList = mPrePageList;
             mPrePageList = null;
 
             // 回调
             chapterChangeCallback();
-        }
-        else {
+        } else {
             dealLoadPageList(prevChapter);
         }
         return mCurPageList != null ? true : false;
@@ -1074,11 +1073,9 @@ public abstract class PageLoader {
         if (mNextPageList != null) {
             mCurPageList = mNextPageList;
             mNextPageList = null;
-
             // 回调
             chapterChangeCallback();
-        }
-        else {
+        } else {
             // 处理页面解析
             dealLoadPageList(nextChapter);
         }
@@ -1164,13 +1161,29 @@ public abstract class PageLoader {
 
     // 取消翻页
     void pageCancel() {
-        // 加载到下一章取消了
-        if (mCurPage.position == 0 && mCurChapterPos > mLastChapterPos) {
-            cancelNextChapter();
+        if (mCurPage.position == 0 && mCurChapterPos > mLastChapterPos) { // 加载到下一章取消了
+            if (mPrePageList != null) {
+                cancelNextChapter();
+            } else {
+                if (parsePrevChapter()) {
+                    mCurPage = getPrevLastPage();
+                } else {
+                    mCurPage = new TxtPage();
+                }
+            }
         } else if (mCurPageList == null
                 || (mCurPage.position == mCurPageList.size() - 1
                 && mCurChapterPos < mLastChapterPos)) {  // 加载上一章取消了
-            cancelPreChapter();
+
+            if (mNextPageList != null) {
+                cancelPreChapter();
+            } else {
+                if (parseNextChapter()) {
+                    mCurPage = mCurPageList.get(0);
+                } else {
+                    mCurPage = new TxtPage();
+                }
+            }
         } else {
             // 假设加载到下一页，又取消了。那么需要重新装载。
             mCurPage = mCancelPage;
