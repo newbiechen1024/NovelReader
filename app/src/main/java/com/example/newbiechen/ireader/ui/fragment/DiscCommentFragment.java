@@ -17,9 +17,9 @@ import com.example.newbiechen.ireader.ui.activity.DiscDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.DiscCommentAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseMVPFragment;
 import com.example.newbiechen.ireader.utils.Constant;
+import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 import com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView;
-import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  * 2. 初始化视图和逻辑的交互
  */
 
-public class DiscCommentFragment extends BaseMVPFragment<DiscCommentContact.Presenter> implements DiscCommentContact.View{
+public class DiscCommentFragment extends BaseMVPFragment<DiscCommentContact.Presenter> implements DiscCommentContact.View {
     private static final String TAG = "DiscCommentFragment";
     private static final String EXTRA_BLOCK = "extra_block";
     private static final String BUNDLE_BLOCK = "bundle_block";
@@ -55,9 +55,9 @@ public class DiscCommentFragment extends BaseMVPFragment<DiscCommentContact.Pres
     private final int mLimited = 20;
 
     /****************************open method**********************************/
-    public static Fragment newInstance(CommunityType block){
+    public static Fragment newInstance(CommunityType block) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(EXTRA_BLOCK,block);
+        bundle.putSerializable(EXTRA_BLOCK, block);
         Fragment fragment = new DiscCommentFragment();
         fragment.setArguments(bundle);
         return fragment;
@@ -72,12 +72,11 @@ public class DiscCommentFragment extends BaseMVPFragment<DiscCommentContact.Pres
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             mBlock = (CommunityType) savedInstanceState.getSerializable(BUNDLE_BLOCK);
             mBookSort = (BookSort) savedInstanceState.getSerializable(BUNDLE_SORT);
             mDistillate = (BookDistillate) savedInstanceState.getSerializable(BUNDLE_DISTILLATE);
-        }
-        else {
+        } else {
             mBlock = (CommunityType) getArguments().getSerializable(EXTRA_BLOCK);
         }
     }
@@ -87,10 +86,10 @@ public class DiscCommentFragment extends BaseMVPFragment<DiscCommentContact.Pres
         setUpAdapter();
     }
 
-    private void setUpAdapter(){
+    private void setUpAdapter() {
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
-        mDiscCommentAdapter = new DiscCommentAdapter(getContext(),new WholeAdapter.Options());
+        mDiscCommentAdapter = new DiscCommentAdapter(getContext(), new WholeAdapter.Options());
         mRvContent.setAdapter(mDiscCommentAdapter);
     }
 
@@ -99,20 +98,20 @@ public class DiscCommentFragment extends BaseMVPFragment<DiscCommentContact.Pres
     @Override
     protected void initClick() {
         //下滑刷新
-        mRvContent.setOnRefreshListener( () -> refreshData() );
+        mRvContent.setOnRefreshListener(() -> refreshData());
         //上滑加载
         mDiscCommentAdapter.setOnLoadMoreListener(
                 () -> mPresenter.loadingComment(mBlock, mBookSort, mStart, mLimited, mDistillate)
         );
         mDiscCommentAdapter.setOnItemClickListener(
-                (view,pos) -> {
+                (view, pos) -> {
                     BookCommentBean bean = mDiscCommentAdapter.getItem(pos);
                     String detailId = bean.get_id();
-                    DiscDetailActivity.startActivity(getContext(),mBlock,detailId);
+                    DiscDetailActivity.startActivity(getContext(), mBlock, detailId);
                 }
         );
         //选择刷新
-        RxBus.getInstance()
+        addDisposable(RxBus.getInstance()
                 .toObservable(Constant.MSG_SELECTOR, SelectorEvent.class)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -121,7 +120,7 @@ public class DiscCommentFragment extends BaseMVPFragment<DiscCommentContact.Pres
                             mDistillate = event.distillate;
                             refreshData();
                         }
-                );
+                ));
     }
 
     @Override
@@ -135,18 +134,19 @@ public class DiscCommentFragment extends BaseMVPFragment<DiscCommentContact.Pres
         super.processLogic();
         //首次加载数据
         mRvContent.startRefresh();
-        mPresenter.firstLoading(mBlock,mBookSort,mStart,mLimited,mDistillate);
+        mPresenter.firstLoading(mBlock, mBookSort, mStart, mLimited, mDistillate);
     }
 
-    private void refreshData(){
+    private void refreshData() {
         mStart = 0;
         mRvContent.startRefresh();
         mPresenter.refreshComment(mBlock, mBookSort, mStart, mLimited, mDistillate);
     }
+
     /********************************rewrite method****************************************/
 
     @Override
-    public void finishRefresh(List<BookCommentBean> beans){
+    public void finishRefresh(List<BookCommentBean> beans) {
         mDiscCommentAdapter.refreshItems(beans);
         mStart = beans.size();
     }
@@ -177,8 +177,8 @@ public class DiscCommentFragment extends BaseMVPFragment<DiscCommentContact.Pres
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(BUNDLE_BLOCK, mBlock);
-        outState.putSerializable(BUNDLE_SORT,mBookSort);
-        outState.putSerializable(BUNDLE_DISTILLATE,mDistillate);
+        outState.putSerializable(BUNDLE_SORT, mBookSort);
+        outState.putSerializable(BUNDLE_DISTILLATE, mDistillate);
     }
 
     @Override
