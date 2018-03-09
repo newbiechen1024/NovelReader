@@ -761,6 +761,10 @@ public abstract class PageLoader {
                 if (mStatus == STATUS_FINISH) {
                     String percent = (mCurPage.position + 1) + "/" + mCurPageList.size();
                     canvas.drawText(percent, mMarginWidth, y, mTipPaint);
+                    //提示章节数量改变了。
+                    if (mPageChangeListener != null) {
+                        mPageChangeListener.onPageCountChange(mCurPageList.size());
+                    }
                 }
             }
         } else {
@@ -1309,9 +1313,9 @@ public abstract class PageLoader {
         }
 
         //提示章节数量改变了。
-        if (mPageChangeListener != null) {
-            mPageChangeListener.onPageCountChange(pages.size());
-        }
+        //if (mPageChangeListener != null) {
+        //    mPageChangeListener.onPageCountChange(pages.size());
+        //}
         return pages;
     }
 
