@@ -183,7 +183,18 @@ public class NetPageLoader extends PageLoader {
     }
 
     private void requestChapters(int start, int end) {
+        // 检验输入值
+        if (start < 0) {
+            start = 0;
+        }
+
+        if (end >= mChapterList.size()) {
+            end = mChapterList.size() - 1;
+        }
+
+
         List<TxtChapter> chapters = new ArrayList<>();
+
         // 过滤，哪些数据已经加载了
         for (int i = start; i <= end; ++i) {
             TxtChapter txtChapter = mChapterList.get(i);
