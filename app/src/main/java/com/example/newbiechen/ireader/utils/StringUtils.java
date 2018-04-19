@@ -148,6 +148,9 @@ public class StringUtils {
         ConversionType currentConversionType = ConversionType.S2TWP;
         int convertType = SharedPreUtils.getInstance().getInt(SHARED_READ_CONVERT_TYPE, 0);
 
+        if (input.length() == 0)
+            return "";
+
         switch (convertType) {
             case 1:
                 currentConversionType = ConversionType.TW2SP;
