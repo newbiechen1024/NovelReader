@@ -3,7 +3,7 @@
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
-	
+
 	<include layout="@layout/toolbar" />
 	
 	<RelativeLayout
@@ -31,11 +31,6 @@
 			android:longClickable="false"/>
 	</RelativeLayout>
 	
-	<View
-		android:layout_width="match_parent"
-		android:layout_height="1dp"
-		android:background="@color/nb.divider.narrow" />
-	
 	<RelativeLayout
 		android:id="@+id/more_setting_rl_full_screen"
 		android:layout_width="match_parent"
@@ -44,7 +39,7 @@
 		android:paddingLeft="20dp"
 		android:paddingRight="20dp"
 		android:background="@drawable/selector_common_bg">
-		
+
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -57,6 +52,31 @@
 			android:layout_height="wrap_content"
 			android:layout_centerVertical="true"
 			android:layout_alignParentRight="true"
+			android:clickable="false"
+			android:longClickable="false"/>
+	</RelativeLayout>
+
+	<RelativeLayout
+		android:id="@+id/more_setting_rl_convert_type"
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
+		android:gravity="center"
+		android:paddingLeft="20dp"
+		android:paddingRight="20dp"
+		android:background="@drawable/selector_common_bg">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:text="繁簡轉換"/>
+
+		<android.support.v7.widget.AppCompatSpinner
+			android:id="@+id/more_setting_sc_convert_type"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_alignParentEnd="true"
 			android:clickable="false"
 			android:longClickable="false"/>
 	</RelativeLayout>

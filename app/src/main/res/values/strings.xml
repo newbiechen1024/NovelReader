@@ -186,5 +186,18 @@
     <!--BookShelf-->
     <string name="nb.bookshelf.book_not_exist">文件不存在或者内容为空,是否删除?</string>
 
-
+    <!--OpenCC-->
+    <string-array name="conversion_type_array">
+        <item>不轉換</item>
+        <item>臺灣正體到簡體(大陸常用詞彙)</item>
+        <item>簡體到香港繁體</item>
+        <item>簡體到繁體</item>
+        <item>簡體到臺灣正體</item>
+        <item>簡體到繁體(臺灣常用詞彙)</item>
+        <item>繁體到香港繁體</item>
+        <item>繁體到簡體</item>
+        <item>繁體臺灣正體</item>
+        <item>臺灣正體到簡體</item>
+        <item>香港繁體到簡體</item>
+    </string-array>
 </resources>
