@@ -67,7 +67,6 @@ public class MoreSettingActivity extends BaseActivity{
     private void initSwitchStatus(){
         mScVolume.setChecked(isVolumeTurnPage);
         mScFullScreen.setChecked(isFullScreen);
-        mScConvertType.setSelection(convertType);
     }
 
     @Override
@@ -108,6 +107,9 @@ public class MoreSettingActivity extends BaseActivity{
                 R.array.conversion_type_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mScConvertType.setAdapter(adapter);
+
+        // initSwitchStatus() be called earlier than onCreate(), so setSelection() won't work
+        mScConvertType.setSelection(convertType);
 
         mScConvertType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
