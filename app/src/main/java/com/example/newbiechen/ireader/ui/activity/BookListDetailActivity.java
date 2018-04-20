@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ import butterknife.Unbinder;
 
 public class BookListDetailActivity extends BaseMVPActivity<BookListDetailContract.Presenter> implements BookListDetailContract.View {
 
+    private static final String TAG = "BookListDetailActivity";
     private static final String EXTRA_DETAIL_ID = "extra_detail_id";
     @BindView(R.id.refresh_layout)
     RefreshLayout mRefreshLayout;
@@ -107,6 +109,14 @@ public class BookListDetailActivity extends BaseMVPActivity<BookListDetailContra
         mDetailAdapter.setOnLoadMoreListener(
                 () -> loadBook()
         );
+        mDetailAdapter.setOnItemClickListener((v,p)->{
+            onItemClick(v,p);
+        });
+    }
+
+    protected void onItemClick(View v, int p){
+        BookListDetailBean.BooksBean.BookBean book = mBooksList.get(p).getBook();
+        BookDetailActivity.startActivity(this, book.get_id());
     }
 
     @Override
