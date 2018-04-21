@@ -1,5 +1,6 @@
 package com.example.newbiechen.ireader.ui.base.adapter;
 
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,7 +100,14 @@ public abstract class BaseListAdapter <T> extends RecyclerView.Adapter<RecyclerV
 
     public void addItems(List<T> values){
         mList.addAll(values);
-        notifyDataSetChanged();
+
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     public void removeItem(T value){
