@@ -686,6 +686,7 @@ public abstract class PageLoader {
         // 获取章节的文本流
         BufferedReader reader = getChapterReader(chapter);
         List<TxtPage> chapters = loadPages(chapter, reader);
+
         return chapters;
     }
 
@@ -1240,6 +1241,7 @@ public abstract class PageLoader {
         String paragraph = chapter.getTitle();//默认展示标题
         try {
             while (showTitle || (paragraph = br.readLine()) != null) {
+                paragraph = StringUtils.convertCC(paragraph, mContext);
                 // 重置段落
                 if (!showTitle) {
                     paragraph = paragraph.replaceAll("\\s", "");
@@ -1264,7 +1266,7 @@ public abstract class PageLoader {
                         // 创建Page
                         TxtPage page = new TxtPage();
                         page.position = pages.size();
-                        page.title = chapter.getTitle();
+                        page.title = StringUtils.convertCC(chapter.getTitle(), mContext);
                         page.lines = new ArrayList<>(lines);
                         page.titleLines = titleLinesCount;
                         pages.add(page);
@@ -1317,7 +1319,7 @@ public abstract class PageLoader {
                 //创建Page
                 TxtPage page = new TxtPage();
                 page.position = pages.size();
-                page.title = chapter.getTitle();
+                page.title = StringUtils.convertCC(chapter.getTitle(), mContext);
                 page.lines = new ArrayList<>(lines);
                 page.titleLines = titleLinesCount;
                 pages.add(page);

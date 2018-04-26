@@ -5,6 +5,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.example.newbiechen.ireader.App;
+import com.example.newbiechen.ireader.utils.StringUtils;
 import com.google.gson.annotations.SerializedName;
 
 import org.greenrobot.greendao.annotation.Entity;
@@ -106,7 +108,7 @@ public class CollBookBean implements Parcelable{
     }
 
     public String getTitle() {
-        return title;
+        return StringUtils.convertCC(title, App.getContext());
     }
 
     public void setTitle(String title) {
@@ -114,7 +116,7 @@ public class CollBookBean implements Parcelable{
     }
 
     public String getAuthor() {
-        return author;
+        return StringUtils.convertCC(author, App.getContext());
     }
 
     public void setAuthor(String author) {
@@ -122,7 +124,7 @@ public class CollBookBean implements Parcelable{
     }
 
     public String getShortIntro() {
-        return shortIntro;
+        return StringUtils.convertCC(shortIntro, App.getContext());
     }
 
     public void setShortIntro(String shortIntro) {
@@ -130,7 +132,7 @@ public class CollBookBean implements Parcelable{
     }
 
     public String getCover() {
-        return cover;
+        return StringUtils.convertCC(cover, App.getContext());
     }
 
     public void setCover(String cover) {
@@ -162,7 +164,7 @@ public class CollBookBean implements Parcelable{
     }
 
     public String getUpdated() {
-        return updated;
+        return StringUtils.convertCC(updated, App.getContext());
     }
 
     public void setUpdated(String updated) {
@@ -178,7 +180,7 @@ public class CollBookBean implements Parcelable{
     }
 
     public String getLastChapter() {
-        return lastChapter;
+        return StringUtils.convertCC(lastChapter, App.getContext());
     }
 
     public void setLastChapter(String lastChapter) {
@@ -214,7 +216,7 @@ public class CollBookBean implements Parcelable{
     }
 
     public String getLastRead() {
-        return lastRead;
+        return StringUtils.convertCC(lastRead, App.getContext());
     }
 
     public void setLastRead(String lastRead) {
