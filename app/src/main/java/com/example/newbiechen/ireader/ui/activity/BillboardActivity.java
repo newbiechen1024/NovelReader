@@ -9,7 +9,7 @@ import com.example.newbiechen.ireader.model.bean.packages.BillboardPackage;
 import com.example.newbiechen.ireader.presenter.BillboardPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BillboardContract;
 import com.example.newbiechen.ireader.ui.adapter.BillboardAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
+import com.example.newbiechen.ireader.ui.base.BaseMVPActivity;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import butterknife.BindView;
  * 3. 制作数据获取类。
  */
 
-public class BillboardActivity extends BaseRxActivity<BillboardContract.Presenter>
+public class BillboardActivity extends BaseMVPActivity<BillboardContract.Presenter>
         implements BillboardContract.View,ExpandableListView.OnGroupClickListener{
     private static final String TAG = "BillboardActivity";
 

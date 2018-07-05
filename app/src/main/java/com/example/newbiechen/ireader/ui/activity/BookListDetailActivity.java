@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,11 @@ import com.example.newbiechen.ireader.model.bean.BookListDetailBean;
 import com.example.newbiechen.ireader.presenter.BookListDetailPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookListDetailContract;
 import com.example.newbiechen.ireader.ui.adapter.BookListDetailAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxActivity;
+import com.example.newbiechen.ireader.ui.base.BaseMVPActivity;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 import com.example.newbiechen.ireader.widget.transform.CircleTransform;
 
 import java.util.ArrayList;
@@ -37,8 +38,9 @@ import butterknife.Unbinder;
  * Created by newbiechen on 17-5-1.
  */
 
-public class BookListDetailActivity extends BaseRxActivity<BookListDetailContract.Presenter> implements BookListDetailContract.View {
+public class BookListDetailActivity extends BaseMVPActivity<BookListDetailContract.Presenter> implements BookListDetailContract.View {
 
+    private static final String TAG = "BookListDetailActivity";
     private static final String EXTRA_DETAIL_ID = "extra_detail_id";
     @BindView(R.id.refresh_layout)
     RefreshLayout mRefreshLayout;
@@ -97,7 +99,7 @@ public class BookListDetailActivity extends BaseRxActivity<BookListDetailContrac
         mDetailAdapter.addHeaderView(mDetailHeader);
 
         mRvContent.setLayoutManager(new LinearLayoutManager(this));
-        mRvContent.addItemDecoration(new DefaultItemDecoration(this));
+        mRvContent.addItemDecoration(new DividerItemDecoration(this));
         mRvContent.setAdapter(mDetailAdapter);
     }
 
@@ -107,6 +109,14 @@ public class BookListDetailActivity extends BaseRxActivity<BookListDetailContrac
         mDetailAdapter.setOnLoadMoreListener(
                 () -> loadBook()
         );
+        mDetailAdapter.setOnItemClickListener((v,p)->{
+            onItemClick(v,p);
+        });
+    }
+
+    protected void onItemClick(View v, int p){
+        BookListDetailBean.BooksBean.BookBean book = mBooksList.get(p).getBook();
+        BookDetailActivity.startActivity(this, book.get_id());
     }
 
     @Override

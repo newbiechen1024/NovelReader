@@ -7,11 +7,9 @@ import android.support.v7.widget.RecyclerView;
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.local.BookRepository;
 import com.example.newbiechen.ireader.ui.adapter.FileSystemAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseFragment;
-import com.example.newbiechen.ireader.utils.FileUtils;
-import com.example.newbiechen.ireader.utils.RxUtils;
+import com.example.newbiechen.ireader.utils.media.MediaStoreHelper;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 
 import java.io.File;
 import java.util.List;
@@ -42,7 +40,7 @@ public class LocalBookFragment extends BaseFileFragment{
     private void setUpAdapter(){
         mAdapter = new FileSystemAdapter();
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DefaultItemDecoration(getContext()));
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mRvContent.setAdapter(mAdapter);
     }
 
@@ -71,24 +69,19 @@ public class LocalBookFragment extends BaseFileFragment{
     @Override
     protected void processLogic() {
         super.processLogic();
-        //显示数据
-        FileUtils.getSDTxtFile()
-                .compose(RxUtils::toSimpleSingle)
-                .subscribe(
-                        files -> {
-                            if (files.size() == 0){
-                                //数据为空
-                                mRlRefresh.showEmpty();
-                            }
-                            else {
-                                mAdapter.refreshItems(files);
-                                mRlRefresh.showFinish();
-                                //反馈
-                                if (mListener != null){
-                                    mListener.onCategoryChanged();
-                                }
-                            }
+        MediaStoreHelper.getAllBookFile(getActivity(),
+                (files) -> {
+                    if (files.isEmpty()){
+                        mRlRefresh.showEmpty();
+                    }
+                    else {
+                        mAdapter.refreshItems(files);
+                        mRlRefresh.showFinish();
+                        //反馈
+                        if (mListener != null){
+                            mListener.onCategoryChanged();
                         }
-                );
+                    }
+                });
     }
 }

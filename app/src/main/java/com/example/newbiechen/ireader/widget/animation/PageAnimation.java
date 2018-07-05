@@ -83,6 +83,16 @@ public abstract class PageAnimation {
         return isRunning;
     }
 
+    /**
+     * 开启翻页动画
+     */
+    public void startAnim(){
+        if (isRunning){
+            return;
+        }
+        isRunning = true;
+    }
+
     public void setDirection(Direction direction){
         mDirection = direction;
     }
@@ -91,6 +101,9 @@ public abstract class PageAnimation {
         return mDirection;
     }
 
+    public void clear(){
+        mView = null;
+    }
     /**
      * 点击事件的处理
      * @param event
@@ -102,11 +115,6 @@ public abstract class PageAnimation {
      * @param canvas
      */
     public abstract void draw(Canvas canvas);
-
-    /**
-     * 开启翻页动画
-     */
-    public abstract void startAnim();
 
     /**
      * 滚动动画

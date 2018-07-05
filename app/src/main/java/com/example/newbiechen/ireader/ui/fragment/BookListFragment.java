@@ -14,10 +14,10 @@ import com.example.newbiechen.ireader.presenter.BookListPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BookListContract;
 import com.example.newbiechen.ireader.ui.activity.BookListDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.BookListAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
+import com.example.newbiechen.ireader.ui.base.BaseMVPFragment;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ import io.reactivex.disposables.Disposable;
  * 书单页面
  */
 
-public class BookListFragment extends BaseRxFragment<BookListContract.Presenter>
+public class BookListFragment extends BaseMVPFragment<BookListContract.Presenter>
         implements BookListContract.View{
     private static final String EXTRA_BOOK_LIST_TYPE = "extra_book_list_type";
     private static final String BUNDLE_BOOK_TAG = "bundle_book_tag";
@@ -124,7 +124,7 @@ public class BookListFragment extends BaseRxFragment<BookListContract.Presenter>
 
     private void setUpAdapter(){
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DefaultItemDecoration(getContext()));
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mBookListAdapter = new BookListAdapter(getContext(),new WholeAdapter.Options());
         mRvContent.setAdapter(mBookListAdapter);
     }

@@ -45,7 +45,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:max="100"
+            android:max="255"
             android:maxHeight="3dp"
             android:minHeight="3dp"
             android:progressDrawable="@drawable/seekbar_bg"

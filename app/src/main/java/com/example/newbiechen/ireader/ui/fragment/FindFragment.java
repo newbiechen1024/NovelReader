@@ -13,7 +13,7 @@ import com.example.newbiechen.ireader.ui.activity.BookListActivity;
 import com.example.newbiechen.ireader.ui.activity.BookSortActivity;
 import com.example.newbiechen.ireader.ui.adapter.SectionAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseFragment;
-import com.example.newbiechen.ireader.widget.itemdecoration.DashItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 
 import java.util.ArrayList;
 
@@ -49,7 +49,7 @@ public class FindFragment extends BaseFragment {
         mAdapter = new SectionAdapter();
         mRvContent.setHasFixedSize(true);
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DashItemDecoration());
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mRvContent.setAdapter(mAdapter);
         mAdapter.addItems(sections);
     }

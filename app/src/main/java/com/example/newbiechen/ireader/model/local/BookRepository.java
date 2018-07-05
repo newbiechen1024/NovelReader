@@ -1,5 +1,7 @@
 package com.example.newbiechen.ireader.model.local;
 
+import android.util.Log;
+
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.BookRecordBean;
 import com.example.newbiechen.ireader.model.bean.ChapterInfoBean;
@@ -25,9 +27,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
 import io.reactivex.SingleOnSubscribe;
@@ -66,7 +65,7 @@ public class BookRepository {
                 .runInTx(
                         () -> {
                             if (bean.getBookChapters() != null){
-                                //存储BookChapterBean(需要找个免更新的方式)
+                                // 存储BookChapterBean
                                 mSession.getBookChapterBeanDao()
                                         .insertOrReplaceInTx(bean.getBookChapters());
                             }
@@ -116,6 +115,7 @@ public class BookRepository {
                             //存储BookChapterBean
                             mSession.getBookChapterBeanDao()
                                     .insertOrReplaceInTx(beans);
+                            Log.d(TAG, "saveBookChaptersWithAsync: "+"进行存储");
                         }
                 );
     }
@@ -154,7 +154,6 @@ public class BookRepository {
     }
 
 
-    //感觉没有必要用rxjava，强行。因为采用的是懒加载机制。(默认的书本是不多的)
     public  List<CollBookBean> getCollBooks(){
         return mCollBookDao
                 .queryBuilder()

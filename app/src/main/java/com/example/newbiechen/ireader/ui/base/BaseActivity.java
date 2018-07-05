@@ -20,6 +20,8 @@ import com.example.newbiechen.ireader.utils.StatusBarCompat;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by PC on 2016/9/8.
@@ -27,15 +29,24 @@ import butterknife.Unbinder;
 public abstract class BaseActivity extends AppCompatActivity {
     private static final int INVALID_VAL = -1;
 
+    protected CompositeDisposable mDisposable;
     //ButterKnife
     private Toolbar mToolbar;
 
     private Unbinder unbinder;
     /****************************abstract area*************************************/
+
     @LayoutRes
     protected abstract int getContentId();
 
     /************************init area************************************/
+    protected void addDisposable(Disposable d){
+        if (mDisposable == null){
+            mDisposable = new CompositeDisposable();
+        }
+        mDisposable.add(d);
+    }
+
     /**
      * 配置Toolbar
      * @param toolbar
@@ -91,6 +102,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbinder.unbind();
+        if (mDisposable != null){
+            mDisposable.dispose();
+        }
     }
 
     /**************************used method area*******************************************/

@@ -5,7 +5,7 @@ import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by newbiechen on 17-4-18.
- * 原理:PublishSubject本身作为转发者和接受者
+ * 原理:PublishSubject本身作为观察者和被观察者。
  */
 
 public class RxBus{

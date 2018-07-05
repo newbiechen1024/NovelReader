@@ -30,7 +30,6 @@ public abstract class HorizonPageAnim extends PageAnimation{
 
     //是否没下一页或者上一页
     private boolean noNext = false;
-    private boolean isRunning = false;
 
     public HorizonPageAnim(int w, int h, View view, OnPageChangeListener listener) {
         this(w, h, 0, 0, view, listener);
@@ -175,7 +174,6 @@ public abstract class HorizonPageAnim extends PageAnimation{
 
                 // 开启翻页效果
                 if (!noNext) {
-                    isRunning = true;
                     startAnim();
                     mView.invalidate();
                 }

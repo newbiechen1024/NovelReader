@@ -71,6 +71,7 @@ public class CoverPageAnim extends HorizonPageAnim {
 
     @Override
     public void startAnim() {
+        super.startAnim();
         int dx = 0;
         switch (mDirection){
             case NEXT:

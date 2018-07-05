@@ -5,20 +5,17 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import com.example.newbiechen.ireader.R;
 import com.example.newbiechen.ireader.model.bean.DownloadTaskBean;
-import com.example.newbiechen.ireader.model.local.LocalRepository;
 import com.example.newbiechen.ireader.service.DownloadService;
 import com.example.newbiechen.ireader.ui.adapter.DownLoadAdapter;
 import com.example.newbiechen.ireader.ui.base.BaseActivity;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 
 import butterknife.BindView;
 
@@ -57,7 +54,7 @@ public class DownloadActivity extends BaseActivity implements DownloadService.On
 
     private void setUpAdapter(){
         mDownloadAdapter = new DownLoadAdapter();
-        mRvContent.addItemDecoration(new DefaultItemDecoration(this));
+        mRvContent.addItemDecoration(new DividerItemDecoration(this));
         mRvContent.setLayoutManager(new LinearLayoutManager(this));
         mRvContent.setAdapter(mDownloadAdapter);
     }

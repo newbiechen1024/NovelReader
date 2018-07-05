@@ -317,7 +317,7 @@ public class BookDetailBean{
         CollBookBean bean = new CollBookBean();
         bean.set_id(get_id());
         bean.setTitle(getTitle());
-        bean.setAuthor(bean.getAuthor());
+        bean.setAuthor(getAuthor());
         bean.setShortIntro(getLongIntro());
         bean.setCover(getCover());
         bean.setHasCp(isHasCp());

@@ -1,10 +1,10 @@
 package com.example.newbiechen.ireader.widget.page;
 
-import android.support.annotation.Nullable;
 
 import com.example.newbiechen.ireader.model.bean.BookChapterBean;
 import com.example.newbiechen.ireader.model.bean.CollBookBean;
 import com.example.newbiechen.ireader.model.local.BookRepository;
+import com.example.newbiechen.ireader.utils.BookManager;
 import com.example.newbiechen.ireader.utils.Constant;
 import com.example.newbiechen.ireader.utils.FileUtils;
 import com.example.newbiechen.ireader.utils.StringUtils;
@@ -22,31 +22,16 @@ import java.util.List;
  * 网络页面加载器
  */
 
-public class NetPageLoader extends PageLoader{
+public class NetPageLoader extends PageLoader {
     private static final String TAG = "PageFactory";
 
-    public NetPageLoader(PageView pageView) {
-        super(pageView);
+    public NetPageLoader(PageView pageView, CollBookBean collBook) {
+        super(pageView, collBook);
     }
 
-    //初始化书籍
-    @Override
-    public void openBook(CollBookBean collBook){
-        super.openBook(collBook);
-        isBookOpen = false;
-        if (collBook.getBookChapters() == null) return;
-        mChapterList = convertTxtChapter(collBook.getBookChapters());
-        //设置目录回调
-        if (mPageChangeListener != null){
-            mPageChangeListener.onCategoryFinish(mChapterList);
-        }
-        //提示加载下面的章节
-        loadCurrentChapter();
-    }
-
-    private List<TxtChapter> convertTxtChapter(List<BookChapterBean> bookChapters){
+    private List<TxtChapter> convertTxtChapter(List<BookChapterBean> bookChapters) {
         List<TxtChapter> txtChapters = new ArrayList<>(bookChapters.size());
-        for (BookChapterBean bean : bookChapters){
+        for (BookChapterBean bean : bookChapters) {
             TxtChapter chapter = new TxtChapter();
             chapter.bookId = bean.getBookId();
             chapter.title = bean.getTitle();
@@ -56,143 +41,177 @@ public class NetPageLoader extends PageLoader{
         return txtChapters;
     }
 
-    @Nullable
     @Override
-    protected List<TxtPage> loadPageList(int chapter) {
-        if (mChapterList == null){
-            throw new IllegalArgumentException("chapter list must not null");
+    public void refreshChapterList() {
+        if (mCollBook.getBookChapters() == null) return;
+
+        // 将 BookChapter 转换成当前可用的 Chapter
+        mChapterList = convertTxtChapter(mCollBook.getBookChapters());
+        isChapterListPrepare = true;
+
+        // 目录加载完成，执行回调操作。
+        if (mPageChangeListener != null) {
+            mPageChangeListener.onCategoryFinish(mChapterList);
         }
 
-        //获取要加载的文件
-        TxtChapter txtChapter = mChapterList.get(chapter);
+        // 如果章节未打开
+        if (!isChapterOpen()) {
+            // 打开章节
+            openChapter();
+        }
+    }
+
+    @Override
+    protected BufferedReader getChapterReader(TxtChapter chapter) throws Exception {
         File file = new File(Constant.BOOK_CACHE_PATH + mCollBook.get_id()
-                + File.separator + mChapterList.get(chapter).title + FileUtils.SUFFIX_NB);
+                + File.separator + chapter.title + FileUtils.SUFFIX_NB);
         if (!file.exists()) return null;
 
-        Reader reader = null;
-        try {
-            reader = new FileReader(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        Reader reader = new FileReader(file);
         BufferedReader br = new BufferedReader(reader);
-
-        return loadPages(txtChapter,br);
+        return br;
     }
 
-    //装载上一章节的内容
     @Override
-    boolean prevChapter(){
-
-        boolean hasPrev = super.prevChapter();
-        if (!hasPrev) return false;
-
-        if (mStatus == STATUS_FINISH){
-            loadCurrentChapter();
-            return true;
-        }
-        else if (mStatus == STATUS_LOADING){
-            loadCurrentChapter();
-            return false;
-        }
-        return false;
+    protected boolean hasChapterData(TxtChapter chapter) {
+        return BookManager.isChapterCached(mCollBook.get_id(), chapter.title);
     }
 
-    //装载下一章节的内容
+    // 装载上一章节的内容
     @Override
-    boolean nextChapter(){
-        boolean hasNext = super.nextChapter();
-        if (!hasNext) return false;
+    boolean parsePrevChapter() {
+        boolean isRight = super.parsePrevChapter();
 
-        if (mStatus == STATUS_FINISH){
+        if (mStatus == STATUS_FINISH) {
+            loadPrevChapter();
+        } else if (mStatus == STATUS_LOADING) {
+            loadCurrentChapter();
+        }
+        return isRight;
+    }
+
+    // 装载当前章内容。
+    @Override
+    boolean parseCurChapter() {
+        boolean isRight = super.parseCurChapter();
+
+        if (mStatus == STATUS_LOADING) {
+            loadCurrentChapter();
+        }
+        return isRight;
+    }
+
+    // 装载下一章节的内容
+    @Override
+    boolean parseNextChapter() {
+        boolean isRight = super.parseNextChapter();
+
+        if (mStatus == STATUS_FINISH) {
             loadNextChapter();
-            return true;
-        }
-        else if (mStatus == STATUS_LOADING){
+        } else if (mStatus == STATUS_LOADING) {
             loadCurrentChapter();
-            return false;
         }
-        return false;
+
+        return isRight;
     }
 
-    //跳转到指定章节
-    public void skipToChapter(int pos){
-        super.skipToChapter(pos);
-
-        //提示章节改变，需要下载
-        loadCurrentChapter();
-    }
-
-    private void loadPrevChapter(){
-        //提示加载上一章
-        if (mPageChangeListener != null){
-            //提示加载前面3个章节（不包括当前章节）
-            int current = mCurChapterPos;
-            int prev = current - 3;
-            if (prev < 0){
-                prev = 0;
+    /**
+     * 加载当前页的前面两个章节
+     */
+    private void loadPrevChapter() {
+        if (mPageChangeListener != null) {
+            int end = mCurChapterPos;
+            int begin = end - 2;
+            if (begin < 0) {
+                begin = 0;
             }
-            mPageChangeListener.onLoadChapter(mChapterList.subList(prev,current),mCurChapterPos);
+
+            requestChapters(begin, end);
         }
     }
 
-    private void loadCurrentChapter(){
-        if (mPageChangeListener != null){
-            List<TxtChapter> bookChapters = new ArrayList<>(5);
-            //提示加载当前章节和前面两章和后面两章
-            int current = mCurChapterPos;
-            bookChapters.add(mChapterList.get(current));
+    /**
+     * 加载前一页，当前页，后一页。
+     */
+    private void loadCurrentChapter() {
+        if (mPageChangeListener != null) {
+            int begin = mCurChapterPos;
+            int end = mCurChapterPos;
 
-            //如果当前已经是最后一章，那么就没有必要加载后面章节
-            if (current != mChapterList.size()){
-                int begin = current + 1;
-                int next = begin + 2;
-                if (next > mChapterList.size()){
-                    next = mChapterList.size();
+            // 是否当前不是最后一章
+            if (end < mChapterList.size()) {
+                end = end + 1;
+                if (end >= mChapterList.size()) {
+                    end = mChapterList.size() - 1;
                 }
-                bookChapters.addAll(mChapterList.subList(begin,next));
             }
 
-            //如果当前已经是第一章，那么就没有必要加载前面章节
-            if (current != 0){
-                int prev = current - 2;
-                if (prev < 0){
-                    prev = 0;
+            // 如果当前不是第一章
+            if (begin != 0) {
+                begin = begin - 1;
+                if (begin < 0) {
+                    begin = 0;
                 }
-                bookChapters.addAll(mChapterList.subList(prev,current));
             }
-            mPageChangeListener.onLoadChapter(bookChapters,mCurChapterPos);
+
+            requestChapters(begin, end);
         }
     }
 
-    private void loadNextChapter(){
-        //提示加载下一章
-        if (mPageChangeListener != null){
-            //提示加载当前章节和后面3个章节
-            int current = mCurChapterPos + 1;
-            int next = mCurChapterPos + 3;
-            if (next > mChapterList.size()){
-                next = mChapterList.size();
+    /**
+     * 加载当前页的后两个章节
+     */
+    private void loadNextChapter() {
+        if (mPageChangeListener != null) {
+
+            // 提示加载后两章
+            int begin = mCurChapterPos + 1;
+            int end = begin + 1;
+
+            // 判断是否大于最后一章
+            if (begin >= mChapterList.size()) {
+                // 如果下一章超出目录了，就没有必要加载了
+                return;
             }
-            mPageChangeListener.onLoadChapter(mChapterList.subList(current,next),mCurChapterPos);
+
+            if (end > mChapterList.size()) {
+                end = mChapterList.size() - 1;
+            }
+
+            requestChapters(begin, end);
         }
     }
 
-    @Override
-    public void setChapterList(List<BookChapterBean> bookChapters) {
-        if (bookChapters == null) return;
+    private void requestChapters(int start, int end) {
+        // 检验输入值
+        if (start < 0) {
+            start = 0;
+        }
 
-        mChapterList = convertTxtChapter(bookChapters);
+        if (end >= mChapterList.size()) {
+            end = mChapterList.size() - 1;
+        }
 
-        if (mPageChangeListener != null){
-            mPageChangeListener.onCategoryFinish(mChapterList);
+
+        List<TxtChapter> chapters = new ArrayList<>();
+
+        // 过滤，哪些数据已经加载了
+        for (int i = start; i <= end; ++i) {
+            TxtChapter txtChapter = mChapterList.get(i);
+            if (!hasChapterData(txtChapter)) {
+                chapters.add(txtChapter);
+            }
+        }
+
+        if (!chapters.isEmpty()) {
+            mPageChangeListener.requestChapters(chapters);
         }
     }
 
     @Override
     public void saveRecord() {
         super.saveRecord();
-        if (mCollBook != null && isBookOpen){
+        if (mCollBook != null && isChapterListPrepare) {
             //表示当前CollBook已经阅读
             mCollBook.setIsUpdate(false);
             mCollBook.setLastRead(StringUtils.

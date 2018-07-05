@@ -1,192 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/read_dl_slide"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/theme_leather_bg">
-	
-	
-	    <android.support.design.widget.AppBarLayout
-		    android:id="@+id/read_abl_top_menu"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:background="@color/nb.read.menu.bg"
-		    android:visibility="gone"
-		    tools:visibility="visible">
-		
-		    <android.support.v7.widget.Toolbar
-			    android:id="@+id/toolbar"
-			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content"
-			    android:minHeight="?attr/actionBarSize"
-			    android:theme="@style/Theme.ToolBar.Menu">
-			    <RelativeLayout
-				    android:layout_width="120dp"
-				    android:layout_height="50dp"
-				    android:layout_gravity="right"
-				    android:background="@color/nb.read.menu.bg">
-				    <TextView
-					    android:id="@+id/read_tv_brief"
-					    android:layout_alignParentRight="true"
-					    android:text="@string/nb.read.brief"
-					    style="@style/NB.Theme.TextAppearance.Read.TopMenu"/>
-				
-				    <TextView
-					    android:id="@+id/read_tv_community"
-					    android:layout_toLeftOf="@id/read_tv_brief"
-					    android:text="@string/nb.read.community"
-					    style="@style/NB.Theme.TextAppearance.Read.TopMenu"/>
-			    </RelativeLayout>
-		    </android.support.v7.widget.Toolbar>
-	    </android.support.design.widget.AppBarLayout>
-	    
+
         <!--阅读页面-->
-		<com.example.newbiechen.ireader.widget.page.PageView
-			android:id="@+id/read_pv_page"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
+        <com.example.newbiechen.ireader.widget.page.PageView
+            android:id="@+id/read_pv_page"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:clickable="true"
-			tools:visibility="gone"/>
-	    
+            tools:visibility="gone" />
+
         <!--切换页面提示-->
         <TextView
             android:id="@+id/read_tv_page_tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/read_ll_bottom_menu"
-            android:layout_marginBottom="10dp"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
             android:background="@color/nb.read.menu.bg"
+            android:gravity="center"
+            android:paddingBottom="8dp"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:gravity="center"
             android:text="1/12"
             android:textColor="@color/white"
-            android:visibility="gone"/>
-        
+            android:visibility="gone" />
+
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/read_abl_top_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/nb.read.menu.bg"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="@style/Theme.ToolBar.Menu">
+
+                <RelativeLayout
+                    android:layout_width="120dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="right"
+                    android:background="@color/nb.read.menu.bg">
+
+                    <TextView
+                        android:id="@+id/read_tv_brief"
+                        style="@style/NB.Theme.TextAppearance.Read.TopMenu"
+                        android:layout_alignParentRight="true"
+                        android:text="@string/nb.read.brief" />
+
+                    <TextView
+                        android:id="@+id/read_tv_community"
+                        style="@style/NB.Theme.TextAppearance.Read.TopMenu"
+                        android:layout_toLeftOf="@id/read_tv_brief"
+                        android:text="@string/nb.read.community" />
+                </RelativeLayout>
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+
         <!--底部页面-->
         <LinearLayout
             android:id="@+id/read_ll_bottom_menu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:clickable="true"
             android:layout_alignParentBottom="true"
             android:background="@color/nb.read.menu.bg"
+            android:clickable="true"
+            android:orientation="vertical"
             android:visibility="gone"
             tools:visibility="visible">
-            
+
             <!--页面进度栏-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-                
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
                 <TextView
-                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu"
                     android:id="@+id/read_tv_pre_chapter"
+                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu"
                     android:layout_width="80dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="上一章" />
-                
+
                 <SeekBar
                     android:id="@+id/read_sb_chapter_progress"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:progressDrawable="@drawable/seekbar_bg"
-                    android:thumb="@drawable/seekbar_thumb"
                     android:max="100"
                     android:maxHeight="3dp"
                     android:minHeight="3dp"
+                    android:progressDrawable="@drawable/seekbar_bg"
+                    android:thumb="@drawable/seekbar_thumb"
                     android:thumbOffset="10dp" />
+
                 <TextView
-                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu"
                     android:id="@+id/read_tv_next_chapter"
+                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu"
                     android:layout_width="80dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="下一章" />
             </LinearLayout>
-            
+
             <!--菜单栏-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:orientation="horizontal"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp">
+                android:paddingBottom="12dp"
+                android:paddingTop="12dp">
+
                 <TextView
-                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
                     android:id="@+id/read_tv_category"
+                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
                     android:drawableTop="@drawable/ic_read_menu_category"
                     android:text="@string/nb.read.category" />
-                
+
                 <TextView
-                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
                     android:id="@+id/read_tv_night_mode"
+                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
                     android:drawableTop="@drawable/ic_read_menu_night"
                     android:text="@string/nb.mode.night" />
-                
-<!--                <TextView
-                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
-                    android:id="@+id/read_tv_download"
-                    android:drawableTop="@drawable/ic_read_menu_download"
-                    android:text="@string/nb.read.download" />-->
-                
+
+                <!--                <TextView
+                                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
+                                    android:id="@+id/read_tv_download"
+                                    android:drawableTop="@drawable/ic_read_menu_download"
+                                    android:text="@string/nb.read.download" />-->
+
                 <TextView
-                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
                     android:id="@+id/read_tv_setting"
+                    style="@style/NB.Theme.TextAppearance.Read.BottomMenu.Button"
                     android:drawableTop="@drawable/ic_read_menu_font"
                     android:text="@string/nb.read.setting" />
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
-    
+
     <!--侧滑栏-->
     <LinearLayout
         android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:clickable="true"
         android:layout_gravity="start"
-        android:paddingTop="@dimen/nb.padding.large"
+        android:background="@drawable/theme_leather_bg"
+        android:clickable="true"
+        android:orientation="vertical"
         android:paddingBottom="@dimen/nb.padding.large"
-        android:background="@drawable/theme_leather_bg">
-    
+        android:paddingTop="@dimen/nb.padding.large">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="15dp"
             android:text="目录"
             android:textColor="@color/nb.text.default"
-            android:textSize="20sp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginBottom="8dp"/>
-        
+            android:textSize="20sp" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-    
+
             <ListView
                 android:id="@+id/read_iv_category"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical">
-            </ListView>
+                android:scrollbars="vertical"></ListView>
         </RelativeLayout>
     </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

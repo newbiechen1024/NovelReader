@@ -14,9 +14,9 @@ import com.example.newbiechen.ireader.presenter.DiscHelpsPresenter;
 import com.example.newbiechen.ireader.presenter.contract.DiscHelpsContract;
 import com.example.newbiechen.ireader.ui.activity.DiscDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.DiscHelpsAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
+import com.example.newbiechen.ireader.ui.base.BaseMVPFragment;
 import com.example.newbiechen.ireader.utils.Constant;
-import com.example.newbiechen.ireader.widget.itemdecoration.DashItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 import com.example.newbiechen.ireader.widget.refresh.ScrollRefreshRecyclerView;
 import com.example.newbiechen.ireader.widget.adapter.WholeAdapter;
 
@@ -30,7 +30,7 @@ import io.reactivex.disposables.Disposable;
  * Created by newbiechen on 17-4-21.
  */
 
-public class DiscHelpsFragment extends BaseRxFragment<DiscHelpsContract.Presenter> implements DiscHelpsContract.View{
+public class DiscHelpsFragment extends BaseMVPFragment<DiscHelpsContract.Presenter> implements DiscHelpsContract.View{
     private static final String BUNDLE_SORT = "bundle_sort";
     private static final String BUNDLE_DISTILLATE = "bundle_distillate";
     /*****************View********************/
@@ -66,7 +66,7 @@ public class DiscHelpsFragment extends BaseRxFragment<DiscHelpsContract.Presente
 
     private void setUpAdapter(){
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DashItemDecoration());
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mDiscHelpsAdapter = new DiscHelpsAdapter(getContext(),new WholeAdapter.Options());
         mRvContent.setAdapter(mDiscHelpsAdapter);
     }

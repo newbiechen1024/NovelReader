@@ -7,7 +7,6 @@ import com.example.newbiechen.ireader.App;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -155,10 +154,18 @@ public class FileUtils {
         file.delete();
     }
 
+    //由于递归的耗时问题，取巧只遍历内部三层
+
     //获取txt文件
-    public static List<File> getTxtFiles(String filePath){
+    public static List<File> getTxtFiles(String filePath,int layer){
         List txtFiles = new ArrayList();
         File file = new File(filePath);
+
+        //如果层级为 3，则直接返回
+        if (layer == 3){
+            return txtFiles;
+        }
+
         //获取文件夹
         File[] dirs = file.listFiles(
                 pathname -> {
@@ -178,7 +185,7 @@ public class FileUtils {
         //遍历文件夹
         for (File dir : dirs){
             //递归遍历txt文件
-            txtFiles.addAll(getTxtFiles(dir.getPath()));
+            txtFiles.addAll(getTxtFiles(dir.getPath(),layer + 1));
         }
         return txtFiles;
     }
@@ -190,7 +197,7 @@ public class FileUtils {
         return Single.create(new SingleOnSubscribe<List<File>>() {
             @Override
             public void subscribe(SingleEmitter<List<File>> e) throws Exception {
-                List<File> files = getTxtFiles(rootPath);
+                List<File> files = getTxtFiles(rootPath,0);
                 e.onSuccess(files);
             }
         });

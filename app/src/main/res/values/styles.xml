@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowAnimationStyle">@style/anim_slide_right_in_left_out</item>
+        <item name="android:listDivider">@drawable/shape_divider_dash</item>
         <item name="android:actionOverflowMenuStyle">@style/ActionButton.Overflow.Menu</item>
     </style>
     
@@ -16,6 +16,7 @@
     <style name="SplashTheme" parent="AppTheme">
         <item name="android:background">@color/transparent</item>
     </style>
+    
     <!--Dialog-->
     <style name="CommonDialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="android:windowNoTitle">true</item>
@@ -34,17 +35,17 @@
     </style>
     
     <!--animation-->
-    <style name="anim_slide_bottom_in_out" parent="android:Animation">
-        <item name="@android:windowEnterAnimation">@anim/slide_bottom_in</item>
-        <item name="@android:windowExitAnimation">@anim/slide_bottom_out</item>
+    <style name="anim_slide_bottom_in_out" parent="android:Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/slide_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_bottom_out</item>
     </style>
     
-    <style name="anim_slide_left_in_right_out" parent="android:Animation">
+    <style name="anim_slide_left_in_right_out" parent="android:Animation.Dialog">
         <item name="android:windowEnterAnimation">@anim/slide_left_in</item>
         <item name="android:windowExitAnimation">@anim/slide_right_out</item>
     </style>
     
-    <style name="anim_slide_right_in_left_out" parent="android:Animation">
+    <style name="anim_slide_right_in_left_out" parent="android:Animation.Dialog">
         <item name="android:windowExitAnimation">@anim/slide_right_out</item>
         <item name="android:windowEnterAnimation">@anim/slide_left_in</item>
     </style>

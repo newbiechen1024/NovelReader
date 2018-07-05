@@ -11,9 +11,9 @@ import com.example.newbiechen.ireader.presenter.BillBookPresenter;
 import com.example.newbiechen.ireader.presenter.contract.BillBookContract;
 import com.example.newbiechen.ireader.ui.activity.BookDetailActivity;
 import com.example.newbiechen.ireader.ui.adapter.BillBookAdapter;
-import com.example.newbiechen.ireader.ui.base.BaseRxFragment;
+import com.example.newbiechen.ireader.ui.base.BaseMVPFragment;
 import com.example.newbiechen.ireader.widget.RefreshLayout;
-import com.example.newbiechen.ireader.widget.itemdecoration.DefaultItemDecoration;
+import com.example.newbiechen.ireader.widget.itemdecoration.DividerItemDecoration;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ import butterknife.BindView;
  * Created by newbiechen on 17-5-3.
  */
 
-public class BillBookFragment extends BaseRxFragment<BillBookContract.Presenter>
+public class BillBookFragment extends BaseMVPFragment<BillBookContract.Presenter>
         implements BillBookContract.View{
     private static final String EXTRA_BILL_ID = "extra_bill_id";
 
@@ -87,7 +87,7 @@ public class BillBookFragment extends BaseRxFragment<BillBookContract.Presenter>
 
     private void setUpAdapter(){
         mRvContent.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvContent.addItemDecoration(new DefaultItemDecoration(getContext()));
+        mRvContent.addItemDecoration(new DividerItemDecoration(getContext()));
         mBillBookAdapter = new BillBookAdapter();
         mRvContent.setAdapter(mBillBookAdapter);
     }
