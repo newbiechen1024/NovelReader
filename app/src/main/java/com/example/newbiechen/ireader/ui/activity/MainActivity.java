@@ -129,7 +129,7 @@ public class MainActivity extends BaseTabActivity{
                 break;
             case R.id.action_scan_local_book:
 
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
 
                     if (mPermissionsChecker == null){
                         mPermissionsChecker = new PermissionsChecker(this);
