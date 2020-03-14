@@ -1,0 +1,77 @@
+ext.deps = [:]
+
+// 版本号
+def versions = [:]
+versions.gradle = '3.6.1'
+versions.android = '28.0.0'
+versions.glide = '3.7.0'
+versions.rxjava2 = '2.2.19'
+versions.rxandroid = "2.1.1"
+versions.okhttp = '3.6.0'
+versions.retrofit = '2.7.2'
+versions.stetho = '1.5.1'
+versions.greendao = '3.2.2'
+versions.butterknife = '8.5.1'
+versions.junit = '4.13'
+
+// 依赖
+def deps = [:]
+
+// support
+def android =[:]
+android.plugin = "com.android.tools.build:gradle:$versions.gradle"
+android.appcompat = "com.android.support:appcompat-v7:$versions.android"
+android.design = "com.android.support:design:$versions.android"
+android.support = "com.android.support:support-v4:$versions.android"
+android.cardview = "com.android.support:cardview-v7:$versions.android"
+deps.android = android
+
+// butterknife
+def butterknife = [:]
+butterknife.runtime = "com.jakewharton:butterknife:$versions.butterknife"
+butterknife.compiler = "com.jakewharton:butterknife-compiler:$versions.butterknife"
+deps.butterknife = butterknife
+
+// rxjava
+def reactivex = [:]
+reactivex.rxandroid = "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
+reactivex.rxjava2 = "io.reactivex.rxjava2:rxjava:$versions.rxjava2"
+deps.reactivex = reactivex
+
+// okhttp
+def okhttp = [:]
+okhttp.runtime = "com.squareup.okhttp3:okhttp:$versions.okhttp"
+okhttp.logging = "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
+deps.okhttp = okhttp
+
+// retrofit
+def retrofit = [:]
+retrofit.runtime = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+retrofit.rxjava2 = "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+deps.retrofit = retrofit
+
+// 图片加载库
+def glide = [:]
+glide.runtime = "com.github.bumptech.glide:glide:$versions.glide"
+glide.compiler = "com.github.bumptech.glide:compiler:$versions.glide"
+deps.glide = glide
+
+def greendao = [:]
+greendao.runtime = "org.greenrobot:greendao:$versions.greendao"
+greendao.plugin = "org.greenrobot:greendao-gradle-plugin:$versions.greendao"
+deps.greendao = greendao
+
+// 测试相关
+def testing = [:]
+testing.junit = "junit:junit:$versions.junit"
+deps.testing = testing
+
+ext.deps = deps
+
+def build_versions = [:]
+build_versions.min_sdk = 21
+build_versions.target_sdk = 28
+build_versions.tools_version = '28.0.0'
+
+ext.build_versions = build_versions
