@@ -66,7 +66,7 @@ public class LocalFileLoader extends CursorLoader {
                 continue;
             } else {
                 File file = new File(path);
-                if (file.isDirectory()){
+                if (file.isDirectory() || !file.exists()){
                     continue;
                 }
                 else {

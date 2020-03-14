@@ -317,11 +317,23 @@ public class PageView extends View {
     public void drawCurPage(boolean isUpdate) {
         if (!isPrepare) return;
 
-        if (mPageAnim instanceof ScrollPageAnim) {
-            ((ScrollPageAnim) mPageAnim).refreshBitmap();
+        if (!isUpdate){
+            if (mPageAnim instanceof ScrollPageAnim) {
+                ((ScrollPageAnim) mPageAnim).resetBitmap();
+            }
         }
 
         mPageLoader.drawPage(getNextBitmap(), isUpdate);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mPageAnim.abortAnim();
+        mPageAnim.clear();
+
+        mPageLoader = null;
+        mPageAnim = null;
     }
 
     /**
@@ -341,7 +353,6 @@ public class PageView extends View {
         } else {
             mPageLoader = new NetPageLoader(this, collBook);
         }
-
         // 判断是否 PageView 已经初始化完成
         if (mViewWidth != 0 || mViewHeight != 0) {
             // 初始化 PageLoader 的屏幕大小

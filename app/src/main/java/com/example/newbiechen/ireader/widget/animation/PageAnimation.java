@@ -101,6 +101,9 @@ public abstract class PageAnimation {
         return mDirection;
     }
 
+    public void clear(){
+        mView = null;
+    }
     /**
      * 点击事件的处理
      * @param event

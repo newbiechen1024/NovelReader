@@ -58,6 +58,7 @@ import java.util.List;
 import butterknife.BindView;
 import io.reactivex.disposables.Disposable;
 
+import static android.support.v4.view.ViewCompat.LAYER_TYPE_SOFTWARE;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -238,10 +239,18 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
     protected void initWidget() {
         super.initWidget();
 
+        // 如果 API < 18 取消硬件加速
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            mPvPage.setLayerType(LAYER_TYPE_SOFTWARE, null);
+        }
+
         //获取页面加载器
         mPageLoader = mPvPage.getPageLoader(mCollBook);
         //禁止滑动展示DrawerLayout
         mDlSlide.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        //侧边打开后，返回键能够起作用
+        mDlSlide.setFocusableInTouchMode(false);
         mSettingDialog = new ReadSettingDialog(this, mPageLoader);
 
         setUpAdapter();
@@ -297,6 +306,12 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
             params.bottomMargin = 0;
             mLlBottomMenu.setLayoutParams(params);
         }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Log.d(TAG, "onWindowFocusChanged: " + mAblTopMenu.getMeasuredHeight());
     }
 
     private void toggleNightMode() {
@@ -365,26 +380,30 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
                     public void requestChapters(List<TxtChapter> requestChapters) {
                         mPresenter.loadChapter(mBookId, requestChapters);
                         mHandler.sendEmptyMessage(WHAT_CATEGORY);
-                        if (mPageLoader.getPageStatus() == PageLoader.STATUS_LOADING
-                                || mPageLoader.getPageStatus() == PageLoader.STATUS_ERROR) {
-                            //冻结使用
-                            mSbChapterProgress.setEnabled(false);
-                        }
                         //隐藏提示
                         mTvPageTip.setVisibility(GONE);
-                        mSbChapterProgress.setProgress(0);
                     }
 
                     @Override
                     public void onCategoryFinish(List<TxtChapter> chapters) {
+                        for (TxtChapter chapter : chapters) {
+                            chapter.setTitle(StringUtils.convertCC(chapter.getTitle(), mPvPage.getContext()));
+                        }
                         mCategoryAdapter.refreshItems(chapters);
                     }
 
                     @Override
                     public void onPageCountChange(int count) {
-                        mSbChapterProgress.setEnabled(true);
-                        mSbChapterProgress.setMax(count - 1);
+                        mSbChapterProgress.setMax(Math.max(0, count - 1));
                         mSbChapterProgress.setProgress(0);
+                        // 如果处于错误状态，那么就冻结使用
+                        if (mPageLoader.getPageStatus() == PageLoader.STATUS_LOADING
+                                || mPageLoader.getPageStatus() == PageLoader.STATUS_ERROR) {
+                            mSbChapterProgress.setEnabled(false);
+                        }
+                        else {
+                            mSbChapterProgress.setEnabled(true);
+                        }
                     }
 
                     @Override
@@ -458,7 +477,9 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
         mTvCategory.setOnClickListener(
                 (v) -> {
                     //移动到指定位置
-                    mLvCategory.setSelection(mPageLoader.getChapterPos());
+                    if (mCategoryAdapter.getCount() > 0) {
+                        mLvCategory.setSelection(mPageLoader.getChapterPos());
+                    }
                     //切换菜单
                     toggleMenu(true);
                     //打开侧滑动栏
@@ -673,15 +694,14 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
             return;
         }
 
-        if (!mCollBook.isLocal() && !isCollected) {
+        if (!mCollBook.isLocal() && !isCollected
+                && !mCollBook.getBookChapters().isEmpty()) {
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                     .setTitle("加入书架")
                     .setMessage("喜欢本书就加入书架吧")
                     .setPositiveButton("确定", (dialog, which) -> {
                         //设置为已收藏
                         isCollected = true;
-                        //设置BookChapter
-                        mCollBook.setBookChapters(mCollBook.getBookChapters());
                         //设置阅读时间
                         mCollBook.setLastRead(StringUtils.
                                 dateConvert(System.currentTimeMillis(), Constant.FORMAT_BOOK_DATE));
@@ -746,6 +766,7 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
         mHandler.removeMessages(WHAT_CHAPTER);
 
         mPageLoader.closeBook();
+        mPageLoader = null;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.newbiechen.ireader.ui.activity;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -76,7 +77,7 @@ public class SearchActivity extends BaseMVPActivity<SearchContract.Presenter>
     protected void initWidget() {
         super.initWidget();
         setUpAdapter();
-        mRlRefresh.setBackground(getDrawable(R.color.white));
+        mRlRefresh.setBackground(ContextCompat.getDrawable(this,R.color.white));
     }
 
     private void setUpAdapter(){

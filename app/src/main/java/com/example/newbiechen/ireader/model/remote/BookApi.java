@@ -296,7 +296,7 @@ public interface BookApi {
      * @param bookId
      * @return
      */
-    @GET("/book/{bookId}")
+    @GET("/book/{bookId}?t=0&useNewCat=true")
     Single<BookDetailBean> getBookDetail(@Path("bookId") String bookId);
 
     /**

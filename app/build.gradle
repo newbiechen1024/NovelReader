@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -18,17 +19,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildToolsVersion '26.0.2'
 }
+
 greendao{
     schemaVersion 3
     daoPackage 'com.example.newbiechen.ireader.model.gen'
     targetGenDir 'src/main/java'
+}
+
+repositories {
+    maven {
+        url 'https://dl.bintray.com/qichuan/maven/'
+    }
 }
 
 dependencies {
@@ -60,6 +67,13 @@ dependencies {
     implementation deps.greendao.runtime
     testImplementation deps.testing.junit
 
-    //AndroidTagGroup
+    // Android Leak Analysis
+    releaseImplementation deps.leakcanary.release
+    debugImplementation deps.leakcanary.debug
+
+    // OpenCC to convert Simp. Chinese to Trad. Chinese
+    implementation "com.zqc.opencc.android.lib:lib-opencc-android:0.8.0@aar"
+
+    // AndroidTagGroup
     implementation 'me.gujun.android.taggroup:library:1.4@aar'
 }

@@ -1,0 +1,203 @@
+<resources>
+    <string name="app_name">IReader</string>
+    <string name="nb.title.app">iReader</string>
+
+    <!--string_array-->
+    <string-array name="nb_fragment_title">
+        <item>@string/nb.fragment.title.bookshelf</item>
+        <item>@string/nb.fragment.title.community</item>
+        <item>@string/nb.fragment.title.find</item>
+    </string-array>
+
+    <string-array name="nb_fragment_section">
+        <item>@string/nb.fragment.community.comment</item>
+        <item>@string/nb.fragment.community.discussion</item>
+        <item>@string/nb.fragment.community.help</item>
+        <item>@string/nb.fragment.community.girl</item>
+        <item>@string/nb.fragment.community.compose</item>
+    </string-array>
+
+    <!--榜单分类-->
+    <string-array name="nb_fragment_bill_book">
+        <item>周榜</item>
+        <item>月榜</item>
+        <item>總榜</item>
+    </string-array>
+    
+    <!--CollBook的长按点击-->
+    <string-array name="nb_menu_net_book">
+        <item>@string/nb.menu.action.top</item>
+        <item>@string/nb.menu.action.cache</item>
+        <item>@string/nb.menu.action.delete</item>
+        <item>@string/nb.menu.action.batch_manage</item>
+    </string-array>
+    
+    <string-array name="nb_menu_local_book">
+        <item>@string/nb.menu.action.top</item>
+        <item>@string/nb.menu.action.delete</item>
+        <item>@string/nb.menu.action.batch_manage</item>
+    </string-array>
+    
+    <!--常用-->
+    <string name="nb.common.tip">提示</string>
+    <string name="nb.common.sure">確定</string>
+    <string name="nb.common.cancel">取消</string>
+    
+    <!--网络相关-->
+    
+    <string name="nb.net.error_tip">似乎沒有網路哦</string>
+    
+    <!--fragment_title:主页的名字-->
+    <string name="nb.fragment.title.bookshelf">書架</string>
+    <string name="nb.fragment.title.community">社區</string>
+    <string name="nb.fragment.title.find">發現</string>
+
+    <!--fragment-->
+    <string name="nb.fragment.community.comment">綜合討論區</string>
+    <string name="nb.fragment.community.discussion">書評區</string>
+    <string name="nb.fragment.community.help">書荒幫助區</string>
+    <string name="nb.fragment.community.girl">女生區</string>
+    <string name="nb.fragment.community.compose">原創區</string>
+    
+    <!--fragment 主题书单-->
+    <string name="nb.fragment.book_list.hot">本周最熱</string>
+    <string name="nb.fragment.book_list.newest">最新發佈</string>
+    <string name="nb.fragment.book_list.collect">最多收藏</string>
+    
+    <string name="nb.fragment.book_list.message">共%1$d本書 |&#160; %2$d人收藏</string>
+    
+    <!--评论相关-->
+    <string name="nb.comment.floor">%1$d楼&#160;</string>
+    <string name="nb.comment.like_count">❤%1$d次同感</string>
+    <string name="nb.comment.best_comment">仰望神評論</string>
+    <string name="nb.comment.comment_count">共%1$d條評論</string>
+    <string name="nb.comment.reply_floor">(%1$d樓)</string>
+    <string name="nb.comment.reply_nickname">回復 %1$s</string>
+    <string name="nb.comment.empty_comment">佔無評論</string>
+    
+    <!--书评区相关-->
+    <string name="nb.review.book_type">[%1$s]</string>
+    <string name="nb.review.recommend">%1$d 人推薦</string>
+    <string name="nb.review.helpful">有用</string>
+    <string name="nb.review.unhelpful">無用</string>
+    <string name="nb.review.book_score">給書評打分</string>
+    <string name="nb.review.master_score">樓主打分：</string>
+    
+    
+    <!--find-->
+    <string name="nb.fragment.find.top">排行榜</string>
+    <string name="nb.fragment.find.topic">主題書單</string>
+    <string name="nb.fragment.find.sort">分類</string>
+    <string name="nb.fragment.find.listen">有聲小說</string>
+
+    <!--dialog-->
+    <string name="nb.dialog.text.introduce">我們會根據您的喜好\n推薦相對應的小說</string>
+    <string name="nb.dialog.text.choose_tip">--請選擇你的喜好--</string>
+    <string name="nb.dialog.text.boy_story">男生小說</string>
+    <string name="nb.dialog.text.girl_story">女生小說</string>
+    
+    <!--menu-->
+    <string name="nb.menu.action.search">搜索</string>
+    <string name="nb.menu.action.login">請登錄</string>
+    <string name="nb.menu.action.message">我的消息</string>
+    <string name="nb.menu.action.download">下載列表</string>
+    <string name="nb.menu.action.sync">同步書架</string>
+    <string name="nb.menu.action.scan">掃描本地書籍</string>
+    <string name="nb.menu.action.transfer">WIFI傳書</string>
+    <string name="nb.menu.action.feedback">意見反饋</string>
+    <string name="nb.menu.action.night_mode">夜間模式</string>
+    <string name="nb.menu.action.setting">設置</string>
+    
+    <string name="nb.menu.action.top">置頂</string>
+    <string name="nb.menu.action.cache">緩存</string>
+    <string name="nb.menu.action.delete">刪除</string>
+    <string name="nb.menu.action.batch_manage">批量管理</string>
+    
+    <!--SplashActivity-->
+    <string name="nb.splash.skip">跳過</string>
+
+    <!--user:用户的信息-->
+    <string name="nb.user.lv">&#160;lv.%1$d</string>
+    <!--book:书籍的信息-->
+    <string name="nb.book.type">[%1$s]</string>
+    <string name="nb.book.recommend">%1$d 人推薦</string>
+    <string name="nb.book.message">%1$d人在追 |&#160; %2$s%%讀者留存</string>
+    <string name="nb.book.word">|&#160;%1$d&#160;萬字</string>
+    <!--sort:每类的书-->
+    <string name="nb.sort.book_count">%1$d 本</string>
+    
+    <!--tag: 标签-->
+    <string name="nb.tag.all">全部</string>
+    <string name="nb.tag.sex">性别</string>
+    <string name="nb.tag.boy">男生</string>
+    <string name="nb.tag.girl">女生</string>
+    
+    
+    <!--book_detail : -->
+    <string name="nb.book_detail.hot_comment">熱門書評</string>
+    <string name="nb.book_detail.community">%1$s的社區</string>
+    <string name="nb.book_detail.posts_count">共有%1$d個帖子</string>
+    <string name="nb.book_detail.recommend_book_list">推薦書單</string>
+    <string name="nb.book_detail.chase_update">追更</string>
+    <string name="nb.book_detail.give_up">放棄</string>
+    <string name="nb.book_detail.start_read">開始閱讀</string>
+    
+    <!--DownloadTask:书籍下载-->
+    <string name="nb.download.add_succeed">成功添加到下載列表</string>
+    <string name="nb.download.exist">該任務已存在</string>
+    <string name="nb.download.load_all">以緩存全部章節</string>
+    <string name="nb.download.progress">%1$d/%2$d</string>
+    <string name="nb.download.chapter_scope">(%1$d-%2$d章)</string>
+    
+    <string name="nb.download.start">繼續</string>
+    <string name="nb.download.pause">暫停</string>
+    <string name="nb.download.wait">等待</string>
+    <string name="nb.download.error">錯誤</string>
+    <string name="nb.download.finish">完成</string>
+    
+    <string name="nb.download.loading">下載中</string>
+    <string name="nb.download.waiting">等待中</string>
+    <string name="nb.download.pausing">暫停中</string>
+    <string name="nb.download.complete">已完成</string>
+    <string name="nb.download.source_error">資源或網路錯誤</string>
+    
+    <!--mode-->
+    <string name="nb.mode.night">夜間</string>
+    <string name="nb.mode.morning">日間</string>
+    
+    <!--read-->
+    <string name="nb.read.community">社區</string>
+    <string name="nb.read.brief">簡介</string>
+    <string name="nb.read.setting">設置</string>
+    <string name="nb.read.download">緩存</string>'
+    <string name="nb.read.category">目錄</string>
+    <string name="nb.read.no_chapter">第 %1$d 章(%2$d)</string>
+    
+    <!--file system-->
+    <string name="nb.file.sub_count">%1$d 項</string>
+    <string name="nb.file.path">存儲卡:%1$s</string>
+    <string name="nb.file.add_shelf">加入書架</string>
+    <string name="nb.file.add_shelves">加入書架(%1$d)</string>
+    <string name="nb.file.add_succeed">成功添加%1$d本書</string>
+    
+    <!--search-->
+    <string name="nb.search.book.brief">%1$d人在追 | %2$s讀者留存 | %3$s著</string>
+
+    <!--BookShelf-->
+    <string name="nb.bookshelf.book_not_exist">文件不存在或者内容為空,是否刪除?</string>
+
+    <!--OpenCC-->
+    <string-array name="conversion_type_array">
+        <item>不轉換</item>
+        <item>臺灣正體到簡體(大陸常用詞彙)</item>
+        <item>簡體到香港繁體</item>
+        <item>簡體到繁體</item>
+        <item>簡體到臺灣正體</item>
+        <item>簡體到繁體(臺灣常用詞彙)</item>
+        <item>繁體到香港繁體</item>
+        <item>繁體到簡體</item>
+        <item>繁體臺灣正體</item>
+        <item>臺灣正體到簡體</item>
+        <item>香港繁體到簡體</item>
+    </string-array>
+</resources>
