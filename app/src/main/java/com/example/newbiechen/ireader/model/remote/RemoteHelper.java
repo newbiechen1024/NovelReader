@@ -23,19 +23,16 @@ public class RemoteHelper {
     private static RemoteHelper sInstance;
     private Retrofit mRetrofit;
     private OkHttpClient mOkHttpClient;
-    private RemoteHelper(){
+
+    private RemoteHelper() {
         mOkHttpClient = new OkHttpClient.Builder()
                 .addNetworkInterceptor(
-                        new Interceptor() {
-                            @Override
-                            public Response intercept(Chain chain) throws IOException {
-                                Request request = chain.request();
-
-                                //在这里获取到request后就可以做任何事情了
-                                Response response = chain.proceed(request);
-                                Log.d(TAG, "intercept: "+request.url().toString());
-                                return response;
-                            }
+                        chain -> {
+                            Request request = chain.request();
+                            //在这里获取到request后就可以做任何事情了
+                            Response response = chain.proceed(request);
+                            Log.d(TAG, "intercept: " + request.url().toString());
+                            return response;
                         }
                 ).build();
 
@@ -47,10 +44,10 @@ public class RemoteHelper {
                 .build();
     }
 
-    public static RemoteHelper getInstance(){
-        if (sInstance == null){
-            synchronized (RemoteHelper.class){
-                if (sInstance == null){
+    public static RemoteHelper getInstance() {
+        if (sInstance == null) {
+            synchronized (RemoteHelper.class) {
+                if (sInstance == null) {
                     sInstance = new RemoteHelper();
                 }
             }
@@ -58,11 +55,11 @@ public class RemoteHelper {
         return sInstance;
     }
 
-    public Retrofit getRetrofit(){
+    public Retrofit getRetrofit() {
         return mRetrofit;
     }
 
-    public OkHttpClient getOkHttpClient(){
+    public OkHttpClient getOkHttpClient() {
         return mOkHttpClient;
     }
 }
