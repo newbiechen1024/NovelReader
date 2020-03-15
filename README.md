@@ -21,7 +21,7 @@
    * 支持在线章节阅读、本地书籍查找。
    * 支持本地书籍加载到页面(支持本地书籍分章、加载速度快、耗费内存少)
 
-注: 项目目前仍有许多问题，希望各位发现 BUG 能够尽快反馈，本人一定尽快修复，谢谢支持。
+注: 在弄新项目，该项目不定时维护更新。
 
 # 采用了以下开源框架
 
@@ -43,6 +43,12 @@
 ![](https://github.com/newbiechen1024/NovelReader/blob/master/screenshot/download.gif)
 
 # 更新记录
+
+**update 2020-03-15**
+
+* 更新三方库
+* Android 8.0 以上禁止使用 DownloadService (暂时没空适配)
+* Android 9.0 SimulationPageAnim 崩溃
 
 **update 2018-03-03**
 
@@ -91,15 +97,3 @@ apply plugin: 'me.tatarka.retrolambda'
 
 * 修复上下滑动，手指只能移动一小段距离的 bug。
 * 修复上下滑动时，存在页面重复显示的问题。
-
-**update 2017-10-09**
-
-* 重写 ItemDecoration，更好的方式设置 RecyclerView 的 divider
-* 修复 ReadActivity 页面的亮度调节问题。(还有一些小问题)
-* 修复上下滑动卡顿问题 (感谢 zeroAngus 的修改)
-* 支持 Android 6.0 动态权限设置。
-* 还修改了一些小 BUG。
-
-**update 2017-09-07**
-* 修复某些机型点击中间区域无法显示菜单的问题。(如果还是无法显示菜单，请发 issue)
-* 添加翻页背面遮盖效果。
