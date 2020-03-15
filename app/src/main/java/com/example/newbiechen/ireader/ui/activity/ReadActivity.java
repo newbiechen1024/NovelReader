@@ -273,7 +273,7 @@ public class ReadActivity extends BaseMVPActivity<ReadContract.Presenter>
 
         //初始化屏幕常亮类
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "keep bright");
+        mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "ireader:keep bright");
 
         //隐藏StatusBar
         mPvPage.post(
