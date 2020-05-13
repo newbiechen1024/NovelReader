@@ -13,7 +13,7 @@
         <activity android:name=".ui.activity.SplashActivity"
             android:theme="@style/SplashTheme">
         </activity>
-        <activity android:name=".ui.activity.MainActivity">
+        <activity android:name=".ui.activity.MainActivity" android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -36,8 +36,7 @@
         <activity android:name=".ui.activity.OtherBillBookActivity"/>
         <activity android:name=".ui.activity.BookDetailActivity"/>
         <activity android:name=".ui.activity.DownloadActivity"/>
-        <activity android:name=".ui.activity.ReadActivity">
-        </activity>
+        <activity android:name=".ui.activity.ReadActivity" android:configChanges="orientation|screenSize"/>
         <activity android:name=".ui.activity.FileSystemActivity"/>
         <activity android:name=".ui.activity.CommunityActivity" />
         <activity android:name=".ui.activity.MoreSettingActivity" />
